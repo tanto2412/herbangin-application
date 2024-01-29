@@ -1,0 +1,16 @@
+{
+    "name": "express-boilerplate",
+    "version": "1.0.0",
+    "description": "Basic boilerplate for an Express.js application",
+    "main": "server.js",
+    "scripts": {
+        "start": "node server.js"
+    },
+    "dependencies": {
+        "dotenv": "^16.4.1",
+        "express": "^4.17.1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC"
+}
