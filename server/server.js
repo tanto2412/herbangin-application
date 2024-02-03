@@ -1,16 +1,29 @@
 const express = require('express')
-const path = require('path')
-const bodyParser = require('body-parser')
+const session = require('express-session')
+const passport = require('./middlewares/authMiddleware')
+
+const apiRoutes = require('./routes/api')
+
 require('dotenv').config() // Load environment variables from .env
 
 const app = express()
 const PORT = process.env.PORT || 3000 // Use the defined port or default to 3000
 
-// Middleware setup
-app.use(bodyParser.json()) // Example JSON body parser middleware
+// Middleware
+app.use(express.json()) // for parsing application/json
+app.use(
+  session({
+    secret: 'your_secret_key',
+    resave: false,
+    saveUninitialized: false,
+  })
+)
 
-// Routes setup
-const apiRoutes = require('./routes/api')
+// Initialize passport
+app.use(passport.passport.initialize())
+app.use(passport.passport.session())
+
+// Import route modules
 app.use('/api', apiRoutes)
 
 // Error handling middleware

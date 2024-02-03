@@ -1,14 +1,22 @@
 {
-    "name": "express-boilerplate",
+    "name": "herbangin_application",
     "version": "1.0.0",
-    "description": "Basic boilerplate for an Express.js application",
+    "description": "Application for herbangin",
     "main": "server.js",
     "scripts": {
-        "start": "node server.js"
+        "start": "node server/server.js",
+        "migrate": "npx knex migrate:latest",
+        "rollback": "npx knex migrate:rollback"
     },
     "dependencies": {
+        "bcrypt": "^5.1.1",
         "dotenv": "^16.4.1",
-        "express": "^4.17.1"
+        "express": "^4.17.1",
+        "express-session": "^1.18.0",
+        "knex": "^3.1.0",
+        "passport": "^0.7.0",
+        "passport-local": "^1.0.0",
+        "pg": "^8.11.3"
     },
     "keywords": [],
     "author": "",
