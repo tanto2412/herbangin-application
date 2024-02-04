@@ -7,7 +7,7 @@ router.post(
   '/login',
   passport.passport.authenticate('local'),
   async (req, res) => {
-    const user = await userModel.getUserByUsername(req.body.username)
+    const user = await userModel.getByUsername(req.body.username)
     delete user.password
     res.json(user)
   }

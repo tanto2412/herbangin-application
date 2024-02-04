@@ -1,5 +1,6 @@
 // controllers/customerController.js
 const customerModel = require('../models/customerModel')
+const salesModel = require('../models/salesModel')
 
 async function search(req, res) {
   const customers = await customerModel.search(req.query)
@@ -19,6 +20,11 @@ async function getById(req, res) {
 
 async function create(req, res) {
   try {
+    if (!(await isSalesExists(req.body.sales_id))) {
+      res.status(500).send('sales not found')
+      return
+    }
+
     const customers = await customerModel.create(req.body)
 
     if (!customers) {
@@ -28,12 +34,17 @@ async function create(req, res) {
 
     res.json(customers[0])
   } catch (error) {
-    res.status(500).send(error.detail)
+    res.status(500).send(error.detail ? error.detail : 'insert failed')
   }
 }
 
 async function edit(req, res) {
   try {
+    if (!(await isSalesExists(req.body.sales_id))) {
+      res.status(500).send('sales not found')
+      return
+    }
+
     const customers = await customerModel.edit(req.params.id, req.body)
 
     if (!customers) {
@@ -44,7 +55,7 @@ async function edit(req, res) {
     res.json(customers[0])
   } catch (error) {
     console.log(error)
-    res.status(500).send(error.detail)
+    res.status(500).send(error.detail ? error.detail : 'update failed')
   }
 }
 
@@ -57,6 +68,10 @@ async function remove(req, res) {
   }
 
   res.json(customers[0])
+}
+
+async function isSalesExists(sales_id) {
+  return await salesModel.getById(sales_id)
 }
 
 module.exports = {

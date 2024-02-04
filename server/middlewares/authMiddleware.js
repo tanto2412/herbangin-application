@@ -29,9 +29,9 @@ passport.use(
         }
       }
 
-      return done(null, false, { message: 'Incorrect username or password.' })
+      return done(null, false, 'incorrect username or password.')
     } catch (error) {
-      return done(null, false, { message: 'Incorrect username or password.' })
+      return done(null, false, 'incorrect username or password.')
     }
   })
 )
@@ -41,7 +41,7 @@ function isAuthenticated(req, res, next) {
     return next()
   }
 
-  res.status(401).json({ error: 'Unauthorized' })
+  res.status(401).send('please login first')
 }
 
 module.exports = {

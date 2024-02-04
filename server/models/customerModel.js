@@ -1,13 +1,12 @@
 // models/customerModel.js
-const bcrypt = require('bcrypt')
 const knex = require('../../knexInstance')
 
-async function search({ nama = null, sales = null }) {
+async function search({ nama_toko = null, sales = null }) {
   return await knex('customer')
     .where((builder) => {
       // Check if 'name' is provided and apply the condition
-      if (nama) {
-        builder.where('lower(nama)', 'like', `%${nama.toLowerCase()}%`)
+      if (nama_toko) {
+        builder.where('nama_toko', 'ilike', `%${nama_toko}%`)
       }
 
       // Check if 'sales' is provided and apply the condition
@@ -19,7 +18,7 @@ async function search({ nama = null, sales = null }) {
       return rows
     })
     .catch(() => {
-      return null
+      return []
     })
 }
 
@@ -70,6 +69,7 @@ async function edit(
       nomor_handphone,
       email,
       batas_piutang,
+      updated_at: knex.raw('now()'),
     })
     .where('id', id)
     .returning('*')

@@ -13,7 +13,7 @@ exports.up = function (knex) {
     })
     .createTable('sales', function (table) {
       table.increments('id').primary()
-      table.string('name').notNullable()
+      table.string('nama').notNullable().unique()
       table.timestamps(true, true)
     })
     .createTable('customer', function (table) {
