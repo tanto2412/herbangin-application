@@ -11,7 +11,7 @@ passport.serializeUser((user, done) => {
 
 // Deserialize user from session
 passport.deserializeUser((username, done) => {
-  const user = userModel.getUserByUsername(username)
+  const user = userModel.getByUsername(username)
   done(null, user)
 })
 
@@ -19,7 +19,7 @@ passport.deserializeUser((username, done) => {
 passport.use(
   new LocalStrategy(async (username, password, done) => {
     try {
-      const user = await userModel.getUserByUsername(username)
+      const user = await userModel.getByUsername(username)
 
       if (user) {
         const passwordMatch = await bcrypt.compare(password, user.password)

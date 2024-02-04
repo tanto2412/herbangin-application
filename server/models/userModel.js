@@ -2,7 +2,7 @@
 const bcrypt = require('bcrypt')
 const knex = require('../../knexInstance')
 
-async function getUserByUsername(userName) {
+async function getByUsername(userName) {
   const user = await knex('user').where('nama', userName).first()
 
   if (!user) {
@@ -12,7 +12,7 @@ async function getUserByUsername(userName) {
   return user
 }
 
-async function getUserById(id) {
+async function getById(id) {
   const user = await knex('user').where('id', id).first()
 
   if (!user) {
@@ -46,7 +46,7 @@ async function updatePassword(id, password) {
 }
 
 module.exports = {
-  getUserByUsername,
-  getUserById,
+  getByUsername,
+  getById,
   updatePassword,
 }

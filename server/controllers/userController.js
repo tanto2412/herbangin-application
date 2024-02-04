@@ -1,8 +1,8 @@
 // controllers/userController.js
 const userModel = require('../models/userModel')
 
-async function getUserById(req, res) {
-  const user = await userModel.getUserById(req.params.id)
+async function getById(req, res) {
+  const user = await userModel.getById(req.params.id)
 
   if (!user) {
     res.status(404).send('user not found')
@@ -27,6 +27,6 @@ async function changePassword(req, res) {
 }
 
 module.exports = {
-  getUserById,
+  getById,
   changePassword,
 }
