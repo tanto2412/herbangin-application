@@ -27,13 +27,14 @@ async function create(req, res) {
 
     const customers = await customerModel.create(req.body)
 
-    if (!customers) {
+    if (!customers.length) {
       res.status(500).send('insert failed')
       return
     }
 
     res.json(customers[0])
   } catch (error) {
+    logger.error(error)
     res.status(500).send(error.detail ? error.detail : 'insert failed')
   }
 }
@@ -47,14 +48,14 @@ async function edit(req, res) {
 
     const customers = await customerModel.edit(req.params.id, req.body)
 
-    if (!customers) {
+    if (!customers.length) {
       res.status(500).send('update failed')
       return
     }
 
     res.json(customers[0])
   } catch (error) {
-    console.log(error)
+    logger.error(error)
     res.status(500).send(error.detail ? error.detail : 'update failed')
   }
 }
@@ -62,7 +63,7 @@ async function edit(req, res) {
 async function remove(req, res) {
   const customers = await customerModel.remove(req.params.id)
 
-  if (!customers) {
+  if (!customers.length) {
     res.status(404).send('customer not found')
     return
   }

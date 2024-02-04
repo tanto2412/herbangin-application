@@ -21,13 +21,14 @@ async function create(req, res) {
   try {
     const sales = await salesModel.create(req.body)
 
-    if (!sales) {
+    if (!sales.length) {
       res.status(500).send('insert failed')
       return
     }
 
     res.json(sales[0])
   } catch (error) {
+    logger.error(error)
     res.status(500).send(error.detail ? error.detail : 'insert failed')
   }
 }
@@ -36,22 +37,22 @@ async function edit(req, res) {
   try {
     const sales = await salesModel.edit(req.params.id, req.body)
 
-    if (!sales) {
-      res.status(500).send(error.detail ? error.detail : 'update failed')
+    if (!sales.length) {
+      res.status(500).send('update failed')
       return
     }
 
     res.json(sales[0])
   } catch (error) {
-    console.log(error)
-    res.status(500).send(error.detail)
+    logger.error(error)
+    res.status(500).send(error.detail ? error.detail : 'update failed')
   }
 }
 
 async function remove(req, res) {
   const sales = await salesModel.remove(req.params.id)
 
-  if (!sales) {
+  if (!sales.length) {
     res.status(404).send('sales not found')
     return
   }

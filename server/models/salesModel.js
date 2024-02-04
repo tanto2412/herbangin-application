@@ -1,7 +1,7 @@
 // models/salesModel.js
 const knex = require('../../knexInstance')
 
-async function search({ nama = null, sales = null }) {
+async function search({ nama = null }) {
   return await knex('sales')
     .where((builder) => {
       // Check if 'name' is provided and apply the condition
