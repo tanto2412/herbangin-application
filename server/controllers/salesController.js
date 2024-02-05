@@ -1,5 +1,6 @@
 // controllers/salesController.js
 const salesModel = require('../models/salesModel')
+const logger = require('../../logger')
 
 async function search(req, res) {
   const sales = await salesModel.search(req.query)

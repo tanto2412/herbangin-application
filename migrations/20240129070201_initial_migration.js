@@ -43,6 +43,23 @@ exports.up = function (knex) {
       table.index(['kode_barang'])
       table.index(['jenis_barang'])
     })
+    .createTable('product_history', function (table) {
+      table.increments('id').primary()
+      table
+        .integer('product_id')
+        .unsigned()
+        .notNullable()
+        .references('id')
+        .inTable('product')
+      table.integer('stok_sebelum').notNullable()
+      table.integer('stok_sesudah').notNullable()
+      table.string('reference_type').notNullable()
+      table.integer('reference_id').notNullable()
+      table.timestamps(true, true)
+
+      table.index(['product_id'])
+      table.index(['reference_type', 'reference_id'])
+    })
     .createTable('receiving', function (table) {
       table.increments('id').primary()
       table.bigint('tanggal').notNullable()
@@ -229,6 +246,7 @@ exports.down = function (knex) {
     .dropTableIfExists('order')
     .dropTableIfExists('receiving_item')
     .dropTableIfExists('receiving')
+    .dropTableIfExists('product_history')
     .dropTableIfExists('product')
     .dropTableIfExists('customer')
     .dropTableIfExists('sales')
