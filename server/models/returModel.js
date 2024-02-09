@@ -1,13 +1,30 @@
-// models/receivingModel.js
+// models/returModel.js
 const knex = require('../../knexInstance')
 const logger = require('../../logger')
 const productModel = require('./productModel')
 
-async function search({ nomor = null }) {
-  return await knex('receiving')
+async function search({
+  nomor_faktur = null,
+  nomor_retur = null,
+  customer = null,
+  sales = null,
+}) {
+  return await knex('retur')
     .where((builder) => {
-      if (nomor) {
-        builder.where('id', nomor)
+      if (nomor_faktur) {
+        builder.where('nomor_faktur', nomor_faktur)
+      }
+
+      if (nomor_retur) {
+        builder.where('id', nomor_retur)
+      }
+
+      if (sales) {
+        builder.where('sales_id', sales)
+      }
+
+      if (customer) {
+        builder.where('customer_id', customer)
       }
     })
     .then((rows) => {
@@ -20,41 +37,53 @@ async function search({ nomor = null }) {
 }
 
 async function getById(id) {
-  return await knex('receiving').where('id', id).first()
+  return await knex('retur').where('id', id).first()
 }
 
 async function getItemsById(id) {
-  if (!id) return []
-  return await knex('receiving_item').where('receiving_id', id)
+  return await knex('retur_item').where('retur_id', id)
 }
 
-async function create({ tanggal, total, items }) {
+async function getItemsByIds(ids) {
+  return await knex('retur_item').whereIn('retur_id', ids)
+}
+
+async function create({
+  nomor_faktur,
+  customer_id,
+  sales_id,
+  tanggal,
+  total,
+  items,
+}) {
   try {
     return await knex.transaction(async (trx) => {
-      let receiving = (
-        await trx('receiving').insert({ tanggal, total }).returning('*')
+      let retur = (
+        await trx('retur')
+          .insert({ nomor_faktur, customer_id, sales_id, tanggal, total })
+          .returning('*')
       )[0]
 
       let updatedItems = items.map((item) => {
         let updatedItem = item
-        updatedItem.receiving_id = receiving.id
+        updatedItem.retur_id = retur.id
         return updatedItem
       })
 
-      let receivingItems = await trx('receiving_item')
+      let returItems = await trx('retur_item')
         .insert(updatedItems)
         .returning('*')
-      if (!receivingItems || !receivingItems.length) {
+      if (!returItems || !returItems.length) {
         await trx.rollback()
         return null
       }
 
       stockSpecs = []
-      for (let item of receivingItems) {
+      for (let item of returItems) {
         stockSpec = {
           product_id: item.product_id,
           stok_diff: item.jumlah_barang,
-          reference_type: productModel.ReferenceType.RECEIVING,
+          reference_type: productModel.ReferenceType.RETUR,
           reference_id: item.id,
         }
         stockSpecs.push(stockSpec)
@@ -66,8 +95,8 @@ async function create({ tanggal, total, items }) {
         return null
       }
 
-      receiving.items = receivingItems
-      return receiving
+      retur.items = returItems
+      return retur
     })
   } catch (error) {
     logger.error(error)
@@ -75,34 +104,47 @@ async function create({ tanggal, total, items }) {
   }
 }
 
-async function edit({ id, tanggal, total, items }) {
+async function edit({
+  id,
+  nomor_faktur,
+  customer_id,
+  sales_id,
+  tanggal,
+  total,
+  items,
+}) {
   try {
     return await knex.transaction(async (trx) => {
-      let receiving = (
-        await trx('receiving')
-          .update({ tanggal, total, updated_at: knex.raw('now()') })
+      let retur = (
+        await trx('retur')
+          .update({
+            nomor_faktur,
+            customer_id,
+            sales_id,
+            tanggal,
+            total,
+            updated_at: knex.raw('now()'),
+          })
           .where('id', id)
           .returning('*')
       )[0]
 
       let updatedItems = items.map((item) => {
         let updatedItem = item
-        updatedItem.receiving_id = id
+        updatedItem.retur_id = id
         return updatedItem
       })
 
-      let deletedItems = await trx('receiving_item')
-        .where('receiving_id', id)
-        .del('*')
+      let deletedItems = await trx('retur_item').where('retur_id', id).del('*')
       if (!deletedItems || !deletedItems.length) {
         await trx.rollback()
         return null
       }
 
-      let receivingItems = await trx('receiving_item')
+      let returItems = await trx('retur_item')
         .insert(updatedItems)
         .returning('*')
-      if (!receivingItems || !receivingItems.length) {
+      if (!returItems || !returItems.length) {
         await trx.rollback()
         return null
       }
@@ -113,7 +155,7 @@ async function edit({ id, tanggal, total, items }) {
         deductSpec = {
           product_id: item.product_id,
           stok_diff: -item.jumlah_barang,
-          reference_type: productModel.ReferenceType.RECEIVING,
+          reference_type: productModel.ReferenceType.RETUR,
           reference_id: item.id,
         }
         deductSpecs.push(deductSpec)
@@ -127,11 +169,11 @@ async function edit({ id, tanggal, total, items }) {
 
       // add new items
       addSpecs = []
-      for (let item of receivingItems) {
+      for (let item of returItems) {
         addSpec = {
           product_id: item.product_id,
           stok_diff: item.jumlah_barang,
-          reference_type: productModel.ReferenceType.RECEIVING,
+          reference_type: productModel.ReferenceType.RETUR,
           reference_id: item.id,
         }
         addSpecs.push(addSpec)
@@ -143,8 +185,8 @@ async function edit({ id, tanggal, total, items }) {
         return null
       }
 
-      receiving.items = receivingItems
-      return receiving
+      retur.items = returItems
+      return retur
     })
   } catch (error) {
     logger.error(error)
@@ -155,18 +197,16 @@ async function edit({ id, tanggal, total, items }) {
 async function remove(id) {
   try {
     return await knex.transaction(async (trx) => {
-      let receivingItems = await trx('receiving_item')
-        .where('receiving_id', id)
-        .del('*')
+      let returItems = await trx('retur_item').where('retur_id', id).del('*')
 
-      let receiving = (await trx('receiving').where('id', id).del('*'))[0]
+      let retur = (await trx('retur').where('id', id).del('*'))[0]
 
       stockSpecs = []
-      for (let item of receivingItems) {
+      for (let item of returItems) {
         stockSpec = {
           product_id: item.product_id,
           stok_diff: -item.jumlah_barang,
-          reference_type: productModel.ReferenceType.RECEIVING,
+          reference_type: productModel.ReferenceType.RETUR,
           reference_id: item.id,
         }
         stockSpecs.push(stockSpec)
@@ -178,8 +218,8 @@ async function remove(id) {
         return null
       }
 
-      receiving.items = receivingItems
-      return receiving
+      retur.items = returItems
+      return retur
     })
   } catch (error) {
     logger.error(error)
@@ -191,6 +231,7 @@ module.exports = {
   search,
   getById,
   getItemsById,
+  getItemsByIds,
   create,
   edit,
   remove,

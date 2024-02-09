@@ -10,19 +10,22 @@ async function search(req, res) {
 }
 
 async function getById(req, res) {
-  const order = await orderModel.getById(req.params.id)
+  let order = await orderModel.getById(req.params.id)
 
   if (!order) {
     res.status(404).send('order not found')
     return
   }
 
+  const orderItems = await orderModel.getItemsById(req.params.id)
+  order.items = orderItems
+
   res.json(order)
 }
 
 async function create(req, res) {
   try {
-    let createSpec = await buildCreateSpec(req.body)
+    let createSpec = await buildCreateSpec(req.params.id, req.body)
     if (createSpec.error) {
       res.status(500).send(createSpec.error)
       return
@@ -43,9 +46,9 @@ async function create(req, res) {
 
 async function edit(req, res) {
   try {
-    let editSpec = await buildCreateSpec(req.body)
+    let editSpec = await buildCreateSpec(req.params.id, req.body)
     if (editSpec.error) {
-      res.status(500).send(createSpec.error)
+      res.status(500).send(editSpec.error)
       return
     }
 
@@ -75,7 +78,10 @@ async function remove(req, res) {
   res.json(order)
 }
 
-async function buildCreateSpec({ tanggal_faktur, customer_id, items }) {
+async function buildCreateSpec(
+  nomor_faktur,
+  { tanggal_faktur, customer_id, items }
+) {
   const itemIds = items.map(({ product_id }) => product_id)
 
   const customer = await customerModel.getById(customer_id)
@@ -92,19 +98,37 @@ async function buildCreateSpec({ tanggal_faktur, customer_id, items }) {
     productMap.set(product.id, product)
   }
 
+  const existingOrderItems = await orderModel.getItemsById(nomor_faktur)
+  let existingOrderItemMap = new Map()
+  for (let existingOrderItem of existingOrderItems) {
+    existingOrderItemMap.set(existingOrderItem.product_id, existingOrderItem)
+  }
+
   let total = 0
   let missingItems = []
   let missingJumlah = []
+  let exceedStok = []
   let filledItems = items.map(({ product_id, jumlah_barang }) => {
     if (!jumlah_barang) {
       missingJumlah.push(product_id)
       return null
     }
+
     let product = productMap.get(product_id)
     if (!product) {
       missingItems.push(product_id)
       return null
     }
+
+    let existingOrderItem = existingOrderItemMap.get(product_id)
+    let totalBarang = jumlah_barang
+    if (existingOrderItem) {
+      totalBarang -= existingOrderItem.jumlah_barang
+    }
+    if (totalBarang > product.stok_barang) {
+      exceedStok.push(product_id)
+    }
+
     let subtotal = jumlah_barang * product.harga
     total += subtotal
     return {
@@ -127,6 +151,13 @@ async function buildCreateSpec({ tanggal_faktur, customer_id, items }) {
   if (missingItems.length) {
     return {
       error: `missing items: ${missingItems}`,
+      result: null,
+    }
+  }
+
+  if (exceedStok.length) {
+    return {
+      error: `exceed stock product: ${exceedStok}`,
       result: null,
     }
   }

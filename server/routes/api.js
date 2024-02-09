@@ -10,6 +10,7 @@ const salesRoutes = require('./sales')
 const productRoutes = require('./products')
 const receivingRoutes = require('./receiving')
 const orderRoutes = require('./order')
+const returRoutes = require('./retur')
 
 const passport = require('../middlewares/authMiddleware')
 
@@ -29,5 +30,6 @@ router.use('/sales', salesRoutes)
 router.use('/products', productRoutes)
 router.use('/receiving', receivingRoutes)
 router.use('/order', orderRoutes)
+router.use('/retur', returRoutes)
 
 module.exports = router

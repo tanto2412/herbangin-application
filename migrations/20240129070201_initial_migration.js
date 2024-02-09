@@ -134,6 +134,7 @@ exports.up = function (knex) {
       table.index(['nomor_faktur'])
       table.index(['product_id'])
       table.index(['kode_barang'])
+      table.unique(['nomor_faktur', 'product_id'])
     })
     .createTable('retur', function (table) {
       table.increments('id').primary()

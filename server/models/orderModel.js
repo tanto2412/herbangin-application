@@ -28,7 +28,17 @@ async function search({ nomor = null, sales = null, customer = null }) {
 }
 
 async function getById(id) {
-  return await knex('order').where('id', id).first()
+  return await knex('order').where('nomor_faktur', id).first()
+}
+
+async function getItemsById(id) {
+  if (!id) return []
+  return await knex('order_item').where('nomor_faktur', id)
+}
+
+async function getItemsByIds(ids) {
+  if (!ids) return []
+  return await knex('order_item').whereIn('id', ids)
 }
 
 async function create({ tanggal_faktur, customer_id, sales_id, total, items }) {
@@ -125,37 +135,37 @@ async function edit({
         return null
       }
 
-      // deduct old items
-      deductSpecs = []
-      for (let item of deletedItems) {
-        deductSpec = {
-          product_id: item.product_id,
-          stok_diff: item.jumlah_barang,
-          reference_type: productModel.ReferenceType.ORDER,
-          reference_id: item.id,
-        }
-        deductSpecs.push(deductSpec)
-      }
-
-      let updatedStock = await productModel.updateStock(deductSpecs, trx)
-      if (!updatedStock || !updatedStock.length) {
-        await trx.rollback()
-        return null
-      }
-
-      // add new items
+      // add old items
       addSpecs = []
-      for (let item of orderItems) {
+      for (let item of deletedItems) {
         addSpec = {
           product_id: item.product_id,
-          stok_diff: -item.jumlah_barang,
+          stok_diff: item.jumlah_barang,
           reference_type: productModel.ReferenceType.ORDER,
           reference_id: item.id,
         }
         addSpecs.push(addSpec)
       }
 
-      updatedStock = await productModel.updateStock(addSpecs, trx)
+      let updatedStock = await productModel.updateStock(addSpecs, trx)
+      if (!updatedStock || !updatedStock.length) {
+        await trx.rollback()
+        return null
+      }
+
+      // deduct new items
+      deductSpecs = []
+      for (let item of orderItems) {
+        deductSpec = {
+          product_id: item.product_id,
+          stok_diff: -item.jumlah_barang,
+          reference_type: productModel.ReferenceType.ORDER,
+          reference_id: item.id,
+        }
+        deductSpecs.push(deductSpec)
+      }
+
+      updatedStock = await productModel.updateStock(deductSpecs, trx)
       if (!updatedStock || !updatedStock.length) {
         await trx.rollback()
         return null
@@ -170,7 +180,7 @@ async function edit({
   }
 }
 
-async function remove(id) {
+async function remove(nomor_faktur) {
   try {
     return await knex.transaction(async (trx) => {
       let orderItems = await trx('order_item')
@@ -210,6 +220,8 @@ async function remove(id) {
 module.exports = {
   search,
   getById,
+  getItemsById,
+  getItemsByIds,
   create,
   edit,
   remove,
