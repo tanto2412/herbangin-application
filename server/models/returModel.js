@@ -40,6 +40,13 @@ async function getById(id) {
   return await knex('retur').where('id', id).first()
 }
 
+async function getByOrderId(id, trx) {
+  if (!trx) {
+    trx = knex
+  }
+  return await trx('retur').where('nomor_faktur', id)
+}
+
 async function getItemsById(id) {
   return await knex('retur_item').where('retur_id', id)
 }
@@ -227,6 +234,35 @@ async function remove(id) {
   }
 }
 
+async function removeByOrderId(id, trx) {
+  let returs = await getByOrderId(id, trx)
+  let returIds = returs.map((retur) => retur.id)
+
+  let returItems = await trx('retur_item').where('retur_id', returIds).del('*')
+
+  returs = await trx('retur').where('nomor_faktur', id).del('*')
+
+  stockSpecs = []
+  for (let item of returItems) {
+    stockSpec = {
+      product_id: item.product_id,
+      stok_diff: -item.jumlah_barang,
+      reference_type: productModel.ReferenceType.RETUR,
+      reference_id: item.id,
+    }
+    stockSpecs.push(stockSpec)
+  }
+
+  let updatedStock = await productModel.updateStock(stockSpecs, trx)
+  if (!updatedStock || !updatedStock.length) {
+    await trx.rollback()
+    return null
+  }
+
+  retur.items = returItems
+  return retur
+}
+
 module.exports = {
   search,
   getById,
@@ -235,4 +271,5 @@ module.exports = {
   create,
   edit,
   remove,
+  removeByOrderId,
 }

@@ -27,6 +27,12 @@ async function create(req, res) {
       return
     }
 
+    errorMessage = await checkParams(req.body)
+    if (errorMessage) {
+      res.status(500).send(errorMessage)
+      return
+    }
+
     const payment = await paymentModel.create(req.body)
     if (!payment) {
       res.status(500).send('insert failed')
@@ -100,6 +106,29 @@ async function checkPaymentAmount(
 
   if (jumlah_pembayaran > existingAmount) {
     return `exceed outstanding amount: ${existingAmount}`
+  }
+
+  return null
+}
+
+async function checkParams({
+  jenis_pembayaran,
+  nomor_giro,
+  nama_bank,
+  tanggal_jatuh_tempo,
+}) {
+  if (jenis_pembayaran == paymentModel.JenisPembayaran.GIRO) {
+    if (nomor_giro === undefined || nomor_giro === null) {
+      return 'missing nomor_giro'
+    }
+
+    if (nama_bank === undefined || nama_bank === null) {
+      return 'missing nama_bank'
+    }
+
+    if (tanggal_jatuh_tempo === undefined || tanggal_jatuh_tempo === null) {
+      return 'missing tanggal_jatuh_tempo'
+    }
   }
 
   return null

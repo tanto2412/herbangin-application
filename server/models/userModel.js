@@ -1,6 +1,7 @@
 // models/userModel.js
 const bcrypt = require('bcrypt')
 const knex = require('../../knexInstance')
+const logger = require('../../logger')
 
 async function getByUsername(userName) {
   const user = await knex('user').where('nama', userName).first()

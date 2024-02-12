@@ -12,6 +12,7 @@ const receivingRoutes = require('./receiving')
 const orderRoutes = require('./order')
 const returRoutes = require('./retur')
 const paymentRoutes = require('./payment')
+const giroRoutes = require('./giro')
 
 const passport = require('../middlewares/authMiddleware')
 
@@ -25,6 +26,8 @@ router.use(
     '/receiving',
     '/order',
     '/retur',
+    '/payment',
+    '/giro',
   ],
   passport.isAuthenticated
 )
@@ -41,5 +44,6 @@ router.use('/receiving', receivingRoutes)
 router.use('/order', orderRoutes)
 router.use('/retur', returRoutes)
 router.use('/payment', paymentRoutes)
+router.use('/giro', giroRoutes)
 
 module.exports = router

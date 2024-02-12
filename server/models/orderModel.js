@@ -2,6 +2,8 @@
 const knex = require('../../knexInstance')
 const logger = require('../../logger')
 const productModel = require('./productModel')
+const paymentModel = require('./paymentModel')
+const returModel = require('./returModel')
 
 async function search({ nomor = null, sales = null, customer = null }) {
   return await knex('order')
@@ -113,6 +115,9 @@ async function edit({
           .returning('*')
       )[0]
 
+      await paymentModel.removeByOrderId(nomor_faktur, trx)
+      await returModel.removeByOrderId(nomor_faktur, trx)
+
       let updatedItems = items.map((item) => {
         let updatedItem = item
         updatedItem.nomor_faktur = nomor_faktur
@@ -191,11 +196,14 @@ async function remove(nomor_faktur) {
         await trx('order').where('nomor_faktur', nomor_faktur).del('*')
       )[0]
 
+      await paymentModel.removeByOrderId(nomor_faktur, trx)
+      await returModel.removeByOrderId(nomor_faktur, trx)
+
       stockSpecs = []
       for (let item of orderItems) {
         stockSpec = {
           product_id: item.product_id,
-          stok_diff: -item.jumlah_barang,
+          stok_diff: item.jumlah_barang,
           reference_type: productModel.ReferenceType.ORDER,
           reference_id: item.id,
         }

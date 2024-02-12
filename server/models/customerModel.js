@@ -1,5 +1,6 @@
 // models/customerModel.js
 const knex = require('../../knexInstance')
+const logger = require('../../logger')
 
 async function search({ nama_toko = null, sales = null }) {
   return await knex('customer')

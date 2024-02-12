@@ -113,7 +113,7 @@ async function buildCreateSpec(id, { tanggal, items }) {
     }
 
     let existingReceivingItem = existingReceivingItemMap.get(product_id)
-    if (existingOrderItem) {
+    if (existingReceivingItem) {
       diff = existingReceivingItem.jumlah_barang - jumlah_barang
       if (diff > product.stok_barang) {
         exceedStok.push(product_id)
