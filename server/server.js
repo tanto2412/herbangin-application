@@ -1,6 +1,7 @@
 const express = require('express')
 const session = require('express-session')
 const passport = require('./middlewares/authMiddleware')
+const cors = require('cors')
 
 const apiRoutes = require('./routes/api')
 
