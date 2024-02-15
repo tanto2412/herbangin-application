@@ -13,6 +13,8 @@ async function search({
   nomor_pembayaran = null,
   nomor_giro = null,
   status_pembayaran = null,
+  page = 1,
+  pageSize = 20,
 }) {
   return await knex('giro')
     .where((builder) => {
@@ -32,6 +34,10 @@ async function search({
       if (status_pembayaran) {
         builder.where('status_pembayaran', status_pembayaran)
       }
+
+      builder.offset((page - 1) * pageSize)
+      builder.limit(pageSize)
+      builder.orderBy('id')
     })
     .then((rows) => {
       return rows

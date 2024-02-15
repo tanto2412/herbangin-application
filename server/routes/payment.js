@@ -10,7 +10,7 @@ const paymentParams = [
   'jenis_pembayaran',
 ]
 
-router.get('/', paymentController.search)
+router.get('/', checkMiddleware.checkPagination(), paymentController.search)
 router.get('/:id', paymentController.getById)
 
 router.put(

@@ -2,7 +2,12 @@
 const knex = require('../../knexInstance')
 const logger = require('../../logger')
 
-async function search({ nama_toko = null, sales = null }) {
+async function search({
+  nama_toko = null,
+  sales = null,
+  page = 1,
+  pageSize = 20,
+}) {
   return await knex('customer')
     .where((builder) => {
       // Check if 'name' is provided and apply the condition
@@ -14,6 +19,10 @@ async function search({ nama_toko = null, sales = null }) {
       if (sales) {
         builder.where('sales_id', sales)
       }
+
+      builder.offset((page - 1) * pageSize)
+      builder.limit(pageSize)
+      builder.orderBy('id')
     })
     .then((rows) => {
       return rows

@@ -5,7 +5,7 @@ const checkMiddleware = require('../middlewares/checkMiddleware')
 
 const customerParams = ['nama_toko', 'alamat', 'batas_piutang', 'sales_id']
 
-router.get('/', customerController.search)
+router.get('/', checkMiddleware.checkPagination(), customerController.search)
 router.get('/:id', customerController.getById)
 
 router.put(

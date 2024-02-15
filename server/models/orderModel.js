@@ -5,7 +5,13 @@ const productModel = require('./productModel')
 const paymentModel = require('./paymentModel')
 const returModel = require('./returModel')
 
-async function search({ nomor = null, sales = null, customer = null }) {
+async function search({
+  nomor = null,
+  sales = null,
+  customer = null,
+  page = 1,
+  pageSize = 20,
+}) {
   return await knex('order')
     .where((builder) => {
       if (nomor) {
@@ -19,6 +25,10 @@ async function search({ nomor = null, sales = null, customer = null }) {
       if (customer) {
         builder.where('customer_id', customer)
       }
+
+      builder.offset((page - 1) * pageSize)
+      builder.limit(pageSize)
+      builder.orderBy('id')
     })
     .then((rows) => {
       return rows

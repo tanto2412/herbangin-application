@@ -13,7 +13,12 @@ const ReferenceType = {
   RETUR: 'RETUR',
 }
 
-async function search({ kode_barang = null, nama_barang = null }) {
+async function search({
+  kode_barang = null,
+  nama_barang = null,
+  page = 1,
+  pageSize = 20,
+}) {
   return await knex('product')
     .where((builder) => {
       // Check if 'name' is provided and apply the condition
@@ -24,6 +29,10 @@ async function search({ kode_barang = null, nama_barang = null }) {
       if (kode_barang) {
         builder.where('kode_barang', 'ilike', `%${kode_barang}%`)
       }
+
+      builder.offset((page - 1) * pageSize)
+      builder.limit(pageSize)
+      builder.orderBy('id')
     })
     .then((rows) => {
       return rows

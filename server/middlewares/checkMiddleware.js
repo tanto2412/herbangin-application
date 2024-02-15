@@ -23,6 +23,20 @@ function checkMissingParams(requiredParams) {
   }
 }
 
+function checkPagination() {
+  return (req, res, next) => {
+    if (req.query.page) {
+      req.query.page = parseInt(req.query.page)
+    }
+    if (req.query.pageSize) {
+      req.query.pageSize = parseInt(req.query.pageSize)
+    }
+
+    next()
+  }
+}
+
 module.exports = {
   checkMissingParams,
+  checkPagination,
 }

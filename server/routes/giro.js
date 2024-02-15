@@ -1,8 +1,9 @@
 const express = require('express')
 const router = express.Router()
 const giroController = require('../controllers/giroController')
+const checkMiddleware = require('../middlewares/checkMiddleware')
 
-router.get('/', giroController.search)
+router.get('/', checkMiddleware.checkPagination(), giroController.search)
 router.get('/:id', giroController.getById)
 
 router.put('/:id/lunas', giroController.lunas)

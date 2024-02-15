@@ -11,7 +11,7 @@ const productParams = [
   'jenis_barang',
 ]
 
-router.get('/', productController.search)
+router.get('/', checkMiddleware.checkPagination(), productController.search)
 router.get('/:id', productController.getById)
 
 router.put(

@@ -10,7 +10,12 @@ const JenisPembayaran = {
   LAIN_LAIN: 'LAIN LAIN',
 }
 
-async function search({ nomor_faktur = null, jenis_pembayaran = null }) {
+async function search({
+  nomor_faktur = null,
+  jenis_pembayaran = null,
+  page = 1,
+  pageSize = 20,
+}) {
   return await knex('payment')
     .where((builder) => {
       // Check if 'nomor_faktur' is provided and apply the condition
@@ -21,6 +26,10 @@ async function search({ nomor_faktur = null, jenis_pembayaran = null }) {
       if (jenis_pembayaran) {
         builder.where('jenis_pembayaran', jenis_pembayaran)
       }
+
+      builder.offset((page - 1) * pageSize)
+      builder.limit(pageSize)
+      builder.orderBy('id')
     })
     .then((rows) => {
       return rows

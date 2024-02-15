@@ -3,12 +3,16 @@ const knex = require('../../knexInstance')
 const logger = require('../../logger')
 const productModel = require('./productModel')
 
-async function search({ nomor = null }) {
+async function search({ nomor = null, page = 1, pageSize = 20 }) {
   return await knex('receiving')
     .where((builder) => {
       if (nomor) {
         builder.where('id', nomor)
       }
+
+      builder.offset((page - 1) * pageSize)
+      builder.limit(pageSize)
+      builder.orderBy('id')
     })
     .then((rows) => {
       return rows

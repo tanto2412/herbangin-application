@@ -5,7 +5,7 @@ const checkMiddleware = require('../middlewares/checkMiddleware')
 
 const receivingParams = ['tanggal', 'items']
 
-router.get('/', receivingController.search)
+router.get('/', checkMiddleware.checkPagination(), receivingController.search)
 router.get('/:id', receivingController.getById)
 
 router.put(

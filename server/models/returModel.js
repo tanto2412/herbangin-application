@@ -8,6 +8,8 @@ async function search({
   nomor_retur = null,
   customer = null,
   sales = null,
+  page = 1,
+  pageSize = 20,
 }) {
   return await knex('retur')
     .where((builder) => {
@@ -26,6 +28,10 @@ async function search({
       if (customer) {
         builder.where('customer_id', customer)
       }
+
+      builder.offset((page - 1) * pageSize)
+      builder.limit(pageSize)
+      builder.orderBy('id')
     })
     .then((rows) => {
       return rows
