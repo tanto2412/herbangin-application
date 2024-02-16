@@ -8,18 +8,23 @@ const apiRoutes = require('./routes/api')
 require('dotenv').config() // Load environment variables from .env
 
 // Allow requests only from localhost
+// const corsOptions = {
+//   origin: 'http://localhost:5173', // Replace yourPort with the actual port of your frontend
+//   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+//   credentials: true,
+//   optionsSuccessStatus: 204,
+// }
+
 const corsOptions = {
-  origin: 'http://localhost:5173', // Replace yourPort with the actual port of your frontend
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  origin: true,
   credentials: true,
-  optionsSuccessStatus: 204,
 }
 
 const app = express()
 const PORT = process.env.PORT || 3000 // Use the defined port or default to 3000
 
 // Middleware
-app.use(cors())
+app.use(cors(corsOptions))
 app.use(express.json()) // for parsing application/json
 app.use(
   session({
