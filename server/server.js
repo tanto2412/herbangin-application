@@ -27,7 +27,7 @@ const sessionOptions = {
   cookie: {
     httpOnly: true,
     sameSite: 'None',
-    secure: true,
+    secure: false,
   },
 }
 
