@@ -9,7 +9,8 @@ require('dotenv').config() // Load environment variables from .env
 
 // Allow requests only from localhost
 const corsOptions = {
-  origin: 'http://localhost:5173', // Replace yourPort with the actual port of your frontend
+  // origin: 'http://localhost:5173', // Replace yourPort with the actual port of your frontend
+  origin: false,
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
   optionsSuccessStatus: 204,
