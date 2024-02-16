@@ -2,6 +2,7 @@ const express = require('express')
 const session = require('express-session')
 const passport = require('./middlewares/authMiddleware')
 const cors = require('cors')
+const cookieParser = require('cookie-parser')
 
 const apiRoutes = require('./routes/api')
 
@@ -25,12 +26,17 @@ const PORT = process.env.PORT || 3000 // Use the defined port or default to 3000
 
 // Middleware
 app.use(cors(corsOptions))
+app.use(cookieParser())
 app.use(express.json()) // for parsing application/json
 app.use(
   session({
     secret: 'your_secret_key',
     resave: false,
     saveUninitialized: false,
+    cookie: {
+      sameSite: 'None',
+      secure: false,
+    },
   })
 )
 
