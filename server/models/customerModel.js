@@ -9,6 +9,7 @@ async function search({
   pageSize = 20,
 }) {
   return await knex('customer')
+    .select('customer.*', 'sales.nama as nama_sales')
     .where((builder) => {
       // Check if 'name' is provided and apply the condition
       if (nama_toko) {
@@ -20,13 +21,15 @@ async function search({
         builder.where('sales_id', sales)
       }
     })
+    .leftJoin('sales', 'sales.id', '=', 'customer.sales_id')
     .limit(pageSize === 0 ? null : pageSize)
     .offset((page - 1) * pageSize)
-    .orderBy('id')
+    .orderBy('customer.id')
     .then((rows) => {
       return rows
     })
-    .catch(() => {
+    .catch((error) => {
+      logger.error(error)
       return []
     })
 }

@@ -9,26 +9,16 @@ require('dotenv').config() // Load environment variables from .env
 
 // Allow requests only from localhost
 const corsOptions = {
-  origin: 'localhost', // Replace yourPort with the actual port of your frontend
+  origin: 'http://localhost:5173', // Replace yourPort with the actual port of your frontend
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
   optionsSuccessStatus: 204,
 }
 
-// const corsOptions = {
-//   origin: true,
-//   credentials: true,
-// }
-
 const sessionOptions = {
   secret: 'your_secret_key',
   resave: false,
   saveUninitialized: false,
-  // cookie: {
-  //   httpOnly: true,
-  //   sameSite: 'None',
-  //   secure: false,
-  // },
 }
 
 const app = express()
