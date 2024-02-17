@@ -29,11 +29,10 @@ async function search({
       if (kode_barang) {
         builder.where('kode_barang', 'ilike', `%${kode_barang}%`)
       }
-
-      builder.offset((page - 1) * pageSize)
-      builder.limit(pageSize)
-      builder.orderBy('id')
     })
+    .limit(pageSize === 0 ? null : pageSize)
+    .offset((page - 1) * pageSize)
+    .orderBy('id')
     .then((rows) => {
       return rows
     })
@@ -116,7 +115,7 @@ async function updateStock(specs, trx = null) {
   })
 
   const updatedRows = await Promise.all(updatePromises)
-    .then((updated) => updated[0])
+    .then((updated) => updated.flatMap((i) => i))
     .catch((error) => {
       logger.error(error)
     })
@@ -137,6 +136,7 @@ async function updateStock(specs, trx = null) {
       }
     }
   )
+  console.log(historySpecs)
 
   const insertedHistory = await trx('product_history')
     .insert(historySpecs)

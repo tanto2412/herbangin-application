@@ -9,11 +9,10 @@ async function search({ nama = null, page = 1, pageSize = 20 }) {
       if (nama) {
         builder.where('nama', 'ilike', `%${nama}%`)
       }
-
-      builder.offset((page - 1) * pageSize)
-      builder.limit(pageSize)
-      builder.orderBy('id')
     })
+    .limit(pageSize === 0 ? null : pageSize)
+    .offset((page - 1) * pageSize)
+    .orderBy('id')
     .then((rows) => {
       return rows
     })

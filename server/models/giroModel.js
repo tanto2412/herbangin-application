@@ -34,11 +34,10 @@ async function search({
       if (status_pembayaran) {
         builder.where('status_pembayaran', status_pembayaran)
       }
-
-      builder.offset((page - 1) * pageSize)
-      builder.limit(pageSize)
-      builder.orderBy('id')
     })
+    .limit(pageSize === 0 ? null : pageSize)
+    .offset((page - 1) * pageSize)
+    .orderBy('id')
     .then((rows) => {
       return rows
     })

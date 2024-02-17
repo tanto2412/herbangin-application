@@ -13,8 +13,10 @@ const orderRoutes = require('./order')
 const returRoutes = require('./retur')
 const paymentRoutes = require('./payment')
 const giroRoutes = require('./giro')
+const laporanRoutes = require('./laporan')
 
 const passport = require('../middlewares/authMiddleware')
+const pdf = require('../middlewares/pdfMiddleware')
 
 // Authenticated
 router.use(
@@ -32,6 +34,9 @@ router.use(
   passport.isAuthenticated
 )
 
+// PDF
+router.use('/laporan', pdf.addPdfHeaders())
+
 // Define routes
 router.get('/', mainController.home)
 
@@ -45,5 +50,6 @@ router.use('/order', orderRoutes)
 router.use('/retur', returRoutes)
 router.use('/payment', paymentRoutes)
 router.use('/giro', giroRoutes)
+router.use('/laporan', laporanRoutes)
 
 module.exports = router

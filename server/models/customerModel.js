@@ -19,11 +19,10 @@ async function search({
       if (sales) {
         builder.where('sales_id', sales)
       }
-
-      builder.offset((page - 1) * pageSize)
-      builder.limit(pageSize)
-      builder.orderBy('id')
     })
+    .limit(pageSize === 0 ? null : pageSize)
+    .offset((page - 1) * pageSize)
+    .orderBy('id')
     .then((rows) => {
       return rows
     })
