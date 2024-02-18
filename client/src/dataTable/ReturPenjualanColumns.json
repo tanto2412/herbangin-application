@@ -1,0 +1,22 @@
+[
+  {
+    "id": "nomorFaktur",
+    "header": "Nomor Faktur"
+  },
+  {
+    "id": "nomorRetur",
+    "header": "Nomor Retur"
+  },
+  {
+    "id": "tglRetur",
+    "header": "Tanggal Retur"
+  },
+  {
+    "id": "customerName",
+    "header": "Nama Customer"
+  },
+  {
+    "id": "salesName",
+    "header": "Nama Sales"
+  }
+]

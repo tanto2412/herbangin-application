@@ -1,0 +1,14 @@
+[
+  {
+    "id": "userId",
+    "header": "User ID"
+  },
+  {
+    "id": "username",
+    "header": "Username"
+  },
+  {
+    "id": "isAdmin",
+    "header": "Administrator"
+  }
+]

@@ -1,0 +1,20 @@
+[
+  {
+    "nomorFaktur": 1,
+    "tglFaktur": "06/02/2024",
+    "utangBelumLunas": 9000,
+    "namaToko": "toko002"
+  },
+  {
+    "nomorFaktur": 2,
+    "tglFaktur": "01/02/2024",
+    "utangBelumLunas": 7000,
+    "namaToko": "toko002"
+  },
+  {
+    "nomorFaktur": 3,
+    "tglFaktur": "23/01/2024",
+    "utangBelumLunas": 2000,
+    "namaToko": "toko001"
+  }
+]

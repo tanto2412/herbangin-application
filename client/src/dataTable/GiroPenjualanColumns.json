@@ -1,0 +1,30 @@
+[
+  {
+    "id": "nomorGiro",
+    "header": "Nomor Giro"
+  },
+  {
+    "id": "nomorPembayaran",
+    "header": "Nomor Pembayaran"
+  },
+  {
+    "id": "nomorPenjualan",
+    "header": "Nomor Penjualan"
+  },
+  {
+    "id": "namaBank",
+    "header": "Nama Bank"
+  },
+  {
+    "id": "tglJatuhTempo",
+    "header": "Tanggal Jatuh Tempo"
+  },
+  {
+    "id": "tglPencairan",
+    "header": "Tanggal Pencairan"
+  },
+  {
+    "id": "statusPembayaran",
+    "header": "Status Pembayaran"
+  }
+]

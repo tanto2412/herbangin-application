@@ -1,0 +1,17 @@
+[
+  {
+    "nomorPembayaran": 1,
+    "salesName": "sales003",
+    "customerName": "customer002"
+  },
+  {
+    "nomorPembayaran": 2,
+    "salesName": "sales001",
+    "customerName": "customer001"
+  },
+  {
+    "nomorPembayaran": 3,
+    "salesName": "sales001",
+    "customerName": "customer003"
+  }
+]

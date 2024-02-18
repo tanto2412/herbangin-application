@@ -1,0 +1,18 @@
+[
+  {
+    "id": "nomorFaktur",
+    "header": "Nomor Faktur"
+  },
+  {
+    "id": "tglFaktur",
+    "header": "Tanggal Faktur"
+  },
+  {
+    "id": "piutangBelumLunas",
+    "header": "Piutang Belum Lunas"
+  },
+  {
+    "id": "customerName",
+    "header": "Nama Customer"
+  }
+]

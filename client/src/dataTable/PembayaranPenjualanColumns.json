@@ -1,0 +1,14 @@
+[
+  {
+    "id": "nomorPembayaran",
+    "header": "Nomor Pembayaran"
+  },
+  {
+    "id": "salesName",
+    "header": "Nama Sales"
+  },
+  {
+    "id": "customerName",
+    "header": "Nama Customer"
+  }
+]

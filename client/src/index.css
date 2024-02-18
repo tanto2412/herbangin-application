@@ -1,0 +1,41 @@
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#headerNav {
+  z-index: 998;
+}
+
+#loginScreen {
+  background: rgba(51, 170, 51, 0.3);
+}
+
+#sideBar {
+  min-width: 200px;
+  max-width: 200px;
+  background: rgb(248, 249, 250);
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+  color: #fff;
+  transition: all 0.3s;
+}
+
+#invalid-feedback {
+  font-size: small;
+  color: red;
+}
+
+#dimScreen {
+  position: fixed;
+  padding: 0;
+  margin: 0;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.7);
+  z-index: 999;
+  
+  overflow: scroll;
+}
