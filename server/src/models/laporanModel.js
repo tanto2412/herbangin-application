@@ -1,6 +1,6 @@
 // models/laporanModel.js
 const knex = require('../../knexInstance')
-const productModel = require('../models/productModel')
+const productModel = require('./productModel')
 const logger = require('../../logger')
 
 async function penerimaan({ product_id = null, from = null, to = null }) {
