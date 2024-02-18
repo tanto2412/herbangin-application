@@ -31,6 +31,8 @@ router.use(
     '/retur',
     '/payment',
     '/giro',
+    '/laporan',
+    '/rekap',
   ],
   passport.isAuthenticated
 )
