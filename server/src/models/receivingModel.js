@@ -28,7 +28,10 @@ async function getById(id) {
 
 async function getItemsById(id) {
   if (!id) return []
-  return await knex('receiving_item').where('receiving_id', id)
+  return await knex('receiving_item')
+    .select('receiving_item.*', 'product.nama_barang', 'product.kode_barang')
+    .leftJoin('product', 'product.id', '=', 'receiving_item.product_id')
+    .where('receiving_id', id)
 }
 
 async function create({ tanggal, total, items }) {

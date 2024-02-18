@@ -53,7 +53,10 @@ async function getByOrderId(id, trx) {
 }
 
 async function getItemsById(id) {
-  return await knex('retur_item').where('retur_id', id)
+  return await knex('retur_item')
+    .select('retur_item.*', 'product.nama_barang', 'product.kode_barang')
+    .leftJoin('product', 'product.id', '=', 'retur_item.product_id')
+    .where('retur_id', id)
 }
 
 async function getItemsByIds(ids) {

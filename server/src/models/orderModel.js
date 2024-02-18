@@ -44,7 +44,10 @@ async function getById(id) {
 
 async function getItemsById(id) {
   if (!id) return []
-  return await knex('order_item').where('nomor_faktur', id)
+  return await knex('order_item')
+    .select('order_item.*', 'product.nama_barang', 'product.kode_barang')
+    .leftJoin('product', 'product.id', '=', 'order_item.product_id')
+    .where('nomor_faktur', id)
 }
 
 async function getItemsByIds(ids) {
