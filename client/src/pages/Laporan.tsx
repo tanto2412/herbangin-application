@@ -1,36 +1,36 @@
-import PageTitle from "../components/PageTitle";
-import RadioButtonReport from "../components/RadioButtonReport";
-import { DatePicker } from "@gsebdev/react-simple-datepicker";
+import PageTitle from '../components/PageTitle'
+import RadioButtonReport from '../components/RadioButtonReport'
+import { DatePicker } from '@gsebdev/react-simple-datepicker'
 
 const buttonLaporanList = [
-  "Laporan Giro Penjualan Belum Lunas",
-  "Laporan Giro Penjualan Ditolak",
-  "Laporan Pembayaran Penjualan",
-  "Laporan Penjualan",
-  "Laporan Piutang",
-  "Laporan Rekap Cash In",
-  "Laporan Rekap Pembayaran Penjualan",
-  "Laporan Rekap Penjualan",
-  "Laporan Rekap Piutang",
-  "Laporan Retur Penjualan",
-];
+  'Laporan Giro Penjualan Belum Lunas',
+  'Laporan Giro Penjualan Ditolak',
+  'Laporan Pembayaran Penjualan',
+  'Laporan Penjualan',
+  'Laporan Piutang',
+  'Laporan Rekap Cash In',
+  'Laporan Rekap Pembayaran Penjualan',
+  'Laporan Rekap Penjualan',
+  'Laporan Rekap Piutang',
+  'Laporan Retur Penjualan',
+]
 
 const Laporan = () => {
   const onDateChange = (e: { target: HTMLInputElement }) => {
-    console.log(e.target.value);
-  };
+    console.log(e.target.value)
+  }
 
   return (
     <>
       <div className="p-2">
         <div>
-          <PageTitle titleName={"Laporan"} />
+          <PageTitle titleName={'Laporan'} />
         </div>
         <form name="showReportForm">
           <div className="card p-2">
             <div className="card-header fw-bold">Filter</div>
             <div>
-              Tanggal mulai{" "}
+              Tanggal mulai{' '}
               <DatePicker
                 id="datepicker-id"
                 name="date-demo"
@@ -38,7 +38,7 @@ const Laporan = () => {
               />
             </div>
             <div>
-              Tanggal selesai{" "}
+              Tanggal selesai{' '}
               <DatePicker
                 id="datepicker-id"
                 name="date-demo"
@@ -60,10 +60,10 @@ const Laporan = () => {
               return (
                 <RadioButtonReport
                   key={index}
-                  radioID={"laporan-" + index}
+                  radioID={'laporan-' + index}
                   radioLabel={buttonLaporanList}
                 />
-              );
+              )
             })}
           </div>
           <div className="p-2">
@@ -74,7 +74,7 @@ const Laporan = () => {
         </form>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default Laporan;
+export default Laporan

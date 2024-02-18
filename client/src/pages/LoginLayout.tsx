@@ -1,36 +1,36 @@
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
 
-import DimScreenTemplate from "../components/DimScreenTemplate";
-import FloatingLabelFormComponent from "../components/FloatingLabelFormComponent";
-import { useUserContext } from "../components/UserContext";
-import { fetchLogin } from "../dataHandling/API_login_user";
+import DimScreenTemplate from '../components/DimScreenTemplate'
+import FloatingLabelFormComponent from '../components/FloatingLabelFormComponent'
+import { useUserContext } from '../components/UserContext'
+import { fetchLogin } from '../dataHandling/API_login_user'
 
 const LoginLayout: React.FC = () => {
-  const navigate = useNavigate();
-  const [loginError, setLoginError] = useState(false);
-  const { setUserName } = useUserContext();
+  const navigate = useNavigate()
+  const [loginError, setLoginError] = useState(false)
+  const { setUserName } = useUserContext()
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm()
 
   const onSubmit = async (data: any) => {
     try {
-      await fetchLogin(data.username, data.password);
-      setLoginError(false);
-      setUserName(data.username);
-      navigate("/home");
+      await fetchLogin(data.username, data.password)
+      setLoginError(false)
+      setUserName(data.username)
+      navigate('/home')
     } catch (error) {
-      setLoginError(true);
+      setLoginError(true)
     }
-  };
+  }
 
-  const idFormComponentList = ["loginUsername", "loginPassword"];
-  const labelFormComponentList = ["Username", "Password"];
+  const idFormComponentList = ['loginUsername', 'loginPassword']
+  const labelFormComponentList = ['Username', 'Password']
 
   return (
     <>
@@ -49,13 +49,13 @@ const LoginLayout: React.FC = () => {
               className="form-control form-control-lg"
               autoComplete="off"
               onKeyDown={() => setLoginError(false)}
-              {...register("username", {
+              {...register('username', {
                 required: true,
               })}
             />
             <div id="invalid-feedback">
-              {errors.username && "Username harus diisi"}
-              {loginError && "Username atau password salah. Login gagal"}
+              {errors.username && 'Username harus diisi'}
+              {loginError && 'Username atau password salah. Login gagal'}
               <br />
             </div>
           </FloatingLabelFormComponent>
@@ -69,18 +69,18 @@ const LoginLayout: React.FC = () => {
               id={idFormComponentList[1]}
               className="form-control form-control-lg"
               autoComplete="off"
-              {...register("password", {
+              {...register('password', {
                 required: true,
                 minLength: 5,
               })}
             />
             <div id="invalid-feedback">
               {errors.password &&
-                errors.password.type === "required" &&
-                "Password harus diisi"}
+                errors.password.type === 'required' &&
+                'Password harus diisi'}
               {errors.password &&
-                errors.password.type === "minLength" &&
-                "Panjang password minimal 5 karakter"}
+                errors.password.type === 'minLength' &&
+                'Panjang password minimal 5 karakter'}
               <br />
             </div>
           </FloatingLabelFormComponent>
@@ -93,7 +93,7 @@ const LoginLayout: React.FC = () => {
         </form>
       </DimScreenTemplate>
     </>
-  );
-};
+  )
+}
 
-export default LoginLayout;
+export default LoginLayout

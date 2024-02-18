@@ -5,7 +5,7 @@ const Footer = () => {
         <div className="text-center p-3">© 2024 Copyright Herba</div>
       </footer>
     </>
-  );
-};
+  )
+}
 
-export default Footer;
+export default Footer

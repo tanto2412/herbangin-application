@@ -1,27 +1,27 @@
-import axios from "axios";
-import { SalesData } from "./interfaces";
-import { baseURL } from "./Constants";
+import axios from 'axios'
+import { SalesData } from './interfaces'
+import { baseURL } from './Constants'
 
-const salesDataURL = "sales";
+const salesDataURL = 'sales'
 
 export const fetchSalesData = async (
   searchTerm?: string | null
 ): Promise<SalesData[]> => {
   try {
-    let params = {};
-    if (searchTerm != null) {
-      params = searchTerm != "" ? { nama: searchTerm } : {};
+    let params = {}
+    if (searchTerm != null && searchTerm != '') {
+      params = { nama: searchTerm }
     }
     const response = await axios.get<SalesData[]>(
       `${baseURL}/${salesDataURL}`,
       { params, withCredentials: true }
-    );
-    return response.data;
+    )
+    return response.data
   } catch (error) {
-    console.error("Error fetching sales data:", error);
-    throw error;
+    console.error('Error fetching sales data:', error)
+    throw error
   }
-};
+}
 
 export const addSalesRecord = async (newSalesName: string) => {
   try {
@@ -29,13 +29,13 @@ export const addSalesRecord = async (newSalesName: string) => {
       `${baseURL}/${salesDataURL}`,
       { nama: newSalesName },
       { withCredentials: true }
-    );
-    return response.data;
+    )
+    return response.data
   } catch (error) {
-    console.error("Error adding sales record:", error);
-    throw error;
+    console.error('Error adding sales record:', error)
+    throw error
   }
-};
+}
 
 export const updateSalesRecord = async (
   id: number,
@@ -46,21 +46,21 @@ export const updateSalesRecord = async (
       `${baseURL}/${salesDataURL}/${id}`,
       { nama: updatedData },
       { withCredentials: true }
-    );
-    return response.data;
+    )
+    return response.data
   } catch (error) {
-    console.error("Error updating sales record:", error);
-    throw error;
+    console.error('Error updating sales record:', error)
+    throw error
   }
-};
+}
 
 export const deleteSalesRecord = async (id: number): Promise<void> => {
   try {
     await axios.delete(`${baseURL}/${salesDataURL}/${id}`, {
       withCredentials: true,
-    });
+    })
   } catch (error) {
-    console.error("Error deleting sales record:", error);
-    throw error;
+    console.error('Error deleting sales record:', error)
+    throw error
   }
-};
+}

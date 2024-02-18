@@ -1,24 +1,26 @@
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
 
-import DimScreenTemplate from "../components/DimScreenTemplate";
-import ShowDataTemplate from "../components/ShowDataTemplate";
+import DimScreenTemplate from '../components/DimScreenTemplate'
+import ShowDataTemplate from '../components/ShowDataTemplate'
 
-import FloatingLabelFormComponent from "../components/FloatingLabelFormComponent";
-import DeleteScreenContent from "../components/DeleteScreenContent";
-import ActionButton from "../components/ActionButton";
-import OKCancelButton from "../components/OKCancelButton";
+import FloatingLabelFormComponent from '../components/FloatingLabelFormComponent'
+import DeleteScreenContent from '../components/DeleteScreenContent'
+import ActionButton from '../components/ActionButton'
+import OKCancelButton from '../components/OKCancelButton'
 
 import {
   addReceivingRecord,
   deleteReceivingRecord,
   fetchReceivingData,
+  fetchReceivingDataDetails,
   updateReceivingRecord,
-} from "../dataHandling/API_receiving";
+} from '../dataHandling/API_receiving'
 import {
-  PenerimaanData,
-  PenerimaanDataDetails,
-} from "../dataHandling/interfaces";
+  ProductsData,
+  ReceivingData,
+  ReceivingDataDetails,
+} from '../dataHandling/interfaces'
 import {
   ADD_DIMSCREEN,
   DELETE_DIMSCREEN,
@@ -26,51 +28,148 @@ import {
   HIDE_DIMSCREEN,
   ReceivingColumns,
   ReceivingItemsColumns,
+  dateToEpochmillis,
   epochmillisToDate,
-} from "../dataHandling/Constants";
+  epochmillisToInputDate,
+} from '../dataHandling/Constants'
+import { fetchProductsData } from '../dataHandling/API_products'
 
-const componentTitle = "Penerimaan Barang";
+const componentTitle = 'Penerimaan Barang'
 
 const PenerimaanBarang = () => {
-  const [receivingList, setReceivingList] = useState<PenerimaanData[]>([]);
-  const [toggleDimScreen, setToogle] = useState(HIDE_DIMSCREEN);
-  const [IDToChange, setIDToChange] = useState<number | null>(null);
-  const [nameToChange, setNameToChange] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState<string | null>(null);
+  const [receivingList, setReceivingList] = useState<ReceivingData[]>([])
+  const [selectedReceiving, setSelectedReceiving] = useState<
+    ReceivingDataDetails[]
+  >([])
+  const [productList, setProductList] = useState<ProductsData[]>([])
 
-  const idFormComponentList = ["checkTglFaktur"];
-  const labelFormComponentList = ["Tanggal Faktur"];
+  const [toggleDimScreen, setToogle] = useState(HIDE_DIMSCREEN)
+  const [IDToChange, setIDToChange] = useState<number | null>(null)
+  const [nameToChange, setNameToChange] = useState<string | null>(null)
+  const [searchTerm, setSearchTerm] = useState<string | null>(null)
+  const [showAddItemRow, setShowAddItemRow] = useState(false)
+
+  const idFormComponentList = ['checkTglFaktur']
+  const labelFormComponentList = ['Tanggal Faktur']
+
+  const idFormComponentListItem = ['checkProductID', 'checkJumlahBarang']
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await fetchReceivingData(searchTerm);
-        setReceivingList(data);
+        const data = await fetchReceivingData(searchTerm)
+        setReceivingList(data)
       } catch (error) {
         // Handle error if needed
       }
-    };
+    }
 
-    fetchData();
-  }, [IDToChange, toggleDimScreen, searchTerm]);
+    fetchData()
+  }, [IDToChange, toggleDimScreen, searchTerm])
+
+  useEffect(() => {
+    const fetchDataItems = async () => {
+      try {
+        let data = {} as ReceivingDataDetails[]
+        if (IDToChange != null) {
+          data = await fetchReceivingDataDetails(IDToChange)
+          setSelectedReceiving(data)
+        } else setSelectedReceiving([])
+      } catch (error) {
+        // Handle error if needed
+      }
+    }
+
+    fetchDataItems()
+  }, [IDToChange, toggleDimScreen])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await fetchProductsData()
+        setProductList(data)
+      } catch (error) {
+        // Handle error if needed
+      }
+    }
+
+    fetchData()
+  }, [])
 
   const selectItemColumns = () => (
     <>
       <option key={1} value="id">
-        Nomor Faktur
+        Nomor Penerimaan
       </option>
     </>
-  );
+  )
+
+  const productListOptions = () =>
+    productList.map((ProductData) => {
+      return (
+        <option key={ProductData.id} value={ProductData.id}>
+          {ProductData.nama_barang}
+        </option>
+      )
+    })
+
+  const addItemRow = () => (
+    <>
+      <tr key={999}>
+        <td>
+          <select
+            className="form-select form-select-sm"
+            id={idFormComponentList[0]}
+            {...register('checkProductID', {
+              required: true,
+            })}
+          >
+            {productListOptions()}
+          </select>
+        </td>
+        <td>
+          <input
+            type="text"
+            id={idFormComponentListItem[1]}
+            className="form-control form-control-sm"
+            autoComplete="off"
+            {...register('checkJumlahBarang', {
+              required: true,
+            })}
+          />
+        </td>
+        <td> </td>
+        <td> </td>
+        <td className="text-center" width={100}>
+          {/* <ActionButton
+            buttonCaption="Delete"
+            buttonSize={20}
+            showCaption={false}
+            onClick={() => onClickItemAction(DELETE_DIMSCREEN, index)}
+          /> */}
+          <OKCancelButton
+            okString={'OK'}
+            okButtonType={'button'}
+            onClickOK={() => onClickItemOK()}
+            cancelString={'X'}
+            onClickCancel={() => onClickItemAction(HIDE_DIMSCREEN)}
+            buttonSize="btn-sm"
+            gutterSize="g-1"
+          />
+        </td>
+      </tr>
+    </>
+  )
 
   const tableColumns = () =>
     ReceivingColumns?.map((ReceivingColumns, index) => {
-      return <th key={index}>{ReceivingColumns}</th>;
-    });
+      return <th key={index}>{ReceivingColumns}</th>
+    })
 
   const tableItemsColumns = () =>
     ReceivingItemsColumns?.map((ReceivingItemsColumns, index) => {
-      return <th key={index}>{ReceivingItemsColumns}</th>;
-    });
+      return <th key={index}>{ReceivingItemsColumns}</th>
+    })
 
   const tableData = () =>
     receivingList?.map((PenerimaanBarangData, index) => {
@@ -100,69 +199,182 @@ const PenerimaanBarang = () => {
             />
           </td>
         </tr>
-      );
-    });
+      )
+    })
+
+  const tableDataItems = () =>
+    selectedReceiving?.map((receivingItemDetails, index) => {
+      return (
+        <tr key={index}>
+          <td>{receivingItemDetails.nama_barang}</td>
+          <td>
+            {receivingItemDetails.jumlah_barang}{' '}
+            {receivingItemDetails.satuan_terkecil}
+          </td>
+          <td>
+            Rp.{' '}
+            {Math.round(receivingItemDetails?.harga_satuan).toLocaleString()}
+          </td>
+          <td>
+            Rp. {Math.round(receivingItemDetails?.subtotal).toLocaleString()}
+          </td>
+          <td className="text-center" width={90}>
+            {/* <ActionButton
+              buttonCaption="Edit"
+              buttonSize={20}
+              showCaption={false}
+            /> */}
+            <ActionButton
+              buttonCaption="Delete"
+              buttonSize={20}
+              showCaption={false}
+              onClick={() => onClickItemAction(DELETE_DIMSCREEN, index)}
+            />
+          </td>
+        </tr>
+      )
+    })
 
   const onClickAction = (dimScreenName: string, IDToChangeParam?: any) => {
-    
-    setToogle(dimScreenName);
-    IDToChangeParam && setIDToChange(IDToChangeParam);
-    dimScreenName == HIDE_DIMSCREEN && reset();
-
-    if (dimScreenName == EDIT_DIMSCREEN || dimScreenName == DELETE_DIMSCREEN) {
-      const selectedSale = receivingList.find(
-        (sale) => sale.id === IDToChangeParam
-      ) as PenerimaanData;
-      setValue(idFormComponentList[0], selectedSale.tanggal); //need epoch conversion
-      setNameToChange(selectedSale.tanggal.toString());
+    setToogle(dimScreenName)
+    switch (dimScreenName) {
+      case ADD_DIMSCREEN:
+        setIDToChange(null)
+        break
+      case EDIT_DIMSCREEN:
+      case DELETE_DIMSCREEN:
+        setIDToChange(IDToChangeParam)
+        const selectedReceivingID = receivingList.find(
+          (receiving) => receiving.id === IDToChangeParam
+        ) as ReceivingData
+        const dateToChange = epochmillisToInputDate(selectedReceivingID.tanggal)
+        setValue(idFormComponentList[0], dateToChange)
+        setNameToChange(dateToChange)
+        break
+      case HIDE_DIMSCREEN:
+        setShowAddItemRow(false)
+        reset()
+        break
     }
-  };
+  }
+
+  const onClickItemAction = (itemAction: string, indexToChangeParam?: any) => {
+    switch (itemAction) {
+      case ADD_DIMSCREEN:
+        setShowAddItemRow(true)
+        clearErrors()
+        break
+      case EDIT_DIMSCREEN:
+        break
+      case DELETE_DIMSCREEN:
+        if (selectedReceiving != null) {
+          const newData = [...selectedReceiving]
+          newData.splice(indexToChangeParam, 1)
+          setSelectedReceiving(newData)
+        }
+        break
+      case HIDE_DIMSCREEN:
+        setShowAddItemRow(false)
+        clearErrors()
+        break
+    }
+  }
+
+  const onClickItemOK = () => {
+    const added_product_id = getValues('checkProductID')
+    const added_jumlah_barang = getValues('checkJumlahBarang')
+    if (added_product_id == '' || added_jumlah_barang == '') {
+      setError('checkJumlahBarang', { type: 'manual' })
+      return
+    }
+    const selectedProduct = productList.find(
+      (product) => product.id === Math.round(added_product_id)
+    ) as ProductsData
+
+    const subTotalTemp = Math.round(added_jumlah_barang) * selectedProduct.harga
+
+    const newRow: ReceivingDataDetails = {
+      // id, receiving_id, set to dummy value
+      id: 0,
+      receiving_id: 0,
+      product_id: Number(added_product_id),
+      nama_barang: selectedProduct.nama_barang,
+      jumlah_barang: Number(added_jumlah_barang),
+      satuan_terkecil: selectedProduct.satuan_terkecil,
+      harga_satuan: selectedProduct.harga,
+      subtotal: subTotalTemp,
+    }
+
+    setSelectedReceiving([...selectedReceiving, newRow])
+    setShowAddItemRow(false)
+    reset()
+  }
 
   const {
     register,
     handleSubmit,
     setValue,
+    getValues,
+    setError,
+    clearErrors,
     reset,
     formState: { errors },
-  } = useForm();
+  } = useForm()
 
-  const onSubmit = (data: any) => {
-    console.log(data);
+  const onSubmit = async (data: any) => {
+    const dateToChange = dateToEpochmillis(data.checkTglFaktur)
+    const data_to_change: ReceivingData = {
+      // id and total as dummy value
+      id: 0,
+      tanggal: dateToChange,
+      total: 0,
+      items: selectedReceiving,
+    }
+
     switch (toggleDimScreen) {
       case ADD_DIMSCREEN:
-        break;
+        if (selectedReceiving.length == 0) {
+          setError('checkProductID', { type: 'manual' })
+          return
+        }
+        await addReceivingRecord(data_to_change)
+        break
       case EDIT_DIMSCREEN:
-        break;
+        if (IDToChange != null)
+          await updateReceivingRecord(IDToChange, data_to_change)
+        break
       case DELETE_DIMSCREEN:
-        break;
+        if (IDToChange != null) await deleteReceivingRecord(IDToChange)
+        setIDToChange(null)
+        break
     }
-    setToogle(HIDE_DIMSCREEN);
-    reset();
-  };
+
+    if (data.checkSearch == '') setSearchTerm(null)
+    else setSearchTerm(data.checkSearch)
+
+    setToogle(HIDE_DIMSCREEN)
+    reset()
+  }
 
   return (
     <>
-      <ShowDataTemplate
-        titleNameString={componentTitle}
-        selectItemObject={selectItemColumns()}
-        tableColumnsObject={tableColumns()}
-        tableDataObject={tableData()}
-        onClickAdd={() => onClickAction(ADD_DIMSCREEN)}
-        register={register}
-      />
-      <DimScreenTemplate
-        idScreenFormat="dimScreen"
-        titleScreen={toggleDimScreen + " " + componentTitle}
-        widthScreen="8"
-        onClickClose={() => onClickAction(HIDE_DIMSCREEN)}
-        toggleClassName={
-          toggleDimScreen === HIDE_DIMSCREEN ? "invisible" : "visible"
-        }
-      >
-        <form
-          id="actionForm"
-          name="actionForm"
-          onSubmit={handleSubmit(onSubmit)}
+      <form id="actionForm" name="actionForm" onSubmit={handleSubmit(onSubmit)}>
+        <ShowDataTemplate
+          titleNameString={componentTitle}
+          selectItemObject={selectItemColumns()}
+          tableColumnsObject={tableColumns()}
+          tableDataObject={tableData()}
+          onClickAdd={() => onClickAction(ADD_DIMSCREEN)}
+          register={register}
+        />
+        <DimScreenTemplate
+          idScreenFormat="dimScreen"
+          titleScreen={toggleDimScreen + ' ' + componentTitle}
+          widthScreen="9"
+          onClickClose={() => onClickAction(HIDE_DIMSCREEN)}
+          toggleClassName={
+            toggleDimScreen === HIDE_DIMSCREEN ? 'invisible' : 'visible'
+          }
         >
           {(toggleDimScreen === ADD_DIMSCREEN ||
             toggleDimScreen === EDIT_DIMSCREEN) && (
@@ -177,15 +389,30 @@ const PenerimaanBarang = () => {
                     id={idFormComponentList[0]}
                     className="form-control"
                     autoComplete="off"
-                    {...register("checkTglFaktur", {
+                    {...register('checkTglFaktur', {
                       required: true,
                     })}
                   />
                   <div id="invalid-feedback">
-                    {errors.checkTglFaktur && "Tanggal Faktur harus diisi"}
+                    {errors.checkTglFaktur && 'Tanggal Penerimaan harus diisi'}
+                    {errors.checkJumlahBarang &&
+                      'Nama dan Jumlah barang harus diisi'}
+                    {errors.checkProductID && 'Data Penerimaan harus ada'}
                     <br />
                   </div>
                 </FloatingLabelFormComponent>
+
+                <div className="row justify-content-end">
+                  <div className="col-2">
+                    <ActionButton
+                      buttonCaption="Add"
+                      buttonSize={15}
+                      showCaption={true}
+                      onClick={() => onClickItemAction(ADD_DIMSCREEN)}
+                    />
+                  </div>
+                </div>
+
                 <div className="row pb-2">
                   <div className="col-12">
                     <table className="table table-hover table-striped table-bordered">
@@ -196,7 +423,8 @@ const PenerimaanBarang = () => {
                         </tr>
                       </thead>
                       <tbody className="table-group-divider">
-                        {/* {tableItemsDataObject} */}
+                        {showAddItemRow && addItemRow()}
+                        {selectedReceiving && tableDataItems()}
                       </tbody>
                     </table>
                   </div>
@@ -213,10 +441,10 @@ const PenerimaanBarang = () => {
               onClickCancel={() => onClickAction(HIDE_DIMSCREEN)}
             />
           )}
-        </form>
-      </DimScreenTemplate>
+        </DimScreenTemplate>
+      </form>
     </>
-  );
-};
+  )
+}
 
-export default PenerimaanBarang;
+export default PenerimaanBarang

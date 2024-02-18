@@ -1,37 +1,37 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
 
-import DimScreenTemplate from "../components/DimScreenTemplate";
-import ShowDataTemplate from "../components/ShowDataTemplate";
+import DimScreenTemplate from '../components/DimScreenTemplate'
+import ShowDataTemplate from '../components/ShowDataTemplate'
 
-import FloatingLabelFormComponent from "../components/FloatingLabelFormComponent";
-import DeleteScreenContent from "../components/DeleteScreenContent";
-import ActionButton from "../components/ActionButton";
-import OKCancelButton from "../components/OKCancelButton";
+import FloatingLabelFormComponent from '../components/FloatingLabelFormComponent'
+import DeleteScreenContent from '../components/DeleteScreenContent'
+import ActionButton from '../components/ActionButton'
+import OKCancelButton from '../components/OKCancelButton'
 
-import ReturPenjualanColumns from "../dataTable/ReturPenjualanColumns.json";
-import ReturPenjualanData from "../dataTable/ReturPenjualanData.json";
+import ReturPenjualanColumns from '../dataTable/ReturPenjualanColumns.json'
+import ReturPenjualanData from '../dataTable/ReturPenjualanData.json'
 
-const componentTitle = "Retur Penjualan Barang";
+const componentTitle = 'Retur Penjualan Barang'
 
-const HIDE_DIMSCREEN = "NULL";
-const ADD_DIMSCREEN = "Add";
-const EDIT_DIMSCREEN = "Edit";
-const DELETE_DIMSCREEN = "Delete";
+const HIDE_DIMSCREEN = 'NULL'
+const ADD_DIMSCREEN = 'Add'
+const EDIT_DIMSCREEN = 'Edit'
+const DELETE_DIMSCREEN = 'Delete'
 const selectItemColumns = () =>
   ReturPenjualanColumns?.map((ReturPenjualanColumns, index) => {
     return (
       <option key={index} value={ReturPenjualanColumns?.header}>
         {ReturPenjualanColumns?.header}
       </option>
-    );
-  });
+    )
+  })
 
 const ReturPenjualanBarang = () => {
   const tableColumns = () =>
     ReturPenjualanColumns?.map((ReturPenjualanColumns, index) => {
-      return <th key={index}>{ReturPenjualanColumns?.header}</th>;
-    });
+      return <th key={index}>{ReturPenjualanColumns?.header}</th>
+    })
 
   const tableData = () =>
     ReturPenjualanData?.map((ReturPenjualanData, index) => {
@@ -61,51 +61,51 @@ const ReturPenjualanBarang = () => {
             />
           </td>
         </tr>
-      );
-    });
+      )
+    })
 
-  const [toggleDimScreen, setToogle] = useState(HIDE_DIMSCREEN);
-  const [IDToChange, setIDToChange] = useState<number | null>(null);
+  const [toggleDimScreen, setToogle] = useState(HIDE_DIMSCREEN)
+  const [IDToChange, setIDToChange] = useState<number | null>(null)
 
   const onClickAction = (dimScreenName: string, IDToChange?: any) => {
-    setToogle(dimScreenName);
-    setIDToChange(IDToChange);
-    dimScreenName == HIDE_DIMSCREEN && reset();
-  };
+    setToogle(dimScreenName)
+    setIDToChange(IDToChange)
+    dimScreenName == HIDE_DIMSCREEN && reset()
+  }
 
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm();
+  } = useForm()
 
   const onSubmit = (data: any) => {
-    console.log(data);
+    console.log(data)
     switch (toggleDimScreen) {
       case ADD_DIMSCREEN:
-        break;
+        break
       case EDIT_DIMSCREEN:
-        break;
+        break
       case DELETE_DIMSCREEN:
-        break;
+        break
     }
-    setToogle(HIDE_DIMSCREEN);
-    reset();
-  };
+    setToogle(HIDE_DIMSCREEN)
+    reset()
+  }
 
   const idFormComponentList = [
-    "checkNoFaktur",
-    "checkTglRetur",
-    "checkCustomerName",
-    "checkSalesName",
-  ];
+    'checkNoFaktur',
+    'checkTglRetur',
+    'checkCustomerName',
+    'checkSalesName',
+  ]
   const labelFormComponentList = [
-    "Nomor Faktur",
-    "Tanggal Retur",
-    "Customer Name",
-    "Sales Name",
-  ];
+    'Nomor Faktur',
+    'Tanggal Retur',
+    'Customer Name',
+    'Sales Name',
+  ]
 
   return (
     <>
@@ -119,10 +119,10 @@ const ReturPenjualanBarang = () => {
       />
       <DimScreenTemplate
         idScreenFormat="dimScreen"
-        titleScreen={toggleDimScreen + " " + componentTitle}
+        titleScreen={toggleDimScreen + ' ' + componentTitle}
         onClickClose={() => onClickAction(HIDE_DIMSCREEN)}
         toggleClassName={
-          toggleDimScreen === HIDE_DIMSCREEN ? "invisible" : "visible"
+          toggleDimScreen === HIDE_DIMSCREEN ? 'invisible' : 'visible'
         }
       >
         <form
@@ -141,7 +141,7 @@ const ReturPenjualanBarang = () => {
                   <select
                     className="form-select"
                     id={idFormComponentList[0]}
-                    {...register("checkNoFaktur", {
+                    {...register('checkNoFaktur', {
                       required: true,
                     })}
                   >
@@ -160,12 +160,12 @@ const ReturPenjualanBarang = () => {
                     id={idFormComponentList[1]}
                     className="form-control"
                     autoComplete="off"
-                    {...register("checkTglRetur", {
+                    {...register('checkTglRetur', {
                       required: true,
                     })}
                   />
                   <div id="invalid-feedback">
-                    {errors.checkTglRetur && "Tanggal Retur harus diisi"}
+                    {errors.checkTglRetur && 'Tanggal Retur harus diisi'}
                     <br />
                   </div>
                 </FloatingLabelFormComponent>
@@ -177,7 +177,7 @@ const ReturPenjualanBarang = () => {
                   <select
                     className="form-select"
                     id={idFormComponentList[2]}
-                    {...register("checkCustomerName", {
+                    {...register('checkCustomerName', {
                       required: true,
                     })}
                   >
@@ -194,7 +194,7 @@ const ReturPenjualanBarang = () => {
                   <select
                     className="form-select"
                     id={idFormComponentList[3]}
-                    {...register("checkSalesName", {
+                    {...register('checkSalesName', {
                       required: true,
                     })}
                   >
@@ -207,10 +207,7 @@ const ReturPenjualanBarang = () => {
             </>
           )}
           {toggleDimScreen === DELETE_DIMSCREEN && (
-            <DeleteScreenContent
-              itemTable={componentTitle}
-              itemID={IDToChange}
-            />
+            <DeleteScreenContent itemID={IDToChange} itemName={''} />
           )}
           {toggleDimScreen != HIDE_DIMSCREEN && (
             <OKCancelButton
@@ -221,7 +218,7 @@ const ReturPenjualanBarang = () => {
         </form>
       </DimScreenTemplate>
     </>
-  );
-};
+  )
+}
 
-export default ReturPenjualanBarang;
+export default ReturPenjualanBarang

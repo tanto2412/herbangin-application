@@ -1,23 +1,23 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
 
-import DimScreenTemplate from "../components/DimScreenTemplate";
-import ShowDataTemplate from "../components/ShowDataTemplate";
+import DimScreenTemplate from '../components/DimScreenTemplate'
+import ShowDataTemplate from '../components/ShowDataTemplate'
 
-import FloatingLabelFormComponent from "../components/FloatingLabelFormComponent";
-import DeleteScreenContent from "../components/DeleteScreenContent";
-import ActionButton from "../components/ActionButton";
-import OKCancelButton from "../components/OKCancelButton";
+import FloatingLabelFormComponent from '../components/FloatingLabelFormComponent'
+import DeleteScreenContent from '../components/DeleteScreenContent'
+import ActionButton from '../components/ActionButton'
+import OKCancelButton from '../components/OKCancelButton'
 
-import PembayaranPenjualanColumns from "../dataTable/PembayaranPenjualanColumns.json";
-import PembayaranPenjualanData from "../dataTable/PembayaranPenjualanData.json";
+import PembayaranPenjualanColumns from '../dataTable/PembayaranPenjualanColumns.json'
+import PembayaranPenjualanData from '../dataTable/PembayaranPenjualanData.json'
 
-const componentTitle = "Pembayaran Jual Barang";
+const componentTitle = 'Pembayaran Jual Barang'
 
-const HIDE_DIMSCREEN = "NULL";
-const ADD_DIMSCREEN = "Add";
-const EDIT_DIMSCREEN = "Edit";
-const DELETE_DIMSCREEN = "Delete";
+const HIDE_DIMSCREEN = 'NULL'
+const ADD_DIMSCREEN = 'Add'
+const EDIT_DIMSCREEN = 'Edit'
+const DELETE_DIMSCREEN = 'Delete'
 
 const PembayaranJualBarang = () => {
   const selectItemColumns = () =>
@@ -26,13 +26,13 @@ const PembayaranJualBarang = () => {
         <option key={index} value={PembayaranPenjualanColumns?.header}>
           {PembayaranPenjualanColumns?.header}
         </option>
-      );
-    });
+      )
+    })
 
   const tableColumns = () =>
     PembayaranPenjualanColumns?.map((PembayaranPenjualanColumns, index) => {
-      return <th key={index}>{PembayaranPenjualanColumns?.header}</th>;
-    });
+      return <th key={index}>{PembayaranPenjualanColumns?.header}</th>
+    })
 
   const tableData = () =>
     PembayaranPenjualanData?.map((PembayaranPenjualanData, index) => {
@@ -66,47 +66,41 @@ const PembayaranJualBarang = () => {
             />
           </td>
         </tr>
-      );
-    });
+      )
+    })
 
-  const [toggleDimScreen, setToogle] = useState(HIDE_DIMSCREEN);
-  const [IDToChange, setIDToChange] = useState<number | null>(null);
+  const [toggleDimScreen, setToogle] = useState(HIDE_DIMSCREEN)
+  const [IDToChange, setIDToChange] = useState<number | null>(null)
 
   const onClickAction = (dimScreenName: string, IDToChange?: any) => {
-    setToogle(dimScreenName);
-    setIDToChange(IDToChange);
-    dimScreenName == HIDE_DIMSCREEN && reset();
-  };
+    setToogle(dimScreenName)
+    setIDToChange(IDToChange)
+    dimScreenName == HIDE_DIMSCREEN && reset()
+  }
 
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm();
+  } = useForm()
 
   const onSubmit = (data: any) => {
-    console.log(data);
+    console.log(data)
     switch (toggleDimScreen) {
       case ADD_DIMSCREEN:
-        break;
+        break
       case EDIT_DIMSCREEN:
-        break;
+        break
       case DELETE_DIMSCREEN:
-        break;
+        break
     }
-    setToogle(HIDE_DIMSCREEN);
-    reset();
-  };
+    setToogle(HIDE_DIMSCREEN)
+    reset()
+  }
 
-  const idFormComponentList = [
-    "checkSalesName",
-    "checkCustomerName",
-  ];
-  const labelFormComponentList = [
-    "Nama Sales",
-    "Nama Customer",
-  ];
+  const idFormComponentList = ['checkSalesName', 'checkCustomerName']
+  const labelFormComponentList = ['Nama Sales', 'Nama Customer']
 
   return (
     <>
@@ -120,10 +114,10 @@ const PembayaranJualBarang = () => {
       />
       <DimScreenTemplate
         idScreenFormat="dimScreen"
-        titleScreen={toggleDimScreen + " " + componentTitle}
+        titleScreen={toggleDimScreen + ' ' + componentTitle}
         onClickClose={() => onClickAction(HIDE_DIMSCREEN)}
         toggleClassName={
-          toggleDimScreen === HIDE_DIMSCREEN ? "invisible" : "visible"
+          toggleDimScreen === HIDE_DIMSCREEN ? 'invisible' : 'visible'
         }
       >
         <form
@@ -135,14 +129,14 @@ const PembayaranJualBarang = () => {
             toggleDimScreen === EDIT_DIMSCREEN) && (
             <>
               <div className="pb-2">
-              <FloatingLabelFormComponent
+                <FloatingLabelFormComponent
                   idInputComponent={idFormComponentList[0]}
                   labelName={labelFormComponentList[0]}
                 >
                   <select
                     className="form-select"
                     id={idFormComponentList[0]}
-                    {...register("checkSalesName", {
+                    {...register('checkSalesName', {
                       required: true,
                     })}
                   >
@@ -159,7 +153,7 @@ const PembayaranJualBarang = () => {
                   <select
                     className="form-select"
                     id={idFormComponentList[1]}
-                    {...register("checkCustomerName", {
+                    {...register('checkCustomerName', {
                       required: true,
                     })}
                   >
@@ -172,10 +166,7 @@ const PembayaranJualBarang = () => {
             </>
           )}
           {toggleDimScreen === DELETE_DIMSCREEN && (
-            <DeleteScreenContent
-              itemTable={componentTitle}
-              itemID={IDToChange}
-            />
+            <DeleteScreenContent itemID={IDToChange} itemName={''} />
           )}
           {toggleDimScreen != HIDE_DIMSCREEN && (
             <OKCancelButton
@@ -186,7 +177,7 @@ const PembayaranJualBarang = () => {
         </form>
       </DimScreenTemplate>
     </>
-  );
-};
+  )
+}
 
-export default PembayaranJualBarang;
+export default PembayaranJualBarang

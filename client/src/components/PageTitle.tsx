@@ -1,13 +1,13 @@
 interface Props {
-  titleName: string;
+  titleName: string
 }
 
 const PageTitle = ({ titleName }: Props) => {
   return (
     <>
-      <h5>{titleName + " "}</h5>
+      <h5>{titleName + ' '}</h5>
     </>
-  );
-};
+  )
+}
 
-export default PageTitle;
+export default PageTitle

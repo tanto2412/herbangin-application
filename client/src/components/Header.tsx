@@ -1,24 +1,24 @@
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import DimScreenTemplate from "./DimScreenTemplate";
-import FloatingLabelFormComponent from "./FloatingLabelFormComponent";
-import { useUserContext } from "./UserContext";
-import { changePassword, fetchLogin } from "../dataHandling/API_login_user";
+import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import DimScreenTemplate from './DimScreenTemplate'
+import FloatingLabelFormComponent from './FloatingLabelFormComponent'
+import { useUserContext } from './UserContext'
+import { changePassword, fetchLogin } from '../dataHandling/API_login_user'
 
 const Header = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   const onClickLogout = () => {
-    navigate("/");
-  };
+    navigate('/')
+  }
 
-  const { username } = useUserContext();
+  const { username } = useUserContext()
 
-  const [toggleChangePwd, setToogle] = useState(false);
+  const [toggleChangePwd, setToogle] = useState(false)
   const onClickChangePwd = () => {
-    toggleChangePwd ? setToogle(false) : setToogle(true);
-    reset();
-  };
+    toggleChangePwd ? setToogle(false) : setToogle(true)
+    reset()
+  }
 
   const {
     register,
@@ -28,29 +28,29 @@ const Header = () => {
     reset,
     setError,
     formState: { errors },
-  } = useForm();
+  } = useForm()
 
   const onSubmit = async (data: any) => {
-    console.log(data);
+    console.log(data)
     try {
-      const loginData = await fetchLogin(username, data.oldPassword);
-      await changePassword(loginData.id, data.newPassword);
-      onClickChangePwd();
+      const loginData = await fetchLogin(username, data.oldPassword)
+      await changePassword(loginData.id, data.newPassword)
+      onClickChangePwd()
     } catch (error) {
-      setError("oldPassword", { type: "wrongpassword" });
+      setError('oldPassword', { type: 'wrongpassword' })
     }
-  };
+  }
 
   const idFormComponentList = [
-    "oldPassword",
-    "newPassword",
-    "confirmNewPassword",
-  ];
+    'oldPassword',
+    'newPassword',
+    'confirmNewPassword',
+  ]
   const labelFormComponentList = [
-    "Password Lama",
-    "Password Baru",
-    "Confirm Password Baru",
-  ];
+    'Password Lama',
+    'Password Baru',
+    'Confirm Password Baru',
+  ]
 
   return (
     <>
@@ -61,14 +61,14 @@ const Header = () => {
             Store Application
           </a>
           <div>
-            Hello, {username}{" "}
+            Hello, {username}{' '}
             <button
               className="btn btn-sm btn-outline-success"
               type="button"
               onClick={onClickChangePwd}
             >
               Ubah Password
-            </button>{" "}
+            </button>{' '}
             <button
               className="btn btn-sm btn-outline-secondary"
               type="button"
@@ -83,7 +83,7 @@ const Header = () => {
           idScreenFormat="dimScreen"
           titleScreen="Change Password"
           onClickClose={onClickChangePwd}
-          toggleClassName={toggleChangePwd ? "visible" : "invisible"}
+          toggleClassName={toggleChangePwd ? 'visible' : 'invisible'}
         >
           <form
             id="changePasswordForm"
@@ -99,21 +99,21 @@ const Header = () => {
                 id={idFormComponentList[0]}
                 className="form-control form-control-lg"
                 autoComplete="off"
-                {...register("oldPassword", {
+                {...register('oldPassword', {
                   required: true,
                   minLength: 5,
                 })}
               />
               <div id="invalid-feedback">
                 {errors.oldPassword &&
-                  errors.oldPassword.type === "required" &&
-                  "Password lama harus diisi"}
+                  errors.oldPassword.type === 'required' &&
+                  'Password lama harus diisi'}
                 {errors.oldPassword &&
-                  errors.oldPassword.type === "minLength" &&
-                  "Panjang password minimal 5 karakter"}
+                  errors.oldPassword.type === 'minLength' &&
+                  'Panjang password minimal 5 karakter'}
                 {errors.oldPassword &&
-                  errors.oldPassword.type === "wrongpassword" &&
-                  "Password lama salah"}
+                  errors.oldPassword.type === 'wrongpassword' &&
+                  'Password lama salah'}
                 <br />
               </div>
             </FloatingLabelFormComponent>
@@ -127,18 +127,18 @@ const Header = () => {
                 id={idFormComponentList[1]}
                 className="form-control form-control-lg"
                 autoComplete="off"
-                {...register("newPassword", {
+                {...register('newPassword', {
                   required: true,
                   minLength: 5,
                 })}
               />
               <div id="invalid-feedback">
                 {errors.newPassword &&
-                  errors.newPassword.type === "required" &&
-                  "Password baru harus diisi"}
+                  errors.newPassword.type === 'required' &&
+                  'Password baru harus diisi'}
                 {errors.newPassword &&
-                  errors.newPassword.type === "minLength" &&
-                  "Panjang password minimal 5 karakter"}
+                  errors.newPassword.type === 'minLength' &&
+                  'Panjang password minimal 5 karakter'}
                 <br />
               </div>
             </FloatingLabelFormComponent>
@@ -152,20 +152,20 @@ const Header = () => {
                 id={idFormComponentList[2]}
                 className="form-control form-control-lg"
                 autoComplete="off"
-                {...register("confirmNewPassword", {
+                {...register('confirmNewPassword', {
                   required: true,
                   validate: (value) =>
-                    value === watch("newPassword") ||
-                    "Confirm Password Baru tidak match",
+                    value === watch('newPassword') ||
+                    'Confirm Password Baru tidak match',
                 })}
               />
               <div id="invalid-feedback">
                 {errors.confirmNewPassword &&
-                  errors.confirmNewPassword.type === "required" &&
-                  "Confirm Password Baru harus diisi"}
-                {watch("confirmNewPassword") !== watch("newPassword") &&
-                getValues("confirmNewPassword")
-                  ? "Confirm Password Baru tidak match"
+                  errors.confirmNewPassword.type === 'required' &&
+                  'Confirm Password Baru harus diisi'}
+                {watch('confirmNewPassword') !== watch('newPassword') &&
+                getValues('confirmNewPassword')
+                  ? 'Confirm Password Baru tidak match'
                   : null}
                 <br />
               </div>
@@ -183,7 +183,7 @@ const Header = () => {
         </DimScreenTemplate>
       </nav>
     </>
-  );
-};
+  )
+}
 
-export default Header;
+export default Header

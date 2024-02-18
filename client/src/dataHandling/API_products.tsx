@@ -1,28 +1,28 @@
-import axios from "axios";
-import { ProductsData } from "./interfaces";
-import { baseURL } from "./Constants";
+import axios from 'axios'
+import { ProductsData } from './interfaces'
+import { baseURL } from './Constants'
 
-const productsDataURL = "products";
+const productsDataURL = 'products'
 
 export const fetchProductsData = async (
-  searchCategory: string = "nama_barang",
+  searchCategory: string = 'nama_barang',
   searchTerm?: string | null
 ): Promise<ProductsData[]> => {
   try {
-    let params: Record<string, string | number> = {};
-    if (searchTerm != null && searchTerm !== "") {
-        params[searchCategory] = searchTerm;
+    let params: Record<string, string | number> = {}
+    if (searchTerm != null && searchTerm !== '') {
+      params[searchCategory] = searchTerm
     }
     const response = await axios.get<ProductsData[]>(
       `${baseURL}/${productsDataURL}`,
       { params, withCredentials: true }
-    );
-    return response.data;
+    )
+    return response.data
   } catch (error) {
-    console.error("Error fetching products data:", error);
-    throw error;
+    console.error('Error fetching products data:', error)
+    throw error
   }
-};
+}
 
 export const addProductsRecord = async (newProducts: ProductsData) => {
   try {
@@ -37,13 +37,13 @@ export const addProductsRecord = async (newProducts: ProductsData) => {
         batas_fast_moving: newProducts.batas_fast_moving,
       },
       { withCredentials: true }
-    );
-    return response.data;
+    )
+    return response.data
   } catch (error) {
-    console.error("Error adding products record:", error);
-    throw error;
+    console.error('Error adding products record:', error)
+    throw error
   }
-};
+}
 
 export const updateProductsRecord = async (
   id: number,
@@ -61,21 +61,21 @@ export const updateProductsRecord = async (
         batas_fast_moving: newProducts.batas_fast_moving,
       },
       { withCredentials: true }
-    );
-    return response.data;
+    )
+    return response.data
   } catch (error) {
-    console.error("Error updating products record:", error);
-    throw error;
+    console.error('Error updating products record:', error)
+    throw error
   }
-};
+}
 
 export const deleteProductsRecord = async (id: number): Promise<void> => {
   try {
     await axios.delete(`${baseURL}/${productsDataURL}/${id}`, {
       withCredentials: true,
-    });
+    })
   } catch (error) {
-    console.error("Error deleting products record:", error);
-    throw error;
+    console.error('Error deleting products record:', error)
+    throw error
   }
-};
+}

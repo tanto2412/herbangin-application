@@ -1,6 +1,6 @@
 interface Props {
-  itemID: number | null;
-  itemName: string | null;
+  itemID: number | null
+  itemName: string | null
 }
 
 const DeleteScreenContent = ({ itemID, itemName }: Props) => {
@@ -11,11 +11,11 @@ const DeleteScreenContent = ({ itemID, itemName }: Props) => {
         <div>
           <br />
           ID: <b>{itemID}</b> <br />
-          Nama: <b>{itemName}</b>
+          <b>{itemName}</b>
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default DeleteScreenContent;
+export default DeleteScreenContent

@@ -1,9 +1,9 @@
-import { ReactNode } from "react";
+import { ReactNode } from 'react'
 
 interface Props {
-  idInputComponent: string;
-  labelName: string;
-  children: ReactNode;
+  idInputComponent: string
+  labelName: string
+  children: ReactNode
 }
 
 const FloatingLabelFormComponent = ({
@@ -20,7 +20,7 @@ const FloatingLabelFormComponent = ({
         </label>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default FloatingLabelFormComponent;
+export default FloatingLabelFormComponent

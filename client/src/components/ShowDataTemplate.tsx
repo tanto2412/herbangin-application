@@ -1,16 +1,16 @@
-import { ReactNode } from "react";
-import ActionButton from "./ActionButton";
-import PageTitle from "./PageTitle";
+import { ReactNode } from 'react'
+import ActionButton from './ActionButton'
+import PageTitle from './PageTitle'
 
 interface Props {
-  titleNameString: string;
-  selectItemObject: ReactNode;
-  tableColumnsObject: ReactNode;
-  tableDataObject: ReactNode;
-  register: any;
-  onClickAdd?: () => void;
-  handleOnChangeCategory?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-  searchItemObject?: ReactNode | null;
+  titleNameString: string
+  selectItemObject: ReactNode
+  tableColumnsObject: ReactNode
+  tableDataObject: ReactNode
+  register: any
+  onClickAdd?: () => void
+  handleOnChangeCategory?: (e: React.ChangeEvent<HTMLSelectElement>) => void
+  searchItemObject?: ReactNode | null
 }
 
 const ShowDataTemplate = ({
@@ -33,32 +33,32 @@ const ShowDataTemplate = ({
         </div>
         <div className="row p-2">
           <div className="col-12 align-bottom">
-            Filter{" "}
+            Filter{' '}
             <select
               className="form-select-sm"
               name="checkSearchColumns"
-              {...register("checkSearchColumns")}
+              {...register('checkSearchColumns')}
               onChange={handleOnChangeCategory}
             >
               {selectItemObject}
-            </select>{" "}
+            </select>{' '}
             {!searchItemObject && (
               <input
                 type="input"
                 className="form-control-sm"
                 id="checkSearch"
-                {...register("checkSearch")}
+                {...register('checkSearch')}
               />
-            )}{" "}
+            )}{' '}
             {searchItemObject && (
               <select
                 className="form-select-sm"
                 name="checkSearchItemObject"
-                {...register("checkSearchItemObject")}
+                {...register('checkSearchItemObject')}
               >
                 {searchItemObject}
               </select>
-            )}{" "}
+            )}{' '}
             <ActionButton
               buttonCaption="Search"
               buttonSize={15}
@@ -122,7 +122,7 @@ const ShowDataTemplate = ({
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default ShowDataTemplate;
+export default ShowDataTemplate

@@ -1,89 +1,89 @@
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
 
-import DimScreenTemplate from "../components/DimScreenTemplate";
-import ShowDataTemplate from "../components/ShowDataTemplate";
+import DimScreenTemplate from '../components/DimScreenTemplate'
+import ShowDataTemplate from '../components/ShowDataTemplate'
 
-import FloatingLabelFormComponent from "../components/FloatingLabelFormComponent";
-import DeleteScreenContent from "../components/DeleteScreenContent";
-import ActionButton from "../components/ActionButton";
-import OKCancelButton from "../components/OKCancelButton";
+import FloatingLabelFormComponent from '../components/FloatingLabelFormComponent'
+import DeleteScreenContent from '../components/DeleteScreenContent'
+import ActionButton from '../components/ActionButton'
+import OKCancelButton from '../components/OKCancelButton'
 
 import {
   addCustomersRecord,
   deleteCustomersRecord,
   fetchCustomersData,
   updateCustomersRecord,
-} from "../dataHandling/API_customers";
-import { fetchSalesData } from "../dataHandling/API_sales";
-import { CustomersData, SalesData } from "../dataHandling/interfaces";
+} from '../dataHandling/API_customers'
+import { fetchSalesData } from '../dataHandling/API_sales'
+import { CustomersData, SalesData } from '../dataHandling/interfaces'
 import {
   ADD_DIMSCREEN,
   DELETE_DIMSCREEN,
   EDIT_DIMSCREEN,
   HIDE_DIMSCREEN,
   CustomerColumns,
-} from "../dataHandling/Constants";
+} from '../dataHandling/Constants'
 
-const componentTitle = "Master Pelanggan";
+const componentTitle = 'Master Pelanggan'
 
 const MasterPelanggan = () => {
-  const [customersList, setCustomersList] = useState<CustomersData[]>([]);
-  const [salesList, setSalesList] = useState<SalesData[]>([]);
-  const [toggleDimScreen, setToogle] = useState(HIDE_DIMSCREEN);
-  const [IDToChange, setIDToChange] = useState<number | null>(null);
-  const [nameToChange, setNameToChange] = useState<string | null>(null);
-  const [searchCategory, setSearchCategory] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState<string | null>(null);
-  const [searchItemObject, setsearchItemObject] = useState<any | null>(null);
+  const [customersList, setCustomersList] = useState<CustomersData[]>([])
+  const [salesList, setSalesList] = useState<SalesData[]>([])
+  const [toggleDimScreen, setToogle] = useState(HIDE_DIMSCREEN)
+  const [IDToChange, setIDToChange] = useState<number | null>(null)
+  const [nameToChange, setNameToChange] = useState<string | null>(null)
+  const [searchCategory, setSearchCategory] = useState<string | null>(null)
+  const [searchTerm, setSearchTerm] = useState<string | null>(null)
+  const [searchItemObject, setsearchItemObject] = useState<any | null>(null)
 
   const idFormComponentList = [
-    "checkCustomerName",
-    "checkCustomerAddress",
-    "checkCustomerPhone",
-    "checkCustomerCellphone",
-    "checkCustomerEmail",
-    "checkCustomerSalesName",
-    "checkCustomerMaxPiutang",
-  ];
+    'checkCustomerName',
+    'checkCustomerAddress',
+    'checkCustomerPhone',
+    'checkCustomerCellphone',
+    'checkCustomerEmail',
+    'checkCustomerSalesName',
+    'checkCustomerMaxPiutang',
+  ]
   const labelFormComponentList = [
-    "Customer Name",
-    "Customer Address",
-    "Customer Phone",
-    "Customer Handphone",
-    "Customer Email",
-    "Sales Name",
-    "Batas Maksimum Piutang",
-  ];
+    'Customer Name',
+    'Customer Address',
+    'Customer Phone',
+    'Customer Handphone',
+    'Customer Email',
+    'Sales Name',
+    'Batas Maksimum Piutang',
+  ]
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let data = {} as CustomersData[];
+        let data = {} as CustomersData[]
         if (searchTerm != null && searchCategory != null)
-          data = await fetchCustomersData(searchCategory, searchTerm);
-        else data = await fetchCustomersData();
-        setCustomersList(data);
+          data = await fetchCustomersData(searchCategory, searchTerm)
+        else data = await fetchCustomersData()
+        setCustomersList(data)
       } catch (error) {
         // Handle error if needed
       }
-    };
+    }
 
-    fetchData();
-  }, [IDToChange, toggleDimScreen, searchTerm, searchCategory]);
+    fetchData()
+  }, [IDToChange, toggleDimScreen, searchTerm, searchCategory])
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await fetchSalesData();
-        setSalesList(data);
+        const data = await fetchSalesData()
+        setSalesList(data)
       } catch (error) {
         // Handle error if needed
       }
-    };
+    }
 
-    fetchData();
-  }, []);
+    fetchData()
+  }, [])
 
   const salesListOptions = () =>
     salesList.map((SalesData) => {
@@ -91,8 +91,8 @@ const MasterPelanggan = () => {
         <option key={SalesData.id} value={SalesData.id}>
           {SalesData.nama}
         </option>
-      );
-    });
+      )
+    })
 
   const selectItemColumns = () => (
     <>
@@ -103,12 +103,12 @@ const MasterPelanggan = () => {
         Nama Sales
       </option>
     </>
-  );
+  )
 
   const tableColumns = () =>
     CustomerColumns?.map((CustomerColumns, index) => {
-      return <th key={index}>{CustomerColumns}</th>;
-    });
+      return <th key={index}>{CustomerColumns}</th>
+    })
 
   const tableData = () =>
     customersList?.map((CustomerData, index) => {
@@ -121,7 +121,9 @@ const MasterPelanggan = () => {
           <td>{CustomerData?.nomor_handphone}</td>
           <td>{CustomerData?.email}</td>
           <td>{CustomerData?.nama_sales}</td>
-          <td>{CustomerData?.batas_piutang}</td>
+          <td>
+            Rp. {Math.round(CustomerData?.batas_piutang).toLocaleString()}
+          </td>
           <td className="text-center" width={90}>
             <ActionButton
               buttonCaption="Edit"
@@ -137,28 +139,28 @@ const MasterPelanggan = () => {
             />
           </td>
         </tr>
-      );
-    });
+      )
+    })
 
   const onClickAction = (dimScreenName: string, IDToChangeParam?: number) => {
-    setToogle(dimScreenName);
-    IDToChangeParam && setIDToChange(IDToChangeParam);
-    dimScreenName == HIDE_DIMSCREEN && reset();
+    setToogle(dimScreenName)
+    IDToChangeParam && setIDToChange(IDToChangeParam)
+    dimScreenName == HIDE_DIMSCREEN && reset()
 
     if (dimScreenName == EDIT_DIMSCREEN || dimScreenName == DELETE_DIMSCREEN) {
       const selectedSale = customersList.find(
         (sale) => sale.id === IDToChangeParam
-      ) as CustomersData;
-      setValue(idFormComponentList[0], selectedSale.nama_toko);
-      setValue(idFormComponentList[1], selectedSale.alamat);
-      setValue(idFormComponentList[2], selectedSale.nomor_telepon);
-      setValue(idFormComponentList[3], selectedSale.nomor_handphone);
-      setValue(idFormComponentList[4], selectedSale.email);
-      setValue(idFormComponentList[5], selectedSale.sales_id);
-      setValue(idFormComponentList[6], selectedSale.batas_piutang);
-      setNameToChange(selectedSale.nama_toko);
+      ) as CustomersData
+      setValue(idFormComponentList[0], selectedSale.nama_toko)
+      setValue(idFormComponentList[1], selectedSale.alamat)
+      setValue(idFormComponentList[2], selectedSale.nomor_telepon)
+      setValue(idFormComponentList[3], selectedSale.nomor_handphone)
+      setValue(idFormComponentList[4], selectedSale.email)
+      setValue(idFormComponentList[5], selectedSale.sales_id)
+      setValue(idFormComponentList[6], selectedSale.batas_piutang)
+      setNameToChange(selectedSale.nama_toko)
     }
-  };
+  }
 
   const {
     register,
@@ -166,7 +168,7 @@ const MasterPelanggan = () => {
     setValue,
     reset,
     formState: { errors },
-  } = useForm();
+  } = useForm()
 
   const onSubmit = async (data: any) => {
     const data_to_change: CustomersData = {
@@ -179,47 +181,43 @@ const MasterPelanggan = () => {
       nomor_handphone: data.checkCustomerCellphone,
       email: data.checkCustomerEmail,
       batas_piutang: data.checkCustomerMaxPiutang,
-      nama_sales: ""
-    };
+      nama_sales: '',
+    }
 
     switch (toggleDimScreen) {
       case ADD_DIMSCREEN:
-        await addCustomersRecord(data_to_change);
-        break;
+        await addCustomersRecord(data_to_change)
+        break
       case EDIT_DIMSCREEN:
         if (IDToChange != null)
-          await updateCustomersRecord(IDToChange, data_to_change);
-        break;
+          await updateCustomersRecord(IDToChange, data_to_change)
+        break
       case DELETE_DIMSCREEN:
-        if (IDToChange != null) await deleteCustomersRecord(IDToChange);
-        setIDToChange(null);
-        break;
+        if (IDToChange != null) await deleteCustomersRecord(IDToChange)
+        setIDToChange(null)
+        break
     }
-    if (data.checkSearch == "" && data.checkSearchItemObject == "") {
-      setSearchTerm(null);
-      setSearchCategory(null);
+    if (data.checkSearch == '' && data.checkSearchItemObject == '') {
+      setSearchTerm(null)
+      setSearchCategory(null)
     } else {
-      setSearchCategory(data.checkSearchColumns);
-      if(data.checkSearchColumns == "nama_toko")
-        setSearchTerm(data.checkSearch);
-      else if(data.checkSearchColumns == "sales")
-        setSearchTerm(data.checkSearchItemObject);
+      setSearchCategory(data.checkSearchColumns)
+      if (data.checkSearchColumns == 'nama_toko')
+        setSearchTerm(data.checkSearch)
+      else if (data.checkSearchColumns == 'sales')
+        setSearchTerm(data.checkSearchItemObject)
     }
 
-    setToogle(HIDE_DIMSCREEN);
-    setsearchItemObject(null);
-    reset();
+    setToogle(HIDE_DIMSCREEN)
+    setsearchItemObject(null)
+    reset()
+  }
 
-    
-  };
-
-  const handleOnChangeCategory = (
-    e: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const selectedValue = e.target.value;
-    if(selectedValue == "nama_toko") setsearchItemObject(null);
-    else if(selectedValue == "sales") setsearchItemObject(salesListOptions);
-  };
+  const handleOnChangeCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedValue = e.target.value
+    if (selectedValue == 'nama_toko') setsearchItemObject(null)
+    else if (selectedValue == 'sales') setsearchItemObject(salesListOptions)
+  }
 
   return (
     <>
@@ -236,11 +234,11 @@ const MasterPelanggan = () => {
         />
         <DimScreenTemplate
           idScreenFormat="dimScreen"
-          titleScreen={toggleDimScreen + " " + componentTitle}
+          titleScreen={toggleDimScreen + ' ' + componentTitle}
           widthScreen="6"
           onClickClose={() => onClickAction(HIDE_DIMSCREEN)}
           toggleClassName={
-            toggleDimScreen === HIDE_DIMSCREEN ? "invisible" : "visible"
+            toggleDimScreen === HIDE_DIMSCREEN ? 'invisible' : 'visible'
           }
         >
           {(toggleDimScreen === ADD_DIMSCREEN ||
@@ -256,12 +254,12 @@ const MasterPelanggan = () => {
                     id={idFormComponentList[0]}
                     className="form-control"
                     autoComplete="off"
-                    {...register("checkCustomerName", {
+                    {...register('checkCustomerName', {
                       required: true,
                     })}
                   />
                   <div id="invalid-feedback">
-                    {errors.checkCustomerName && "Customer Name harus diisi"}
+                    {errors.checkCustomerName && 'Customer Name harus diisi'}
                     <br />
                   </div>
                 </FloatingLabelFormComponent>
@@ -274,13 +272,13 @@ const MasterPelanggan = () => {
                     className="form-control form-control-sm"
                     autoComplete="off"
                     id={idFormComponentList[1]}
-                    {...register("checkCustomerAddress", {
+                    {...register('checkCustomerAddress', {
                       required: true,
                     })}
                   ></textarea>
                   <div id="invalid-feedback">
                     {errors.checkCustomerAddress &&
-                      "Customer Address harus diisi"}
+                      'Customer Address harus diisi'}
                     <br />
                   </div>
                 </FloatingLabelFormComponent>
@@ -294,7 +292,7 @@ const MasterPelanggan = () => {
                     id={idFormComponentList[2]}
                     className="form-control"
                     autoComplete="off"
-                    {...register("checkCustomerPhone")}
+                    {...register('checkCustomerPhone')}
                   />
                   <br />
                 </FloatingLabelFormComponent>
@@ -308,7 +306,7 @@ const MasterPelanggan = () => {
                     id={idFormComponentList[3]}
                     className="form-control"
                     autoComplete="off"
-                    {...register("checkCustomerCellphone")}
+                    {...register('checkCustomerCellphone')}
                   />
                   <br />
                 </FloatingLabelFormComponent>
@@ -322,7 +320,7 @@ const MasterPelanggan = () => {
                     id={idFormComponentList[4]}
                     className="form-control"
                     autoComplete="off"
-                    {...register("checkCustomerEmail")}
+                    {...register('checkCustomerEmail')}
                   />
                   <br />
                 </FloatingLabelFormComponent>
@@ -334,7 +332,7 @@ const MasterPelanggan = () => {
                   <select
                     className="form-select"
                     id={idFormComponentList[5]}
-                    {...register("checkCustomerSalesName", {
+                    {...register('checkCustomerSalesName', {
                       required: true,
                     })}
                   >
@@ -354,13 +352,13 @@ const MasterPelanggan = () => {
                     step={0.01}
                     min={0}
                     autoComplete="off"
-                    {...register("checkCustomerMaxPiutang", {
+                    {...register('checkCustomerMaxPiutang', {
                       required: true,
                     })}
                   />
                   <div id="invalid-feedback">
                     {errors.checkCustomerMaxPiutang &&
-                      "Batas Maksimum Piutang harus diisi"}
+                      'Batas Maksimum Piutang harus diisi'}
                     <br />
                   </div>
                 </FloatingLabelFormComponent>
@@ -379,7 +377,7 @@ const MasterPelanggan = () => {
         </DimScreenTemplate>
       </form>
     </>
-  );
-};
+  )
+}
 
-export default MasterPelanggan;
+export default MasterPelanggan

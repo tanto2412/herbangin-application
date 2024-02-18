@@ -1,21 +1,21 @@
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
 
-import DimScreenTemplate from "../components/DimScreenTemplate";
-import ShowDataTemplate from "../components/ShowDataTemplate";
+import DimScreenTemplate from '../components/DimScreenTemplate'
+import ShowDataTemplate from '../components/ShowDataTemplate'
 
-import FloatingLabelFormComponent from "../components/FloatingLabelFormComponent";
-import DeleteScreenContent from "../components/DeleteScreenContent";
-import ActionButton from "../components/ActionButton";
-import OKCancelButton from "../components/OKCancelButton";
+import FloatingLabelFormComponent from '../components/FloatingLabelFormComponent'
+import DeleteScreenContent from '../components/DeleteScreenContent'
+import ActionButton from '../components/ActionButton'
+import OKCancelButton from '../components/OKCancelButton'
 
 import {
   addProductsRecord,
   deleteProductsRecord,
   fetchProductsData,
   updateProductsRecord,
-} from "../dataHandling/API_products";
-import { ProductsData } from "../dataHandling/interfaces";
+} from '../dataHandling/API_products'
+import { ProductsData } from '../dataHandling/interfaces'
 import {
   ADD_DIMSCREEN,
   DELETE_DIMSCREEN,
@@ -24,55 +24,55 @@ import {
   FAST_MOVING,
   SLOW_MOVING,
   ProductsColumns,
-} from "../dataHandling/Constants";
+} from '../dataHandling/Constants'
 
-const componentTitle = "Master Barang";
+const componentTitle = 'Master Barang'
 
 const MasterBarang = () => {
-  const [productsList, setProductsList] = useState<ProductsData[]>([]);
-  const [toggleDimScreen, setToogle] = useState(HIDE_DIMSCREEN);
-  const [IDToChange, setIDToChange] = useState<number | null>(null);
-  const [nameToChange, setNameToChange] = useState<string | null>(null);
-  const [searchCategory, setSearchCategory] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState<string | null>(null);
+  const [productsList, setProductsList] = useState<ProductsData[]>([])
+  const [toggleDimScreen, setToogle] = useState(HIDE_DIMSCREEN)
+  const [IDToChange, setIDToChange] = useState<number | null>(null)
+  const [nameToChange, setNameToChange] = useState<string | null>(null)
+  const [searchCategory, setSearchCategory] = useState<string | null>(null)
+  const [searchTerm, setSearchTerm] = useState<string | null>(null)
   const [disableStateBatasFastMoving, setdisableStateBatasFastMoving] =
-    useState(false);
+    useState(false)
 
   const idFormComponentList = [
-    "checkProductCode",
-    "checkProductName",
-    "checkProductPrice",
-    "checkStock",
-    "checkSatuanTerkecil",
-    "checkBarangLaku",
-    "checkBatasFastMoving",
-  ];
+    'checkProductCode',
+    'checkProductName',
+    'checkProductPrice',
+    'checkStock',
+    'checkSatuanTerkecil',
+    'checkBarangLaku',
+    'checkBatasFastMoving',
+  ]
   const labelFormComponentList = [
-    "Kode Barang",
-    "Nama Barang",
-    "Harga",
-    "Stok Barang",
-    "Satuan Terkecil",
-    "Barang Laku",
-    "Batas Fast Moving",
-  ];
+    'Kode Barang',
+    'Nama Barang',
+    'Harga',
+    'Stok Barang',
+    'Satuan Terkecil',
+    'Barang Laku',
+    'Batas Fast Moving',
+  ]
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let data = {} as ProductsData[];
+        let data = {} as ProductsData[]
         if (searchTerm != null && searchCategory != null)
-          data = await fetchProductsData(searchCategory, searchTerm);
-        else data = await fetchProductsData();
+          data = await fetchProductsData(searchCategory, searchTerm)
+        else data = await fetchProductsData()
 
-        setProductsList(data);
+        setProductsList(data)
       } catch (error) {
         // Handle error if needed
       }
-    };
+    }
 
-    fetchData();
-  }, [IDToChange, toggleDimScreen, searchTerm, searchCategory]);
+    fetchData()
+  }, [IDToChange, toggleDimScreen, searchTerm, searchCategory])
 
   const selectItemColumns = () => (
     <>
@@ -83,12 +83,12 @@ const MasterBarang = () => {
         Kode Barang
       </option>
     </>
-  );
+  )
 
   const tableColumns = () =>
     ProductsColumns?.map((ProductColumns, index) => {
-      return <th key={index}>{ProductColumns}</th>;
-    });
+      return <th key={index}>{ProductColumns}</th>
+    })
 
   const tableData = () =>
     productsList?.map((ProductData, index) => {
@@ -97,11 +97,11 @@ const MasterBarang = () => {
           <td>{ProductData?.id}</td>
           <td>{ProductData?.kode_barang}</td>
           <td>{ProductData?.nama_barang}</td>
-          <td>{ProductData?.harga}</td>
+          <td>Rp. {Math.round(ProductData?.harga).toLocaleString()}</td>
           <td>
             {ProductData?.stok_barang} {ProductData?.satuan_terkecil}
           </td>
-          <td>{ProductData?.jenis_barang == FAST_MOVING ? "Yes" : "No"}</td>
+          <td>{ProductData?.jenis_barang == FAST_MOVING ? 'Yes' : 'No'}</td>
           <td>{ProductData?.batas_fast_moving}</td>
           <td className="text-center" width={90}>
             <ActionButton
@@ -118,29 +118,30 @@ const MasterBarang = () => {
             />
           </td>
         </tr>
-      );
-    });
+      )
+    })
 
   const onClickAction = (dimScreenName: string, IDToChangeParam?: number) => {
-    setToogle(dimScreenName);
-    IDToChangeParam && setIDToChange(IDToChangeParam);
-    dimScreenName == HIDE_DIMSCREEN && reset();
+    setToogle(dimScreenName)
+    IDToChangeParam && setIDToChange(IDToChangeParam)
+    dimScreenName == HIDE_DIMSCREEN && reset()
 
     if (dimScreenName == EDIT_DIMSCREEN || dimScreenName == DELETE_DIMSCREEN) {
       const selectedSale = productsList.find(
         (sale) => sale.id === IDToChangeParam
-      ) as ProductsData;
-      setValue(idFormComponentList[0], selectedSale.kode_barang);
-      setValue(idFormComponentList[1], selectedSale.nama_barang);
-      setValue(idFormComponentList[2], selectedSale.harga);
-      setValue(idFormComponentList[3], selectedSale.stok_barang);
-      setValue(idFormComponentList[4], selectedSale.satuan_terkecil);
-      setValue(idFormComponentList[5], selectedSale.jenis_barang);
-      setValue(idFormComponentList[6], selectedSale.batas_fast_moving);
-      setNameToChange(selectedSale.nama_barang);
-      if(selectedSale.jenis_barang == SLOW_MOVING) setdisableStateBatasFastMoving(true);
+      ) as ProductsData
+      setValue(idFormComponentList[0], selectedSale.kode_barang)
+      setValue(idFormComponentList[1], selectedSale.nama_barang)
+      setValue(idFormComponentList[2], selectedSale.harga)
+      setValue(idFormComponentList[3], selectedSale.stok_barang)
+      setValue(idFormComponentList[4], selectedSale.satuan_terkecil)
+      setValue(idFormComponentList[5], selectedSale.jenis_barang)
+      setValue(idFormComponentList[6], selectedSale.batas_fast_moving)
+      setNameToChange(selectedSale.nama_barang)
+      if (selectedSale.jenis_barang == SLOW_MOVING)
+        setdisableStateBatasFastMoving(true)
     }
-  };
+  }
 
   const {
     register,
@@ -148,7 +149,7 @@ const MasterBarang = () => {
     setValue,
     reset,
     formState: { errors },
-  } = useForm();
+  } = useForm()
 
   const onSubmit = async (data: any) => {
     const data_to_change: ProductsData = {
@@ -161,46 +162,46 @@ const MasterBarang = () => {
       satuan_terkecil: data.checkSatuanTerkecil,
       jenis_barang: data.checkBarangLaku,
       batas_fast_moving: data.checkBatasFastMoving,
-    };
+    }
 
     switch (toggleDimScreen) {
       case ADD_DIMSCREEN:
-        await addProductsRecord(data_to_change);
-        break;
+        await addProductsRecord(data_to_change)
+        break
       case EDIT_DIMSCREEN:
         if (IDToChange != null)
-          await updateProductsRecord(IDToChange, data_to_change);
-        break;
+          await updateProductsRecord(IDToChange, data_to_change)
+        break
       case DELETE_DIMSCREEN:
-        if (IDToChange != null) await deleteProductsRecord(IDToChange);
-        setIDToChange(null);
-        break;
+        if (IDToChange != null) await deleteProductsRecord(IDToChange)
+        setIDToChange(null)
+        break
     }
 
-    if (data.checkSearch == "") {
-      setSearchTerm(null);
-      setSearchCategory(null);
+    if (data.checkSearch == '') {
+      setSearchTerm(null)
+      setSearchCategory(null)
     } else {
-      setSearchTerm(data.checkSearch);
-      setSearchCategory(data.checkSearchColumns);
+      setSearchTerm(data.checkSearch)
+      setSearchCategory(data.checkSearchColumns)
     }
 
-    setToogle(HIDE_DIMSCREEN);
-    reset();
-  };
+    setToogle(HIDE_DIMSCREEN)
+    reset()
+  }
 
   const handleOnChangeBarangLaku = (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    const selectedValue = e.target.value;
+    const selectedValue = e.target.value
 
     if (selectedValue == SLOW_MOVING) {
-      setValue(idFormComponentList[6], 0);
-      setdisableStateBatasFastMoving(true);
+      setValue(idFormComponentList[6], 0)
+      setdisableStateBatasFastMoving(true)
     } else if (selectedValue == FAST_MOVING) {
-      setdisableStateBatasFastMoving(false);
+      setdisableStateBatasFastMoving(false)
     }
-  };
+  }
 
   return (
     <>
@@ -215,10 +216,10 @@ const MasterBarang = () => {
         />
         <DimScreenTemplate
           idScreenFormat="dimScreen"
-          titleScreen={toggleDimScreen + " " + componentTitle}
+          titleScreen={toggleDimScreen + ' ' + componentTitle}
           onClickClose={() => onClickAction(HIDE_DIMSCREEN)}
           toggleClassName={
-            toggleDimScreen === HIDE_DIMSCREEN ? "invisible" : "visible"
+            toggleDimScreen === HIDE_DIMSCREEN ? 'invisible' : 'visible'
           }
         >
           {(toggleDimScreen === ADD_DIMSCREEN ||
@@ -234,12 +235,12 @@ const MasterBarang = () => {
                     id={idFormComponentList[0]}
                     className="form-control"
                     autoComplete="off"
-                    {...register("checkProductCode", {
+                    {...register('checkProductCode', {
                       required: true,
                     })}
                   />
                   <div id="invalid-feedback">
-                    {errors.checkProductCode && "Kode Barang harus diisi"}
+                    {errors.checkProductCode && 'Kode Barang harus diisi'}
                     <br />
                   </div>
                 </FloatingLabelFormComponent>
@@ -253,12 +254,12 @@ const MasterBarang = () => {
                     id={idFormComponentList[1]}
                     className="form-control"
                     autoComplete="off"
-                    {...register("checkProductName", {
+                    {...register('checkProductName', {
                       required: true,
                     })}
                   />
                   <div id="invalid-feedback">
-                    {errors.checkProductName && "Nama Barang harus diisi"}
+                    {errors.checkProductName && 'Nama Barang harus diisi'}
                     <br />
                   </div>
                 </FloatingLabelFormComponent>
@@ -274,12 +275,12 @@ const MasterBarang = () => {
                     step={0.01}
                     min={0}
                     autoComplete="off"
-                    {...register("checkProductPrice", {
+                    {...register('checkProductPrice', {
                       required: true,
                     })}
                   />
                   <div id="invalid-feedback">
-                    {errors.checkProductPrice && "Harga Barang harus diisi"}
+                    {errors.checkProductPrice && 'Harga Barang harus diisi'}
                     <br />
                   </div>
                 </FloatingLabelFormComponent>
@@ -294,7 +295,7 @@ const MasterBarang = () => {
                     className="form-control"
                     autoComplete="off"
                     disabled
-                    {...register("checkStock")}
+                    {...register('checkStock')}
                   />
                 </FloatingLabelFormComponent>
 
@@ -307,13 +308,13 @@ const MasterBarang = () => {
                     id={idFormComponentList[4]}
                     className="form-control"
                     autoComplete="off"
-                    {...register("checkSatuanTerkecil", {
+                    {...register('checkSatuanTerkecil', {
                       required: true,
                     })}
                   />
                   <div id="invalid-feedback">
                     {errors.checkSatuanTerkecil &&
-                      "Satuan terkecil harus diisi"}
+                      'Satuan terkecil harus diisi'}
                     <br />
                   </div>
                 </FloatingLabelFormComponent>
@@ -325,7 +326,7 @@ const MasterBarang = () => {
                   <select
                     className="form-select"
                     id={idFormComponentList[5]}
-                    {...register("checkBarangLaku", {
+                    {...register('checkBarangLaku', {
                       required: true,
                     })}
                     onChange={handleOnChangeBarangLaku}
@@ -348,13 +349,13 @@ const MasterBarang = () => {
                     min={0}
                     autoComplete="off"
                     disabled={disableStateBatasFastMoving}
-                    {...register("checkBatasFastMoving", {
+                    {...register('checkBatasFastMoving', {
                       required: true,
                     })}
                   />
                   <div id="invalid-feedback">
                     {errors.checkBatasFastMoving &&
-                      "Batas Fast Moving harus diisi"}
+                      'Batas Fast Moving harus diisi'}
                     <br />
                   </div>
                 </FloatingLabelFormComponent>
@@ -373,7 +374,7 @@ const MasterBarang = () => {
         </DimScreenTemplate>
       </form>
     </>
-  );
-};
+  )
+}
 
-export default MasterBarang;
+export default MasterBarang

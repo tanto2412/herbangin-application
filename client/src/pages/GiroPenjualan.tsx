@@ -1,23 +1,23 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
 
-import DimScreenTemplate from "../components/DimScreenTemplate";
-import ShowDataTemplate from "../components/ShowDataTemplate";
+import DimScreenTemplate from '../components/DimScreenTemplate'
+import ShowDataTemplate from '../components/ShowDataTemplate'
 
-import FloatingLabelFormComponent from "../components/FloatingLabelFormComponent";
-import DeleteScreenContent from "../components/DeleteScreenContent";
-import ActionButton from "../components/ActionButton";
-import OKCancelButton from "../components/OKCancelButton";
+import FloatingLabelFormComponent from '../components/FloatingLabelFormComponent'
+import DeleteScreenContent from '../components/DeleteScreenContent'
+import ActionButton from '../components/ActionButton'
+import OKCancelButton from '../components/OKCancelButton'
 
-import GiroPenjualanColumns from "../dataTable/GiroPenjualanColumns.json";
-import GiroPenjualanData from "../dataTable/GiroPenjualanData.json";
+import GiroPenjualanColumns from '../dataTable/GiroPenjualanColumns.json'
+import GiroPenjualanData from '../dataTable/GiroPenjualanData.json'
 
-const componentTitle = "Giro Penjualan";
+const componentTitle = 'Giro Penjualan'
 
-const HIDE_DIMSCREEN = "NULL";
-const ADD_DIMSCREEN = "Add";
-const EDIT_DIMSCREEN = "Edit";
-const DELETE_DIMSCREEN = "Delete";
+const HIDE_DIMSCREEN = 'NULL'
+const ADD_DIMSCREEN = 'Add'
+const EDIT_DIMSCREEN = 'Edit'
+const DELETE_DIMSCREEN = 'Delete'
 
 const GiroPenjualan = () => {
   const selectItemColumns = () =>
@@ -26,13 +26,13 @@ const GiroPenjualan = () => {
         <option key={index} value={PenjualanBarangColumns?.header}>
           {PenjualanBarangColumns?.header}
         </option>
-      );
-    });
+      )
+    })
 
   const tableColumns = () =>
     GiroPenjualanColumns?.map((PenjualanBarangColumns, index) => {
-      return <th key={index}>{PenjualanBarangColumns?.header}</th>;
-    });
+      return <th key={index}>{PenjualanBarangColumns?.header}</th>
+    })
 
   const tableData = () =>
     GiroPenjualanData?.map((PenjualanBarangData, index) => {
@@ -56,55 +56,55 @@ const GiroPenjualan = () => {
             />
           </td>
         </tr>
-      );
-    });
+      )
+    })
 
-  const [toggleDimScreen, setToogle] = useState(HIDE_DIMSCREEN);
-  const [IDToChange, setIDToChange] = useState<number | null>(null);
+  const [toggleDimScreen, setToogle] = useState(HIDE_DIMSCREEN)
+  const [IDToChange, setIDToChange] = useState<number | null>(null)
 
   const onClickAction = (dimScreenName: string, IDToChange?: any) => {
-    setToogle(dimScreenName);
-    setIDToChange(IDToChange);
-    dimScreenName == HIDE_DIMSCREEN && reset();
-  };
+    setToogle(dimScreenName)
+    setIDToChange(IDToChange)
+    dimScreenName == HIDE_DIMSCREEN && reset()
+  }
 
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm();
+  } = useForm()
 
   const onSubmit = (data: any) => {
-    console.log(data);
+    console.log(data)
     switch (toggleDimScreen) {
       case ADD_DIMSCREEN:
-        break;
+        break
       case EDIT_DIMSCREEN:
-        break;
+        break
       case DELETE_DIMSCREEN:
-        break;
+        break
     }
-    setToogle(HIDE_DIMSCREEN);
-    reset();
-  };
+    setToogle(HIDE_DIMSCREEN)
+    reset()
+  }
 
   const idFormComponentList = [
-    "checkNoPembayaran",
-    "checkNoPenjualan",
-    "checkNamaBank",
-    "checkTglJatuhTempo",
-    "checkTglPencairan",
-    "checkStatusBayar",
-  ];
+    'checkNoPembayaran',
+    'checkNoPenjualan',
+    'checkNamaBank',
+    'checkTglJatuhTempo',
+    'checkTglPencairan',
+    'checkStatusBayar',
+  ]
   const labelFormComponentList = [
-    "Nomor Pembayaran",
-    "Nomor Penjualan",
-    "Nama Bank",
-    "Tanggal Jatuh Tempo",
-    "Tanggal Pencairan",
-    "Status Pembayaran",
-  ];
+    'Nomor Pembayaran',
+    'Nomor Penjualan',
+    'Nama Bank',
+    'Tanggal Jatuh Tempo',
+    'Tanggal Pencairan',
+    'Status Pembayaran',
+  ]
 
   return (
     <>
@@ -118,10 +118,10 @@ const GiroPenjualan = () => {
       />
       <DimScreenTemplate
         idScreenFormat="dimScreen"
-        titleScreen={toggleDimScreen + " " + componentTitle}
+        titleScreen={toggleDimScreen + ' ' + componentTitle}
         onClickClose={() => onClickAction(HIDE_DIMSCREEN)}
         toggleClassName={
-          toggleDimScreen === HIDE_DIMSCREEN ? "invisible" : "visible"
+          toggleDimScreen === HIDE_DIMSCREEN ? 'invisible' : 'visible'
         }
       >
         <form
@@ -140,7 +140,7 @@ const GiroPenjualan = () => {
                   <select
                     className="form-select"
                     id={idFormComponentList[0]}
-                    {...register("checkNoPembayaran", {
+                    {...register('checkNoPembayaran', {
                       required: true,
                     })}
                   >
@@ -157,7 +157,7 @@ const GiroPenjualan = () => {
                   <select
                     className="form-select"
                     id={idFormComponentList[1]}
-                    {...register("checkNoPenjualan", {
+                    {...register('checkNoPenjualan', {
                       required: true,
                     })}
                   >
@@ -176,12 +176,12 @@ const GiroPenjualan = () => {
                     id={idFormComponentList[2]}
                     className="form-control"
                     autoComplete="off"
-                    {...register("checkNamaBank", {
+                    {...register('checkNamaBank', {
                       required: true,
                     })}
                   />
                   <div id="invalid-feedback">
-                    {errors.checkNamaBank && "Nama Bank harus diisi"}
+                    {errors.checkNamaBank && 'Nama Bank harus diisi'}
                     <br />
                   </div>
                 </FloatingLabelFormComponent>
@@ -195,12 +195,13 @@ const GiroPenjualan = () => {
                     id={idFormComponentList[3]}
                     className="form-control"
                     autoComplete="off"
-                    {...register("checkTglJatuhTempo", {
+                    {...register('checkTglJatuhTempo', {
                       required: true,
                     })}
                   />
                   <div id="invalid-feedback">
-                    {errors.checkTglJatuhTempo && "Tanggal Jatuh Tempo harus diisi"}
+                    {errors.checkTglJatuhTempo &&
+                      'Tanggal Jatuh Tempo harus diisi'}
                     <br />
                   </div>
                 </FloatingLabelFormComponent>
@@ -214,11 +215,10 @@ const GiroPenjualan = () => {
                     id={idFormComponentList[4]}
                     className="form-control"
                     autoComplete="off"
-                    {...register("checkTgcheckTglPencairanlJatuhTempo", )}
+                    {...register('checkTgcheckTglPencairanlJatuhTempo')}
                   />
                 </FloatingLabelFormComponent>
 
-                
                 <FloatingLabelFormComponent
                   idInputComponent={idFormComponentList[5]}
                   labelName={labelFormComponentList[5]}
@@ -226,7 +226,7 @@ const GiroPenjualan = () => {
                   <select
                     className="form-select"
                     id={idFormComponentList[5]}
-                    {...register("checkStatusBayar", {
+                    {...register('checkStatusBayar', {
                       required: true,
                     })}
                   >
@@ -238,10 +238,7 @@ const GiroPenjualan = () => {
             </>
           )}
           {toggleDimScreen === DELETE_DIMSCREEN && (
-            <DeleteScreenContent
-              itemTable={componentTitle}
-              itemID={IDToChange}
-            />
+            <DeleteScreenContent itemID={IDToChange} itemName={''} />
           )}
           {toggleDimScreen != HIDE_DIMSCREEN && (
             <OKCancelButton
@@ -252,7 +249,7 @@ const GiroPenjualan = () => {
         </form>
       </DimScreenTemplate>
     </>
-  );
-};
+  )
+}
 
-export default GiroPenjualan;
+export default GiroPenjualan

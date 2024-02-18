@@ -1,55 +1,64 @@
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
 
-import DimScreenTemplate from "../components/DimScreenTemplate";
-import ShowDataTemplate from "../components/ShowDataTemplate";
+import DimScreenTemplate from '../components/DimScreenTemplate'
+import ShowDataTemplate from '../components/ShowDataTemplate'
 
-import FloatingLabelFormComponent from "../components/FloatingLabelFormComponent";
-import DeleteScreenContent from "../components/DeleteScreenContent";
-import ActionButton from "../components/ActionButton";
-import OKCancelButton from "../components/OKCancelButton";
+import FloatingLabelFormComponent from '../components/FloatingLabelFormComponent'
+import DeleteScreenContent from '../components/DeleteScreenContent'
+import ActionButton from '../components/ActionButton'
+import OKCancelButton from '../components/OKCancelButton'
 
 import {
   fetchSalesData,
   addSalesRecord,
   updateSalesRecord,
   deleteSalesRecord,
-} from "../dataHandling/API_sales";
-import { SalesData } from "../dataHandling/interfaces";
-import { ADD_DIMSCREEN, DELETE_DIMSCREEN, EDIT_DIMSCREEN, HIDE_DIMSCREEN, SalesColumns } from "../dataHandling/Constants";
+} from '../dataHandling/API_sales'
+import { SalesData } from '../dataHandling/interfaces'
+import {
+  ADD_DIMSCREEN,
+  DELETE_DIMSCREEN,
+  EDIT_DIMSCREEN,
+  HIDE_DIMSCREEN,
+  SalesColumns,
+} from '../dataHandling/Constants'
 
-const componentTitle = "Master Sales";
+const componentTitle = 'Master Sales'
 
 const MasterSales = () => {
-  const [salesList, setSalesList] = useState<SalesData[]>([]);
-  const [toggleDimScreen, setToogle] = useState(HIDE_DIMSCREEN);
-  const [IDToChange, setIDToChange] = useState<number | null>(null);
-  const [nameToChange, setNameToChange] = useState<string | null>(null);
-  const [searchTerm, setsearchTerm] = useState<string | null>(null);
+  const [salesList, setSalesList] = useState<SalesData[]>([])
+  const [toggleDimScreen, setToogle] = useState(HIDE_DIMSCREEN)
+  const [IDToChange, setIDToChange] = useState<number | null>(null)
+  const [nameToChange, setNameToChange] = useState<string | null>(null)
+  const [searchTerm, setSearchTerm] = useState<string | null>(null)
 
-  const idFormComponentList = ["checkSalesName"];
-  const labelFormComponentList = ["Sales Name"];
+  const idFormComponentList = ['checkSalesName']
+  const labelFormComponentList = ['Sales Name']
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await fetchSalesData(searchTerm);
-        setSalesList(data);
+        const data = await fetchSalesData(searchTerm)
+        setSalesList(data)
       } catch (error) {
         // Handle error if needed
       }
-    };
+    }
 
-    fetchData();
-  }, [IDToChange, toggleDimScreen, searchTerm]);
+    fetchData()
+  }, [IDToChange, toggleDimScreen, searchTerm])
 
-  const selectItemColumns = () =>
-    <option key={1} value="nama">Nama Sales</option>
+  const selectItemColumns = () => (
+    <option key={1} value="nama">
+      Nama Sales
+    </option>
+  )
 
   const tableColumns = () =>
     SalesColumns?.map((SalesColumns, index) => {
-      return <th key={index}>{SalesColumns}</th>;
-    });
+      return <th key={index}>{SalesColumns}</th>
+    })
 
   const tableData = () =>
     salesList.map((SalesData) => {
@@ -72,22 +81,22 @@ const MasterSales = () => {
             />
           </td>
         </tr>
-      );
-    });
+      )
+    })
 
   const onClickAction = (dimScreenName: string, IDToChangeParam?: number) => {
-    setToogle(dimScreenName);
-    IDToChangeParam && setIDToChange(IDToChangeParam);
-    dimScreenName == HIDE_DIMSCREEN && reset();
+    setToogle(dimScreenName)
+    IDToChangeParam && setIDToChange(IDToChangeParam)
+    dimScreenName == HIDE_DIMSCREEN && reset()
 
     if (dimScreenName == EDIT_DIMSCREEN || dimScreenName == DELETE_DIMSCREEN) {
       const selectedSale = salesList.find(
         (sale) => sale.id === IDToChangeParam
-      ) as SalesData;
-      setValue(idFormComponentList[0], selectedSale.nama);
-      setNameToChange(selectedSale.nama);
+      ) as SalesData
+      setValue(idFormComponentList[0], selectedSale.nama)
+      setNameToChange(selectedSale.nama)
     }
-  };
+  }
 
   const {
     register,
@@ -95,29 +104,29 @@ const MasterSales = () => {
     setValue,
     reset,
     formState: { errors },
-  } = useForm();
+  } = useForm()
 
   const onSubmit = async (data: any) => {
     switch (toggleDimScreen) {
       case ADD_DIMSCREEN:
-        await addSalesRecord(data.checkSalesName);
-        break;
+        await addSalesRecord(data.checkSalesName)
+        break
       case EDIT_DIMSCREEN:
         if (IDToChange != null)
-          await updateSalesRecord(IDToChange, data.checkSalesName);
-        break;
+          await updateSalesRecord(IDToChange, data.checkSalesName)
+        break
       case DELETE_DIMSCREEN:
-        if (IDToChange != null) await deleteSalesRecord(IDToChange);
-        setIDToChange(null);
-        break;
+        if (IDToChange != null) await deleteSalesRecord(IDToChange)
+        setIDToChange(null)
+        break
     }
 
-    if(data.checkSearch == "") setsearchTerm(null);
-    else setsearchTerm(data.checkSearch);
-    
-    setToogle(HIDE_DIMSCREEN);
-    reset();
-  };
+    if (data.checkSearch == '') setSearchTerm(null)
+    else setSearchTerm(data.checkSearch)
+
+    setToogle(HIDE_DIMSCREEN)
+    reset()
+  }
 
   return (
     <>
@@ -128,14 +137,14 @@ const MasterSales = () => {
           tableColumnsObject={tableColumns()}
           tableDataObject={tableData()}
           onClickAdd={() => onClickAction(ADD_DIMSCREEN)}
-          register = {register}
+          register={register}
         />
         <DimScreenTemplate
           idScreenFormat="dimScreen"
-          titleScreen={toggleDimScreen + " " + componentTitle}
+          titleScreen={toggleDimScreen + ' ' + componentTitle}
           onClickClose={() => onClickAction(HIDE_DIMSCREEN)}
           toggleClassName={
-            toggleDimScreen === HIDE_DIMSCREEN ? "invisible" : "visible"
+            toggleDimScreen === HIDE_DIMSCREEN ? 'invisible' : 'visible'
           }
         >
           {(toggleDimScreen === ADD_DIMSCREEN ||
@@ -151,12 +160,12 @@ const MasterSales = () => {
                     id={idFormComponentList[0]}
                     className="form-control"
                     autoComplete="off"
-                    {...register("checkSalesName", {
+                    {...register('checkSalesName', {
                       required: true,
                     })}
                   />
                   <div id="invalid-feedback">
-                    {errors.checkSalesName && "Sales Name harus diisi"}
+                    {errors.checkSalesName && 'Sales Name harus diisi'}
                     <br />
                   </div>
                 </FloatingLabelFormComponent>
@@ -164,10 +173,7 @@ const MasterSales = () => {
             </>
           )}
           {toggleDimScreen === DELETE_DIMSCREEN && (
-            <DeleteScreenContent
-              itemID={IDToChange}
-              itemName={nameToChange}
-            />
+            <DeleteScreenContent itemID={IDToChange} itemName={nameToChange} />
           )}
           {toggleDimScreen != HIDE_DIMSCREEN && (
             <OKCancelButton
@@ -178,7 +184,7 @@ const MasterSales = () => {
         </DimScreenTemplate>
       </form>
     </>
-  );
-};
+  )
+}
 
-export default MasterSales;
+export default MasterSales

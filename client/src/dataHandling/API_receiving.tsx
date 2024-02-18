@@ -1,74 +1,87 @@
-import axios from "axios";
-import { PenerimaanData } from "./interfaces";
-import { baseURL } from "./Constants";
+import axios from 'axios'
+import { ReceivingData, ReceivingDataDetails } from './interfaces'
+import { baseURL } from './Constants'
 
-const receivingDataURL = "receiving";
+const receivingDataURL = 'receiving'
 
 export const fetchReceivingData = async (
   searchTerm?: string | null
-): Promise<PenerimaanData[]> => {
+): Promise<ReceivingData[]> => {
   try {
-    let params: Record<string, string | number> = {};
-    if (searchTerm != null && searchTerm !== "") {
-      params["id"] = searchTerm;
+    let params = {}
+    if (searchTerm != null && searchTerm != '') {
+      params = { nomor: searchTerm }
     }
-    const response = await axios.get<PenerimaanData[]>(
+    const response = await axios.get<ReceivingData[]>(
       `${baseURL}/${receivingDataURL}`,
       { params, withCredentials: true }
-    );
-    return response.data;
+    )
+    return response.data
   } catch (error) {
-    console.error("Error fetching receiving data:", error);
-    throw error;
+    console.error('Error fetching receiving data:', error)
+    throw error
   }
-};
+}
 
-export const addReceivingRecord = async (newReceiving: PenerimaanData) => {
+export const fetchReceivingDataDetails = async (
+  id: number
+): Promise<ReceivingDataDetails[]> => {
+  try {
+    const response = await axios.get<ReceivingData>(
+      `${baseURL}/${receivingDataURL}/${id}`,
+      { withCredentials: true }
+    )
+    return response.data.items
+  } catch (error) {
+    console.error('Error fetching receiving data:', error)
+    throw error
+  }
+}
+
+export const addReceivingRecord = async (newReceiving: ReceivingData) => {
   try {
     const response = await axios.post(
       `${baseURL}/${receivingDataURL}`,
       {
         tanggal: newReceiving.tanggal,
-        total: newReceiving.tanggal,
         items: newReceiving.items,
       },
       { withCredentials: true }
-    );
-    return response.data;
+    )
+    return response.data
   } catch (error) {
-    console.error("Error adding receiving record:", error);
-    throw error;
+    console.error('Error adding receiving record:', error)
+    throw error
   }
-};
+}
 
 export const updateReceivingRecord = async (
   id: number,
-  newReceiving: PenerimaanData
-): Promise<PenerimaanData> => {
+  newReceiving: ReceivingData
+): Promise<ReceivingData> => {
   try {
-    const response = await axios.put<PenerimaanData>(
+    const response = await axios.put<ReceivingData>(
       `${baseURL}/${receivingDataURL}/${id}`,
       {
         tanggal: newReceiving.tanggal,
-        total: newReceiving.tanggal,
         items: newReceiving.items,
       },
       { withCredentials: true }
-    );
-    return response.data;
+    )
+    return response.data
   } catch (error) {
-    console.error("Error updating receiving record:", error);
-    throw error;
+    console.error('Error updating receiving record:', error)
+    throw error
   }
-};
+}
 
 export const deleteReceivingRecord = async (id: number): Promise<void> => {
   try {
     await axios.delete(`${baseURL}/${receivingDataURL}/${id}`, {
       withCredentials: true,
-    });
+    })
   } catch (error) {
-    console.error("Error deleting receiving record:", error);
-    throw error;
+    console.error('Error deleting receiving record:', error)
+    throw error
   }
-};
+}

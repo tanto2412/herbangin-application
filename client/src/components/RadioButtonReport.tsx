@@ -1,6 +1,6 @@
 interface Props {
-  radioID: string;
-  radioLabel: string;
+  radioID: string
+  radioLabel: string
 }
 
 const RadioButtonReport = ({ radioID, radioLabel }: Props) => {
@@ -19,7 +19,7 @@ const RadioButtonReport = ({ radioID, radioLabel }: Props) => {
         </label>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default RadioButtonReport;
+export default RadioButtonReport
