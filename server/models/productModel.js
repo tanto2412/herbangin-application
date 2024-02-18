@@ -136,7 +136,6 @@ async function updateStock(specs, trx = null) {
       }
     }
   )
-  console.log(historySpecs)
 
   const insertedHistory = await trx('product_history')
     .insert(historySpecs)
