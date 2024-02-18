@@ -3,15 +3,15 @@ const knex = require('../../knexInstance')
 const logger = require('../../logger')
 const productModel = require('./productModel')
 
-async function search({ nomor = null, page = 1, pageSize = 20 }) {
+async function search({ nomor = null, page = 1, page_size = 20 }) {
   return await knex('receiving')
     .where((builder) => {
       if (nomor) {
         builder.where('id', nomor)
       }
     })
-    .limit(pageSize === 0 ? null : pageSize)
-    .offset((page - 1) * pageSize)
+    .limit(page_size === 0 ? null : page_size)
+    .offset((page - 1) * page_size)
     .orderBy('id')
     .then((rows) => {
       return rows

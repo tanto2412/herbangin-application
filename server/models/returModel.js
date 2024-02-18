@@ -9,7 +9,7 @@ async function search({
   customer = null,
   sales = null,
   page = 1,
-  pageSize = 20,
+  page_size = 20,
 }) {
   return await knex('retur')
     .where((builder) => {
@@ -29,8 +29,8 @@ async function search({
         builder.where('customer_id', customer)
       }
     })
-    .limit(pageSize === 0 ? null : pageSize)
-    .offset((page - 1) * pageSize)
+    .limit(page_size === 0 ? null : page_size)
+    .offset((page - 1) * page_size)
     .orderBy('id')
     .then((rows) => {
       return rows

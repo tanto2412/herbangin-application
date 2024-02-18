@@ -28,8 +28,8 @@ function checkPagination() {
     if (req.query.page) {
       req.query.page = parseInt(req.query.page)
     }
-    if (req.query.pageSize) {
-      req.query.pageSize = parseInt(req.query.pageSize)
+    if (req.query.page_size) {
+      req.query.page_size = parseInt(req.query.page_size)
     }
 
     next()
