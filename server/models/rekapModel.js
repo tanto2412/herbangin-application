@@ -3,7 +3,7 @@ const knex = require('../../knexInstance')
 const productModel = require('./productModel')
 const logger = require('../../logger')
 
-async function penerimaan({ product_id = null }) {
+async function penerimaan({ product_id = null, from = null, to = null }) {
   return await knex('receiving_item')
     .select(
       'receiving_item.receiving_id',
@@ -18,8 +18,15 @@ async function penerimaan({ product_id = null }) {
     .leftJoin('receiving', 'receiving.id', '=', 'receiving_item.receiving_id')
     .leftJoin('product', 'product.id', '=', 'receiving_item.product_id')
     .where((builder) => {
+      if (from && to) {
+        builder.whereBetween('receiving.tanggal', [
+          from,
+          Number(to) + 24 * 60 * 60 * 1000,
+        ])
+      }
+
       if (product_id) {
-        builder.where(
+        builder.andWhere(
           'receiving_item.product_id',
           knex.raw('COALESCE(?, receiving_item.product_id)', product_id)
         )
@@ -40,6 +47,8 @@ async function penjualan({
   sales_id = null,
   product_id = null,
   customer_id = null,
+  from = null,
+  to = null,
 }) {
   return await knex('order_item')
     .select(
@@ -59,19 +68,29 @@ async function penjualan({
     .leftJoin('product', 'product.id', '=', 'order_item.product_id')
     .leftJoin('customer', 'customer.id', '=', 'order.customer_id')
     .where((builder) => {
+      if (from && to) {
+        builder.whereBetween('order.tanggal_faktur', [
+          from,
+          Number(to) + 24 * 60 * 60 * 1000,
+        ])
+      }
+
       if (sales_id) {
-        builder.where('sales.id', knex.raw('COALESCE(?, sales.id)', sales_id))
+        builder.andWhere(
+          'sales.id',
+          knex.raw('COALESCE(?, sales.id)', sales_id)
+        )
       }
 
       if (product_id) {
-        builder.where(
+        builder.andWhere(
           'order_item.product_id',
           knex.raw('COALESCE(?, order_item.product_id)', product_id)
         )
       }
 
       if (customer_id)
-        builder.where(
+        builder.andWhere(
           'order.customer_id',
           knex.raw('COALESCE(?, "order".customer_id)', customer_id)
         )
@@ -91,6 +110,8 @@ async function pembayaran({
   sales_id = null,
   product_id = null,
   customer_id = null,
+  from = 0,
+  to = 0,
 }) {
   return await knex('payment')
     .select(
@@ -117,12 +138,22 @@ async function pembayaran({
     .leftJoin('sales', 'sales.id', '=', 'order.sales_id')
     .leftJoin('customer', 'customer.id', '=', 'order.customer_id')
     .where((builder) => {
+      if (from && to) {
+        builder.whereBetween('payment.tanggal', [
+          from,
+          Number(to) + 24 * 60 * 60 * 1000,
+        ])
+      }
+
       if (sales_id) {
-        builder.where('sales.id', knex.raw('COALESCE(?, sales.id)', sales_id))
+        builder.andWhere(
+          'sales.id',
+          knex.raw('COALESCE(?, sales.id)', sales_id)
+        )
       }
 
       if (customer_id)
-        builder.where(
+        builder.andWhere(
           'order.customer_id',
           knex.raw('COALESCE(?, "order".customer_id)', customer_id)
         )
@@ -138,7 +169,12 @@ async function pembayaran({
     })
 }
 
-async function piutang({ product_id = null, customer_id = null }) {
+async function piutang({
+  product_id = null,
+  customer_id = null,
+  from = null,
+  to = null,
+}) {
   return await knex('order')
     .select(
       'customer.nama_toko',
@@ -157,8 +193,15 @@ async function piutang({ product_id = null, customer_id = null }) {
     .leftJoin('customer', 'customer.id', '=', 'order.customer_id')
     .leftJoin('payment', 'payment.nomor_faktur', '=', 'order.nomor_faktur')
     .where((builder) => {
+      if (from && to) {
+        builder.whereBetween('order.tanggal_faktur', [
+          from,
+          Number(to) + 24 * 60 * 60 * 1000,
+        ])
+      }
+
       if (customer_id)
-        builder.where(
+        builder.andWhere(
           'order.customer_id',
           knex.raw('COALESCE(?, "order".customer_id)', customer_id)
         )
@@ -180,7 +223,7 @@ async function piutang({ product_id = null, customer_id = null }) {
 }
 
 async function giro(
-  { sales_id = null, customer_id = null },
+  { sales_id = null, customer_id = null, from = null, to = null },
   status_pembayaran
 ) {
   return await knex('giro')
@@ -199,12 +242,22 @@ async function giro(
     .leftJoin('order', 'order.nomor_faktur', '=', 'giro.nomor_faktur')
     .leftJoin('customer', 'customer.id', '=', 'order.customer_id')
     .where((builder) => {
+      if (from && to) {
+        builder.whereBetween('giro.tanggal', [
+          from,
+          Number(to) + 24 * 60 * 60 * 1000,
+        ])
+      }
+
       if (sales_id) {
-        builder.where('sales.id', knex.raw('COALESCE(?, sales.id)', sales_id))
+        builder.andWhere(
+          'sales.id',
+          knex.raw('COALESCE(?, sales.id)', sales_id)
+        )
       }
 
       if (customer_id)
-        builder.where(
+        builder.andWhere(
           'customer.id',
           knex.raw('COALESCE(?, customerid)', customer_id)
         )
@@ -226,6 +279,8 @@ async function retur({
   sales_id = null,
   product_id = null,
   customer_id = null,
+  from = null,
+  to = null,
 }) {
   return await knex('retur_item')
     .select(
@@ -245,19 +300,29 @@ async function retur({
     .leftJoin('customer', 'customer.id', '=', 'retur.customer_id')
     .leftJoin('sales', 'sales.id', '=', 'retur.sales_id')
     .where((builder) => {
+      if (from && to) {
+        builder.whereBetween('retur.tanggal', [
+          from,
+          Number(to) + 24 * 60 * 60 * 1000,
+        ])
+      }
+
       if (sales_id) {
-        builder.where('sales.id', knex.raw('COALESCE(?, sales.id)', sales_id))
+        builder.andWhere(
+          'sales.id',
+          knex.raw('COALESCE(?, sales.id)', sales_id)
+        )
       }
 
       if (product_id) {
-        builder.where(
+        builder.andWhere(
           'retur_item.product_id',
           knex.raw('COALESCE(?, retur_item.product_id)', product_id)
         )
       }
 
       if (customer_id)
-        builder.where(
+        builder.andWhere(
           'retur.customer_id',
           knex.raw('COALESCE(?, retur.customer_id)', customer_id)
         )
