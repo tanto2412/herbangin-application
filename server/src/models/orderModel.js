@@ -13,6 +13,9 @@ async function search({
   page_size = 20,
 }) {
   return await knex('order')
+    .select('order.*', 'sales.nama as nama_sales', 'customer.nama_toko')
+    .leftJoin('sales', 'sales.id', '=', 'order.sales_id')
+    .leftJoin('customer', 'customer.id', '=', 'order.customer_id')
     .where((builder) => {
       if (nomor) {
         builder.where('nomor_faktur', nomor)
@@ -39,7 +42,17 @@ async function search({
 }
 
 async function getById(id) {
-  return await knex('order').where('nomor_faktur', id).first()
+  return await knex('order')
+    .select(
+      'order.*',
+      'sales.nama as nama_sales',
+      'customer.nama_toko',
+      'customer.alamat'
+    )
+    .leftJoin('sales', 'sales.id', '=', 'order.sales_id')
+    .leftJoin('customer', 'customer.id', '=', 'order.customer_id')
+    .where('nomor_faktur', id)
+    .first()
 }
 
 async function getItemsById(id) {
