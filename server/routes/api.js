@@ -14,6 +14,7 @@ const returRoutes = require('./retur')
 const paymentRoutes = require('./payment')
 const giroRoutes = require('./giro')
 const laporanRoutes = require('./laporan')
+const rekapRoutes = require('./rekap')
 
 const passport = require('../middlewares/authMiddleware')
 const pdf = require('../middlewares/pdfMiddleware')
@@ -35,7 +36,7 @@ router.use(
 )
 
 // PDF
-router.use('/laporan', pdf.addPdfHeaders())
+router.use(['/laporan', '/rekap'], pdf.addPdfHeaders())
 
 // Define routes
 router.get('/', mainController.home)
@@ -51,5 +52,6 @@ router.use('/retur', returRoutes)
 router.use('/payment', paymentRoutes)
 router.use('/giro', giroRoutes)
 router.use('/laporan', laporanRoutes)
+router.use('/rekap', rekapRoutes)
 
 module.exports = router

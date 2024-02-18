@@ -1,6 +1,6 @@
-// models/laporanModel.js
+// models/rekapModel.js
 const knex = require('../../knexInstance')
-const productModel = require('../models/productModel')
+const productModel = require('./productModel')
 const logger = require('../../logger')
 
 async function penerimaan({ product_id = null }) {
@@ -11,9 +11,8 @@ async function penerimaan({ product_id = null }) {
         "to_char(to_timestamp(receiving.tanggal / 1000), 'dd-mm-yyyy') as tanggal"
       ),
       'product.nama_barang',
-      'receiving_item.harga_satuan',
-      'receiving_item.satuan_terkecil',
       'receiving_item.jumlah_barang',
+      'receiving_item.satuan_terkecil',
       'receiving_item.subtotal'
     )
     .leftJoin('receiving', 'receiving.id', '=', 'receiving_item.receiving_id')
@@ -49,15 +48,16 @@ async function penjualan({
         'to_char(to_timestamp("order".tanggal_faktur / 1000), \'dd-mm-yyyy\') as tanggal'
       ),
       knex.raw('to_char("order".nomor_faktur, \'fm00000\') AS nomor_faktur'),
+      'customer.nama_toko',
       'product.nama_barang',
       'order_item.jumlah_barang',
       'order_item.satuan_terkecil',
-      'order_item.harga_satuan',
-      'product.jenis_barang'
+      'order_item.subtotal'
     )
     .leftJoin('order', 'order.nomor_faktur', '=', 'order_item.nomor_faktur')
     .leftJoin('sales', 'sales.id', '=', 'order.sales_id')
     .leftJoin('product', 'product.id', '=', 'order_item.product_id')
+    .leftJoin('customer', 'customer.id', '=', 'order.customer_id')
     .where((builder) => {
       if (sales_id) {
         builder.where('sales.id', knex.raw('COALESCE(?, sales.id)', sales_id))
@@ -142,6 +142,7 @@ async function piutang({ product_id = null, customer_id = null }) {
   return await knex('order')
     .select(
       'customer.nama_toko',
+      'sales.nama',
       knex.raw('to_char("order".nomor_faktur, \'fm00000\') AS nomor_faktur'),
       knex.raw(
         'to_char(to_timestamp("order".tanggal_faktur / 1000), \'dd-mm-yyyy\') as tanggal'
@@ -152,6 +153,7 @@ async function piutang({ product_id = null, customer_id = null }) {
         '"order".total - sum(payment.jumlah_pembayaran) as belum_dibayar'
       )
     )
+    .leftJoin('sales', 'sales.id', '=', 'order.sales_id')
     .leftJoin('customer', 'customer.id', '=', 'order.customer_id')
     .leftJoin('payment', 'payment.nomor_faktur', '=', 'order.nomor_faktur')
     .where((builder) => {
@@ -163,6 +165,7 @@ async function piutang({ product_id = null, customer_id = null }) {
     })
     .groupBy(
       'customer.nama_toko',
+      'sales.nama',
       'order.nomor_faktur',
       'order.tanggal_faktur',
       'order.total'
