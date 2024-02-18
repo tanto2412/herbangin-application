@@ -28,7 +28,7 @@ async function search({
     })
     .limit(page_size === 0 ? null : page_size)
     .offset((page - 1) * page_size)
-    .orderBy('id')
+    .orderBy('nomor_faktur')
     .then((rows) => {
       return rows
     })
