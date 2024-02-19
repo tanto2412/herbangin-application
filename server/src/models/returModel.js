@@ -27,7 +27,7 @@ async function search({
       }
 
       if (nomor_retur) {
-        builder.where('id', nomor_retur)
+        builder.where('retur.id', nomor_retur)
       }
 
       if (sales) {
@@ -40,7 +40,7 @@ async function search({
     })
     .limit(page_size === 0 ? null : page_size)
     .offset((page - 1) * page_size)
-    .orderBy('id')
+    .orderBy('retur.id')
     .then((rows) => {
       return rows
     })
@@ -61,8 +61,12 @@ async function getById(id) {
     .leftJoin('order', 'order.nomor_faktur', '=', 'retur.nomor_faktur')
     .leftJoin('sales', 'sales.id', '=', 'retur.sales_id')
     .leftJoin('customer', 'customer.id', '=', 'retur.customer_id')
-    .where('id', id)
+    .where('retur.id', id)
     .first()
+    .catch((error) => {
+      logger.error(error)
+      return null
+    })
 }
 
 async function getByOrderId(id, trx) {
