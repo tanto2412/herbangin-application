@@ -26,7 +26,9 @@ async function create(req, res) {
       return
     }
 
-    const customers = await customerModel.create(req.body)
+    const cleanedBody = clean(req.body)
+
+    const customers = await customerModel.create(cleanedBody)
 
     if (!customers.length) {
       res.status(500).send('insert failed')
@@ -47,7 +49,9 @@ async function edit(req, res) {
       return
     }
 
-    const customers = await customerModel.edit(req.params.id, req.body)
+    const cleanedBody = clean(req.body)
+
+    const customers = await customerModel.edit(req.params.id, cleanedBody)
 
     if (!customers.length) {
       res.status(500).send('update failed')
@@ -74,6 +78,13 @@ async function remove(req, res) {
 
 async function isSalesExists(sales_id) {
   return await salesModel.getById(sales_id)
+}
+
+function clean(body) {
+  if (!body.email.length) body.email = null
+  if (!body.nomor_handphone.length) body.nomor_handphone = null
+  if (!body.nomor_telepon.length) body.nomor_telepon = null
+  return body
 }
 
 module.exports = {
