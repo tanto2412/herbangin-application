@@ -23,7 +23,7 @@ async function search({
     .leftJoin('customer', 'customer.id', '=', 'retur.customer_id')
     .where((builder) => {
       if (nomor_faktur) {
-        builder.where('nomor_faktur', nomor_faktur)
+        builder.where('retur.nomor_faktur', nomor_faktur)
       }
 
       if (nomor_retur) {
@@ -31,11 +31,11 @@ async function search({
       }
 
       if (sales) {
-        builder.where('sales_id', sales)
+        builder.where('retur.sales_id', sales)
       }
 
       if (customer) {
-        builder.where('customer_id', customer)
+        builder.where('retur.customer_id', customer)
       }
     })
     .limit(page_size === 0 ? null : page_size)
