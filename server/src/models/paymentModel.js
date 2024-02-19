@@ -142,7 +142,7 @@ async function edit(
 async function remove(id) {
   try {
     return await knex.transaction(async (trx) => {
-      let payment = (await trx('payment').where('id', id).del('*'))[0]
+      let payment = await getById(id)
 
       if (payment.jenis_pembayaran == JenisPembayaran.GIRO) {
         let giro = await giroModel.removeByPaymentId(payment.id, trx)
@@ -151,6 +151,8 @@ async function remove(id) {
           return null
         }
       }
+
+      payment = (await trx('payment').where('id', id).del('*'))[0]
 
       return payment
     })
@@ -161,9 +163,9 @@ async function remove(id) {
 }
 
 async function removeByOrderId(id, trx) {
-  let payments = await trx('payment').where('nomor_faktur', id).del('*')
-
   await giroModel.removeByOrderId(id, trx)
+
+  let payments = await trx('payment').where('nomor_faktur', id).del('*')
 
   return payments
 }

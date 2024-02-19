@@ -244,6 +244,8 @@ async function remove(id) {
 
 async function removeByOrderId(id, trx) {
   let returs = await getByOrderId(id, trx)
+  if (!returs.length) return []
+
   let returIds = returs.map((retur) => retur.id)
 
   let returItems = await trx('retur_item')

@@ -27,7 +27,7 @@ async function search({
       }
 
       if (sales) {
-        builder.where('sales_id', sales)
+        builder.where('order.sales_id', sales)
       }
 
       if (customer) {
@@ -222,12 +222,12 @@ async function remove(nomor_faktur) {
         .where('nomor_faktur', nomor_faktur)
         .del('*')
 
+      await paymentModel.removeByOrderId(nomor_faktur, trx)
+      await returModel.removeByOrderId(nomor_faktur, trx)
+
       let order = (
         await trx('order').where('nomor_faktur', nomor_faktur).del('*')
       )[0]
-
-      await paymentModel.removeByOrderId(nomor_faktur, trx)
-      await returModel.removeByOrderId(nomor_faktur, trx)
 
       stockSpecs = []
       for (let item of orderItems) {
@@ -251,6 +251,7 @@ async function remove(nomor_faktur) {
     })
   } catch (error) {
     logger.error(error)
+    console.log(error)
     return null
   }
 }
