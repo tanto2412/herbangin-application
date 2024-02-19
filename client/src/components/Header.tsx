@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import DimScreenTemplate from './DimScreenTemplate'
@@ -7,12 +6,11 @@ import { useUserContext } from './UserContext'
 import { changePassword, fetchLogin } from '../dataHandling/API_login_user'
 
 const Header = () => {
-  const navigate = useNavigate()
   const onClickLogout = () => {
-    navigate('/')
+    setUserName('')
   }
 
-  const { username } = useUserContext()
+  const { username, setUserName } = useUserContext()
 
   const [toggleChangePwd, setToogle] = useState(false)
   const onClickChangePwd = () => {

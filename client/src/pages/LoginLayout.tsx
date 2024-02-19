@@ -1,14 +1,12 @@
 import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
 
 import DimScreenTemplate from '../components/DimScreenTemplate'
 import FloatingLabelFormComponent from '../components/FloatingLabelFormComponent'
-import { useUserContext } from '../components/UserContext'
 import { fetchLogin } from '../dataHandling/API_login_user'
+import { useUserContext } from '../components/UserContext'
 
 const LoginLayout: React.FC = () => {
-  const navigate = useNavigate()
   const [loginError, setLoginError] = useState(false)
   const { setUserName } = useUserContext()
 
@@ -23,7 +21,6 @@ const LoginLayout: React.FC = () => {
       await fetchLogin(data.username, data.password)
       setLoginError(false)
       setUserName(data.username)
-      navigate('/home')
     } catch (error) {
       setLoginError(true)
     }

@@ -1,21 +1,27 @@
-import LoginLayout from "./pages/LoginLayout";
-import HomeLayout from "./pages/HomeLayout";
-import { Routes, Route } from "react-router-dom";
-import { UserProvider } from "./components/UserContext";
+import LoginLayout from './pages/LoginLayout'
+import HomeLayout from './pages/HomeLayout'
+import { Routes, Route } from 'react-router-dom'
+import { ProtectedRoute, UnprotectedRoute } from './utils/ProtectedRoute'
 
 function App() {
   return (
     <>
       <div className="app">
-        <UserProvider>
-          <Routes>
-            <Route path="/" element={<LoginLayout />}></Route>
-            <Route path="/home" element={<HomeLayout />}></Route>
-          </Routes>
-        </UserProvider>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <UnprotectedRoute redirectTo="/home" outlet={<LoginLayout />} />
+            }
+          />
+          <Route
+            path="/home"
+            element={<ProtectedRoute redirectTo="/" outlet={<HomeLayout />} />}
+          />
+        </Routes>
       </div>
     </>
-  );
+  )
 }
 
-export default App;
+export default App
