@@ -13,7 +13,12 @@ async function search({
   page_size = 20,
 }) {
   return await knex('order')
-    .select('order.*', 'sales.nama as nama_sales', 'customer.nama_toko')
+    .select(
+      'order.*',
+      'sales.nama as nama_sales',
+      'customer.nama_toko',
+      'customer.alamat'
+    )
     .leftJoin('sales', 'sales.id', '=', 'order.sales_id')
     .leftJoin('customer', 'customer.id', '=', 'order.customer_id')
     .where((builder) => {
