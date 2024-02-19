@@ -12,7 +12,13 @@ async function search({
   page_size = 20,
 }) {
   return await knex('retur')
-    .select('retur.*', 'sales.nama as nama_sales', 'customer.nama_toko')
+    .select(
+      'retur.*',
+      'sales.nama as nama_sales',
+      'customer.nama_toko',
+      'order.tanggal_faktur'
+    )
+    .leftJoin('order', 'order.nomor_faktur', '=', 'retur.nomor_faktur')
     .leftJoin('sales', 'sales.id', '=', 'retur.sales_id')
     .leftJoin('customer', 'customer.id', '=', 'retur.customer_id')
     .where((builder) => {
@@ -46,7 +52,13 @@ async function search({
 
 async function getById(id) {
   return await knex('retur')
-    .select('retur.*', 'sales.nama as nama_sales', 'customer.nama_toko')
+    .select(
+      'retur.*',
+      'sales.nama as nama_sales',
+      'customer.nama_toko',
+      'order.tanggal_faktur'
+    )
+    .leftJoin('order', 'order.nomor_faktur', '=', 'retur.nomor_faktur')
     .leftJoin('sales', 'sales.id', '=', 'retur.sales_id')
     .leftJoin('customer', 'customer.id', '=', 'retur.customer_id')
     .where('id', id)
