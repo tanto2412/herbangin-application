@@ -12,6 +12,9 @@ async function search({
   page_size = 20,
 }) {
   return await knex('retur')
+    .select('retur.*', 'sales.nama as nama_sales', 'customer.nama_toko')
+    .leftJoin('sales', 'sales.id', '=', 'retur.sales_id')
+    .leftJoin('customer', 'customer.id', '=', 'retur.customer_id')
     .where((builder) => {
       if (nomor_faktur) {
         builder.where('nomor_faktur', nomor_faktur)
