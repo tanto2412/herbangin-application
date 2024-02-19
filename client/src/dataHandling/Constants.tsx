@@ -39,15 +39,29 @@ export const ReceivingItemsColumns = [
   'Harga Satuan',
   'Subtotal',
 ]
+export const OrderColumns = [
+  'Nomor Penjualan',
+  'Tanggal Penjualan',
+  'Nama Customer',
+  'Nama Sales',
+  'Total Penjualan',
+]
+export const OrderItemsColumns = [
+  'Kode Barang',
+  'Nama Barang',
+  'Jumlah',
+  'Harga satuan',
+  'Subtotal',
+]
 
 export const epochmillisToDate = (epochMillis: number) => {
-  const date: Date = new Date(Math.round(epochMillis))
+  const date: Date = new Date(Number(epochMillis))
   const formattedDate: string = new Intl.DateTimeFormat('id-ID').format(date)
   return formattedDate
 }
 
 export const epochmillisToInputDate = (epochMillis: number) => {
-  const date: Date = new Date(Math.round(epochMillis))
+  const date: Date = new Date(Number(epochMillis))
   const dateString: string = new Intl.DateTimeFormat('id-ID').format(date)
   const [day, month, year] = dateString.split('/').map(Number)
   const formattedDate =

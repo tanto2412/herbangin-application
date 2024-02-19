@@ -33,7 +33,7 @@ export const fetchReceivingDataDetails = async (
     )
     return response.data.items
   } catch (error) {
-    console.error('Error fetching receiving data:', error)
+    console.error('Error fetching receiving data details:', error)
     throw error
   }
 }

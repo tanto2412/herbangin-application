@@ -2,7 +2,7 @@ import { ReactNode } from 'react'
 
 interface Props {
   idInputComponent: string
-  labelName: string
+  labelName: string | null
   children: ReactNode
 }
 
@@ -15,9 +15,11 @@ const FloatingLabelFormComponent = ({
     <>
       <div className="form-outline mb-4 form-floating">
         {children}
-        <label className="form-label" htmlFor={idInputComponent}>
-          {labelName}
-        </label>
+        {labelName && (
+          <label className="form-label" htmlFor={idInputComponent}>
+            {labelName}
+          </label>
+        )}
       </div>
     </>
   )

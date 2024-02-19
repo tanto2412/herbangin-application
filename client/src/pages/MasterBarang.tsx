@@ -97,7 +97,7 @@ const MasterBarang = () => {
           <td>{ProductData?.id}</td>
           <td>{ProductData?.kode_barang}</td>
           <td>{ProductData?.nama_barang}</td>
-          <td>Rp. {Math.round(ProductData?.harga).toLocaleString()}</td>
+          <td>Rp. {Number(ProductData?.harga).toLocaleString()}</td>
           <td>
             {ProductData?.stok_barang} {ProductData?.satuan_terkecil}
           </td>
@@ -181,13 +181,13 @@ const MasterBarang = () => {
     if (data.checkSearch == '') {
       setSearchTerm(null)
       setSearchCategory(null)
+      reset()
     } else {
       setSearchTerm(data.checkSearch)
       setSearchCategory(data.checkSearchColumns)
     }
 
     setToogle(HIDE_DIMSCREEN)
-    reset()
   }
 
   const handleOnChangeBarangLaku = (
