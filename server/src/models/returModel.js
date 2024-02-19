@@ -45,7 +45,12 @@ async function search({
 }
 
 async function getById(id) {
-  return await knex('retur').where('id', id).first()
+  return await knex('retur')
+    .select('retur.*', 'sales.nama as nama_sales', 'customer.nama_toko')
+    .leftJoin('sales', 'sales.id', '=', 'retur.sales_id')
+    .leftJoin('customer', 'customer.id', '=', 'retur.customer_id')
+    .where('id', id)
+    .first()
 }
 
 async function getByOrderId(id, trx) {
