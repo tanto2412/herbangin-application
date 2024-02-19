@@ -246,7 +246,9 @@ async function removeByOrderId(id, trx) {
   let returs = await getByOrderId(id, trx)
   let returIds = returs.map((retur) => retur.id)
 
-  let returItems = await trx('retur_item').where('retur_id', returIds).del('*')
+  let returItems = await trx('retur_item')
+    .whereIn('retur_id', returIds)
+    .del('*')
 
   returs = await trx('retur').where('nomor_faktur', id).del('*')
 
