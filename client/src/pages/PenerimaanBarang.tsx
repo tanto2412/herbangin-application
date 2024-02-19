@@ -177,9 +177,7 @@ const PenerimaanBarang = () => {
         <tr key={index}>
           <td>{PenerimaanBarangData?.id}</td>
           <td>{epochmillisToDate(PenerimaanBarangData?.tanggal)}</td>
-          <td>
-            Rp. {Math.round(PenerimaanBarangData?.total).toLocaleString()}
-          </td>
+          <td>Rp. {Number(PenerimaanBarangData?.total).toLocaleString()}</td>
           <td className="text-center" width={90}>
             <ActionButton
               buttonCaption="Edit"
@@ -212,12 +210,9 @@ const PenerimaanBarang = () => {
             {receivingItemDetails.satuan_terkecil}
           </td>
           <td>
-            Rp.{' '}
-            {Math.round(receivingItemDetails?.harga_satuan).toLocaleString()}
+            Rp. {Number(receivingItemDetails?.harga_satuan).toLocaleString()}
           </td>
-          <td>
-            Rp. {Math.round(receivingItemDetails?.subtotal).toLocaleString()}
-          </td>
+          <td>Rp. {Number(receivingItemDetails?.subtotal).toLocaleString()}</td>
           <td className="text-center" width={90}>
             {/* <ActionButton
               buttonCaption="Edit"
@@ -288,15 +283,12 @@ const PenerimaanBarang = () => {
       return
     }
     const selectedProduct = productList.find(
-      (product) => product.id === Math.round(added_product_id)
+      (product) => product.id === Number(added_product_id)
     ) as ProductsData
 
-    const subTotalTemp = Math.round(added_jumlah_barang) * selectedProduct.harga
+    const subTotalTemp = Number(added_jumlah_barang) * selectedProduct.harga
 
     const newRow: ReceivingDataDetails = {
-      // id, receiving_id, set to dummy value
-      id: 0,
-      receiving_id: 0,
       product_id: Number(added_product_id),
       nama_barang: selectedProduct.nama_barang,
       jumlah_barang: Number(added_jumlah_barang),
@@ -307,7 +299,8 @@ const PenerimaanBarang = () => {
 
     setSelectedReceiving([...selectedReceiving, newRow])
     setShowAddItemRow(false)
-    reset()
+    resetField('checkProductID')
+    resetField('checkJumlahBarang')
   }
 
   const {
@@ -318,30 +311,35 @@ const PenerimaanBarang = () => {
     setError,
     clearErrors,
     reset,
+    resetField,
     formState: { errors },
   } = useForm()
 
   const onSubmit = async (data: any) => {
-    const dateToChange = dateToEpochmillis(data.checkTglFaktur)
-    const data_to_change: ReceivingData = {
-      // id and total as dummy value
-      id: 0,
-      tanggal: dateToChange,
-      total: 0,
-      items: selectedReceiving,
-    }
-
     switch (toggleDimScreen) {
       case ADD_DIMSCREEN:
-        if (selectedReceiving.length == 0) {
-          setError('checkProductID', { type: 'manual' })
-          return
-        }
-        await addReceivingRecord(data_to_change)
-        break
       case EDIT_DIMSCREEN:
-        if (IDToChange != null)
-          await updateReceivingRecord(IDToChange, data_to_change)
+        const dateToChange = dateToEpochmillis(data.checkTglFaktur)
+        const data_to_change: ReceivingData = {
+          // id and total as dummy value
+          id: 0,
+          tanggal: dateToChange,
+          total: 0,
+          items: selectedReceiving,
+        }
+
+        if (toggleDimScreen == ADD_DIMSCREEN) {
+          if (selectedReceiving.length == 0) {
+            setError('checkProductID', { type: 'manual' })
+            return
+          }
+          await addReceivingRecord(data_to_change)
+        }
+
+        if (toggleDimScreen == EDIT_DIMSCREEN) {
+          if (IDToChange != null)
+            await updateReceivingRecord(IDToChange, data_to_change)
+        }
         break
       case DELETE_DIMSCREEN:
         if (IDToChange != null) await deleteReceivingRecord(IDToChange)
@@ -349,11 +347,12 @@ const PenerimaanBarang = () => {
         break
     }
 
-    if (data.checkSearch == '') setSearchTerm(null)
-    else setSearchTerm(data.checkSearch)
+    if (data.checkSearch == '') {
+      setSearchTerm(null)
+      reset()
+    } else setSearchTerm(data.checkSearch)
 
     setToogle(HIDE_DIMSCREEN)
-    reset()
   }
 
   return (

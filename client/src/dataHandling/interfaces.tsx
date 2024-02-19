@@ -40,9 +40,29 @@ export interface ReceivingData {
 }
 
 export interface ReceivingDataDetails {
-  id: number
-  receiving_id: number
   product_id: number
+  nama_barang: string
+  jumlah_barang: number
+  satuan_terkecil: string
+  harga_satuan: number
+  subtotal: number
+}
+
+export interface OrderData {
+  nomor_faktur: number
+  tanggal_faktur: number
+  customer_id: number
+  nama_toko: string
+  sales_id: number
+  nama_sales: string
+  total: number
+  alamat: string
+  items: OrderDataDetails[]
+}
+
+export interface OrderDataDetails {
+  product_id: number
+  kode_barang: string
   nama_barang: string
   jumlah_barang: number
   satuan_terkecil: string

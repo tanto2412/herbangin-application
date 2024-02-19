@@ -121,9 +121,7 @@ const MasterPelanggan = () => {
           <td>{CustomerData?.nomor_handphone}</td>
           <td>{CustomerData?.email}</td>
           <td>{CustomerData?.nama_sales}</td>
-          <td>
-            Rp. {Math.round(CustomerData?.batas_piutang).toLocaleString()}
-          </td>
+          <td>Rp. {Number(CustomerData?.batas_piutang).toLocaleString()}</td>
           <td className="text-center" width={90}>
             <ActionButton
               buttonCaption="Edit"
@@ -200,6 +198,8 @@ const MasterPelanggan = () => {
     if (data.checkSearch == '' && data.checkSearchItemObject == '') {
       setSearchTerm(null)
       setSearchCategory(null)
+      setsearchItemObject(null)
+      reset()
     } else {
       setSearchCategory(data.checkSearchColumns)
       if (data.checkSearchColumns == 'nama_toko')
@@ -209,8 +209,6 @@ const MasterPelanggan = () => {
     }
 
     setToogle(HIDE_DIMSCREEN)
-    setsearchItemObject(null)
-    reset()
   }
 
   const handleOnChangeCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {

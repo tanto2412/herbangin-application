@@ -121,11 +121,12 @@ const MasterSales = () => {
         break
     }
 
-    if (data.checkSearch == '') setSearchTerm(null)
-    else setSearchTerm(data.checkSearch)
+    if (data.checkSearch == '') {
+      setSearchTerm(null)
+      reset()
+    } else setSearchTerm(data.checkSearch)
 
     setToogle(HIDE_DIMSCREEN)
-    reset()
   }
 
   return (
