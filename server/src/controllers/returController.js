@@ -166,6 +166,7 @@ async function buildCreateSpec(retur_id, { nomor_faktur, tanggal, items }) {
     let subtotal = jumlah_barang * orderItem.harga_satuan
     total += subtotal
     return {
+      order_item_id,
       product_id: productId,
       kode_barang: orderItem.kode_barang,
       jumlah_barang,
