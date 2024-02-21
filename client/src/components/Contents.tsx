@@ -25,13 +25,13 @@ const Contents = () => {
 
   return (
     <>
-      <div className="d-flex">
+      <div className="d-flex flex-grow-1">
         <div id="sideBar">
           <div className="btn-group-vertical" role="group">
             {buttons}
           </div>
         </div>
-        <div className="p-2">
+        <div className="p-2 w-100">
           <div className="tab-content">
             <div key="contentDiv" className="tab-pane fade show active">
               <Outlet />

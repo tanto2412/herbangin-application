@@ -5,7 +5,7 @@ import Footer from '../components/Footer'
 const HomeLayout = () => {
   return (
     <>
-      <div>
+      <div className="vh-100 d-flex flex-column">
         <Header />
         <Contents />
         <Footer />
