@@ -25,6 +25,8 @@ import {
   SLOW_MOVING,
   ProductsColumns,
 } from '../dataHandling/Constants'
+import { useUserContext } from '../components/UserContext'
+import { AxiosError } from 'axios'
 
 const componentTitle = 'Master Barang'
 
@@ -37,6 +39,7 @@ const MasterBarang = () => {
   const [searchTerm, setSearchTerm] = useState<string | null>(null)
   const [disableStateBatasFastMoving, setdisableStateBatasFastMoving] =
     useState(false)
+  const { setUserName } = useUserContext()
 
   const idFormComponentList = [
     'checkProductCode',
@@ -67,12 +70,15 @@ const MasterBarang = () => {
 
         setProductsList(data)
       } catch (error) {
-        // Handle error if needed
+        const axiosError = error as AxiosError
+        if (axiosError.response?.status === 401) {
+          setUserName('')
+        }
       }
     }
 
     fetchData()
-  }, [IDToChange, toggleDimScreen, searchTerm, searchCategory])
+  }, [IDToChange, toggleDimScreen, searchTerm, searchCategory, setUserName])
 
   const selectItemColumns = () => (
     <>

@@ -33,6 +33,8 @@ import {
   epochmillisToInputDate,
 } from '../dataHandling/Constants'
 import { fetchProductsData } from '../dataHandling/API_products'
+import { useUserContext } from '../components/UserContext'
+import { AxiosError } from 'axios'
 
 const componentTitle = 'Penerimaan Barang'
 
@@ -48,6 +50,7 @@ const PenerimaanBarang = () => {
   const [nameToChange, setNameToChange] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState<string | null>(null)
   const [showAddItemRow, setShowAddItemRow] = useState(false)
+  const { setUserName } = useUserContext()
 
   const idFormComponentList = ['checkTglFaktur']
   const labelFormComponentList = ['Tanggal Faktur']
@@ -60,12 +63,15 @@ const PenerimaanBarang = () => {
         const data = await fetchReceivingData(searchTerm)
         setReceivingList(data)
       } catch (error) {
-        // Handle error if needed
+        const axiosError = error as AxiosError
+        if (axiosError.response?.status === 401) {
+          setUserName('')
+        }
       }
     }
 
     fetchData()
-  }, [IDToChange, toggleDimScreen, searchTerm])
+  }, [IDToChange, toggleDimScreen, searchTerm, setUserName])
 
   useEffect(() => {
     const fetchDataItems = async () => {
@@ -76,12 +82,15 @@ const PenerimaanBarang = () => {
           setSelectedReceiving(data)
         } else setSelectedReceiving([])
       } catch (error) {
-        // Handle error if needed
+        const axiosError = error as AxiosError
+        if (axiosError.response?.status === 401) {
+          setUserName('')
+        }
       }
     }
 
     fetchDataItems()
-  }, [IDToChange, toggleDimScreen])
+  }, [IDToChange, toggleDimScreen, setUserName])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -89,12 +98,15 @@ const PenerimaanBarang = () => {
         const data = await fetchProductsData()
         setProductList(data)
       } catch (error) {
-        // Handle error if needed
+        const axiosError = error as AxiosError
+        if (axiosError.response?.status === 401) {
+          setUserName('')
+        }
       }
     }
 
     fetchData()
-  }, [])
+  }, [setUserName])
 
   const selectItemColumns = () => (
     <>

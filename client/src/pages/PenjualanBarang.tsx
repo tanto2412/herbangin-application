@@ -37,6 +37,8 @@ import {
 import { fetchProductsData } from '../dataHandling/API_products'
 import { fetchCustomersData } from '../dataHandling/API_customers'
 import { fetchSalesData } from '../dataHandling/API_sales'
+import { useUserContext } from '../components/UserContext'
+import { AxiosError } from 'axios'
 
 const componentTitle = 'Penjualan Barang'
 
@@ -62,6 +64,7 @@ const PenjualanBarang = () => {
   const [searchItemObject, setsearchItemObject] = useState<any | null>(null)
 
   const [showAddItemRow, setShowAddItemRow] = useState(false)
+  const { setUserName } = useUserContext()
 
   const idFormComponentList = [
     'checkTglFaktur',
@@ -81,12 +84,15 @@ const PenjualanBarang = () => {
         else data = await fetchOrderData()
         setOrderList(data)
       } catch (error) {
-        // Handle error if needed
+        const axiosError = error as AxiosError
+        if (axiosError.response?.status === 401) {
+          setUserName('')
+        }
       }
     }
 
     fetchData()
-  }, [IDToChange, toggleDimScreen, searchTerm])
+  }, [IDToChange, toggleDimScreen, searchTerm, setUserName])
 
   useEffect(() => {
     const fetchDataItems = async () => {
@@ -97,12 +103,15 @@ const PenjualanBarang = () => {
           setSelectedOrder(data)
         } else setSelectedOrder([])
       } catch (error) {
-        // Handle error if needed
+        const axiosError = error as AxiosError
+        if (axiosError.response?.status === 401) {
+          setUserName('')
+        }
       }
     }
 
     fetchDataItems()
-  }, [IDToChange, toggleDimScreen])
+  }, [IDToChange, toggleDimScreen, setUserName])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -110,12 +119,15 @@ const PenjualanBarang = () => {
         const data = await fetchProductsData()
         setProductList(data)
       } catch (error) {
-        // Handle error if needed
+        const axiosError = error as AxiosError
+        if (axiosError.response?.status === 401) {
+          setUserName('')
+        }
       }
     }
 
     fetchData()
-  }, [])
+  }, [setUserName])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -123,12 +135,15 @@ const PenjualanBarang = () => {
         const data = await fetchSalesData()
         setSalesList(data)
       } catch (error) {
-        // Handle error if needed
+        const axiosError = error as AxiosError
+        if (axiosError.response?.status === 401) {
+          setUserName('')
+        }
       }
     }
 
     fetchData()
-  }, [])
+  }, [setUserName])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -136,12 +151,15 @@ const PenjualanBarang = () => {
         const data = await fetchCustomersData()
         setCustomersListToSearch(data)
       } catch (error) {
-        // Handle error if needed
+        const axiosError = error as AxiosError
+        if (axiosError.response?.status === 401) {
+          setUserName('')
+        }
       }
     }
 
     fetchData()
-  }, [])
+  }, [setUserName])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -149,12 +167,15 @@ const PenjualanBarang = () => {
         const data = await fetchCustomersData('sales', searchSalesCustomer)
         setCustomersList(data)
       } catch (error) {
-        // Handle error if needed
+        const axiosError = error as AxiosError
+        if (axiosError.response?.status === 401) {
+          setUserName('')
+        }
       }
     }
 
     fetchData()
-  }, [searchSalesCustomer])
+  }, [searchSalesCustomer, setUserName])
 
   const selectItemColumns = () => (
     <>

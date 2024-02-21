@@ -24,6 +24,8 @@ import {
   HIDE_DIMSCREEN,
   CustomerColumns,
 } from '../dataHandling/Constants'
+import { useUserContext } from '../components/UserContext'
+import { AxiosError } from 'axios'
 
 const componentTitle = 'Master Pelanggan'
 
@@ -36,6 +38,7 @@ const MasterPelanggan = () => {
   const [searchCategory, setSearchCategory] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState<string | null>(null)
   const [searchItemObject, setsearchItemObject] = useState<any | null>(null)
+  const { setUserName } = useUserContext()
 
   const idFormComponentList = [
     'checkCustomerName',
@@ -65,12 +68,15 @@ const MasterPelanggan = () => {
         else data = await fetchCustomersData()
         setCustomersList(data)
       } catch (error) {
-        // Handle error if needed
+        const axiosError = error as AxiosError
+        if (axiosError.response?.status === 401) {
+          setUserName('')
+        }
       }
     }
 
     fetchData()
-  }, [IDToChange, toggleDimScreen, searchTerm, searchCategory])
+  }, [IDToChange, toggleDimScreen, searchTerm, searchCategory, setUserName])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -78,12 +84,15 @@ const MasterPelanggan = () => {
         const data = await fetchSalesData()
         setSalesList(data)
       } catch (error) {
-        // Handle error if needed
+        const axiosError = error as AxiosError
+        if (axiosError.response?.status === 401) {
+          setUserName('')
+        }
       }
     }
 
     fetchData()
-  }, [])
+  }, [setUserName])
 
   const salesListOptions = () =>
     salesList.map((SalesData) => {

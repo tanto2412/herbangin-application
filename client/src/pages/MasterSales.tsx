@@ -23,6 +23,8 @@ import {
   HIDE_DIMSCREEN,
   SalesColumns,
 } from '../dataHandling/Constants'
+import { useUserContext } from '../components/UserContext'
+import { AxiosError } from 'axios'
 
 const componentTitle = 'Master Sales'
 
@@ -32,6 +34,7 @@ const MasterSales = () => {
   const [IDToChange, setIDToChange] = useState<number | null>(null)
   const [nameToChange, setNameToChange] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState<string | null>(null)
+  const { setUserName } = useUserContext()
 
   const idFormComponentList = ['checkSalesName']
   const labelFormComponentList = ['Sales Name']
@@ -42,12 +45,15 @@ const MasterSales = () => {
         const data = await fetchSalesData(searchTerm)
         setSalesList(data)
       } catch (error) {
-        // Handle error if needed
+        const axiosError = error as AxiosError
+        if (axiosError.response?.status === 401) {
+          setUserName('')
+        }
       }
     }
 
     fetchData()
-  }, [IDToChange, toggleDimScreen, searchTerm])
+  }, [IDToChange, toggleDimScreen, searchTerm, setUserName])
 
   const selectItemColumns = () => (
     <option key={1} value="nama">
