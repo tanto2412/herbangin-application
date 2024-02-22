@@ -3,7 +3,7 @@ const knex = require('../../knexInstance')
 const productModel = require('./productModel')
 const logger = require('../../logger')
 
-async function penerimaan({ product_id = null, from = null, to = null }) {
+async function penerimaan({ product = null, from = null, to = null }) {
   return await knex('receiving_item')
     .select(
       'receiving_item.receiving_id',
@@ -25,10 +25,10 @@ async function penerimaan({ product_id = null, from = null, to = null }) {
         ])
       }
 
-      if (product_id) {
+      if (product) {
         builder.andWhere(
           'receiving_item.product_id',
-          knex.raw('COALESCE(?, receiving_item.product_id)', product_id)
+          knex.raw('COALESCE(?, receiving_item.product_id)', product)
         )
       }
     })
@@ -44,9 +44,9 @@ async function penerimaan({ product_id = null, from = null, to = null }) {
 }
 
 async function penjualan({
-  sales_id = null,
-  product_id = null,
-  customer_id = null,
+  sales = null,
+  product = null,
+  customer = null,
   from = null,
   to = null,
 }) {
@@ -75,24 +75,21 @@ async function penjualan({
         ])
       }
 
-      if (sales_id) {
-        builder.andWhere(
-          'sales.id',
-          knex.raw('COALESCE(?, sales.id)', sales_id)
-        )
+      if (sales) {
+        builder.andWhere('sales.id', knex.raw('COALESCE(?, sales.id)', sales))
       }
 
-      if (product_id) {
+      if (product) {
         builder.andWhere(
           'order_item.product_id',
-          knex.raw('COALESCE(?, order_item.product_id)', product_id)
+          knex.raw('COALESCE(?, order_item.product_id)', product)
         )
       }
 
-      if (customer_id)
+      if (customer)
         builder.andWhere(
           'order.customer_id',
-          knex.raw('COALESCE(?, "order".customer_id)', customer_id)
+          knex.raw('COALESCE(?, "order".customer_id)', customer)
         )
     })
     .orderBy('order.nomor_faktur', 'asc')
@@ -107,9 +104,9 @@ async function penjualan({
 }
 
 async function pembayaran({
-  sales_id = null,
-  product_id = null,
-  customer_id = null,
+  sales = null,
+  product = null,
+  customer = null,
   from = 0,
   to = 0,
 }) {
@@ -145,17 +142,14 @@ async function pembayaran({
         ])
       }
 
-      if (sales_id) {
-        builder.andWhere(
-          'sales.id',
-          knex.raw('COALESCE(?, sales.id)', sales_id)
-        )
+      if (sales) {
+        builder.andWhere('sales.id', knex.raw('COALESCE(?, sales.id)', sales))
       }
 
-      if (customer_id)
+      if (customer)
         builder.andWhere(
           'order.customer_id',
-          knex.raw('COALESCE(?, "order".customer_id)', customer_id)
+          knex.raw('COALESCE(?, "order".customer_id)', customer)
         )
     })
     .orderBy('payment.id', 'asc')
@@ -170,8 +164,8 @@ async function pembayaran({
 }
 
 async function piutang({
-  product_id = null,
-  customer_id = null,
+  product = null,
+  customer = null,
   from = null,
   to = null,
 }) {
@@ -200,10 +194,10 @@ async function piutang({
         ])
       }
 
-      if (customer_id)
+      if (customer)
         builder.andWhere(
           'order.customer_id',
-          knex.raw('COALESCE(?, "order".customer_id)', customer_id)
+          knex.raw('COALESCE(?, "order".customer_id)', customer)
         )
     })
     .groupBy(
@@ -223,7 +217,7 @@ async function piutang({
 }
 
 async function giro(
-  { sales_id = null, customer_id = null, from = null, to = null },
+  { sales = null, customer = null, from = null, to = null },
   status_pembayaran
 ) {
   return await knex('giro')
@@ -249,17 +243,14 @@ async function giro(
         ])
       }
 
-      if (sales_id) {
-        builder.andWhere(
-          'sales.id',
-          knex.raw('COALESCE(?, sales.id)', sales_id)
-        )
+      if (sales) {
+        builder.andWhere('sales.id', knex.raw('COALESCE(?, sales.id)', sales))
       }
 
-      if (customer_id)
+      if (customer)
         builder.andWhere(
           'customer.id',
-          knex.raw('COALESCE(?, customerid)', customer_id)
+          knex.raw('COALESCE(?, customerid)', customer)
         )
 
       builder.where('giro.status_pembayaran', status_pembayaran)
@@ -276,9 +267,9 @@ async function giro(
 }
 
 async function retur({
-  sales_id = null,
-  product_id = null,
-  customer_id = null,
+  sales = null,
+  product = null,
+  customer = null,
   from = null,
   to = null,
 }) {
@@ -307,24 +298,21 @@ async function retur({
         ])
       }
 
-      if (sales_id) {
-        builder.andWhere(
-          'sales.id',
-          knex.raw('COALESCE(?, sales.id)', sales_id)
-        )
+      if (sales) {
+        builder.andWhere('sales.id', knex.raw('COALESCE(?, sales.id)', sales))
       }
 
-      if (product_id) {
+      if (product) {
         builder.andWhere(
           'retur_item.product_id',
-          knex.raw('COALESCE(?, retur_item.product_id)', product_id)
+          knex.raw('COALESCE(?, retur_item.product_id)', product)
         )
       }
 
-      if (customer_id)
+      if (customer)
         builder.andWhere(
           'retur.customer_id',
-          knex.raw('COALESCE(?, retur.customer_id)', customer_id)
+          knex.raw('COALESCE(?, retur.customer_id)', customer)
         )
     })
     .orderBy('retur.id', 'asc')
