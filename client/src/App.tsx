@@ -13,6 +13,7 @@ import ReturPenjualanBarang from './pages/ReturPenjualanBarang'
 import PembayaranJualBarang from './pages/PembayaranJualBarang'
 import GiroPenjualan from './pages/GiroPenjualan'
 import Laporan from './pages/Laporan'
+import PDFViewer from './components/PdfViewer'
 
 function App() {
   return (
@@ -95,8 +96,12 @@ function App() {
               }
             />
             <Route
-              path="laporan"
+              path="report"
               element={<ProtectedRoute redirectTo="/" outlet={<Laporan />} />}
+            />
+            <Route
+              path="report/:jenis/:id"
+              element={<ProtectedRoute redirectTo="/" outlet={<PDFViewer />} />}
             />
           </Route>
         </Routes>

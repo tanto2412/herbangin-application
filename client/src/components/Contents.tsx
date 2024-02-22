@@ -11,14 +11,19 @@ const menuMap = new Map<string, string>([
   ['Retur Barang', 'retur'],
   ['Pembayaran Jual Barang', 'pembayaran'],
   ['Giro Penjualan', 'giro'],
-  ['Laporan', 'laporan'],
+  ['Laporan', 'report'],
 ])
 
 menuMap
 
 const Contents = () => {
   const buttons = [...menuMap].map(([key, value]) => (
-    <NavLink className="btn btn-outline-success rounded-0" to={value} end>
+    <NavLink
+      className="btn btn-outline-success rounded-0"
+      key={key}
+      to={value}
+      end
+    >
       {key}
     </NavLink>
   ))
@@ -32,8 +37,8 @@ const Contents = () => {
           </div>
         </div>
         <div className="p-2 w-100">
-          <div className="tab-content">
-            <div key="contentDiv" className="tab-pane fade show active">
+          <div className="tab-content h-100">
+            <div key="contentDiv" className="tab-pane fade show active h-100">
               <Outlet />
             </div>
           </div>
