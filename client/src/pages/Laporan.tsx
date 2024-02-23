@@ -88,7 +88,7 @@ const Laporan = () => {
     const fetchData = async () => {
       try {
         const data = await fetchCustomersData('sales', searchSalesCustomer)
-        setCustomersList(data)
+        setCustomersList(data.result)
       } catch (error) {
         const axiosError = error as AxiosError
         if (axiosError.response?.status === 401) {
@@ -120,7 +120,7 @@ const Laporan = () => {
     const fetchData = async () => {
       try {
         const data = await fetchProductsData()
-        setProductList(data)
+        setProductList(data.result)
       } catch (error) {
         const axiosError = error as AxiosError
         if (axiosError.response?.status === 401) {

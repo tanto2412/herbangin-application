@@ -15,7 +15,7 @@ import {
   fetchProductsData,
   updateProductsRecord,
 } from '../dataHandling/API_products'
-import { ProductsData } from '../dataHandling/interfaces'
+import { Pagination, ProductsData } from '../dataHandling/interfaces'
 import {
   ADD_DIMSCREEN,
   DELETE_DIMSCREEN,
@@ -27,11 +27,13 @@ import {
 } from '../dataHandling/Constants'
 import { useUserContext } from '../components/UserContext'
 import { AxiosError } from 'axios'
+import { useParams } from 'react-router-dom'
 
 const componentTitle = 'Master Barang'
 
 const MasterBarang = () => {
-  const [productsList, setProductsList] = useState<ProductsData[]>([])
+  const [productsData, setProductsData] =
+    useState<Pagination<ProductsData> | null>(null)
   const [toggleDimScreen, setToogle] = useState(HIDE_DIMSCREEN)
   const [IDToChange, setIDToChange] = useState<number | null>(null)
   const [nameToChange, setNameToChange] = useState<string | null>(null)
@@ -40,6 +42,7 @@ const MasterBarang = () => {
   const [disableStateBatasFastMoving, setdisableStateBatasFastMoving] =
     useState(false)
   const { setUserName } = useUserContext()
+  const params = useParams()
 
   const idFormComponentList = [
     'checkProductCode',
@@ -63,12 +66,12 @@ const MasterBarang = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let data = {} as ProductsData[]
+        let data = {} as Pagination<ProductsData>
         if (searchTerm != null && searchCategory != null)
           data = await fetchProductsData(searchCategory, searchTerm)
         else data = await fetchProductsData()
 
-        setProductsList(data)
+        setProductsData(data)
       } catch (error) {
         const axiosError = error as AxiosError
         if (axiosError.response?.status === 401) {
@@ -97,7 +100,7 @@ const MasterBarang = () => {
     })
 
   const tableData = () =>
-    productsList?.map((ProductData, index) => {
+    productsData?.result.map((ProductData, index) => {
       return (
         <tr key={index}>
           <td>{ProductData?.id}</td>
@@ -133,7 +136,7 @@ const MasterBarang = () => {
     dimScreenName == HIDE_DIMSCREEN && reset()
 
     if (dimScreenName == EDIT_DIMSCREEN || dimScreenName == DELETE_DIMSCREEN) {
-      const selectedSale = productsList.find(
+      const selectedSale = productsData?.result.find(
         (sale) => sale.id === IDToChangeParam
       ) as ProductsData
       setValue(idFormComponentList[0], selectedSale.kode_barang)
@@ -219,6 +222,8 @@ const MasterBarang = () => {
           tableDataObject={tableData()}
           onClickAdd={() => onClickAction(ADD_DIMSCREEN)}
           register={register}
+          pages={productsData?.pages}
+          currentPage={Number(params.id) | 1}
         />
         <DimScreenTemplate
           idScreenFormat="dimScreen"

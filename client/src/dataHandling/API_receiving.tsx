@@ -1,18 +1,18 @@
 import axios from 'axios'
-import { ReceivingData, ReceivingDataDetails } from './interfaces'
+import { Pagination, ReceivingData, ReceivingDataDetails } from './interfaces'
 import { baseURL } from './Constants'
 
 const receivingDataURL = 'receiving'
 
 export const fetchReceivingData = async (
   searchTerm?: string | null
-): Promise<ReceivingData[]> => {
+): Promise<Pagination<ReceivingData>> => {
   try {
     let params = {}
     if (searchTerm != null && searchTerm != '') {
       params = { nomor: searchTerm }
     }
-    const response = await axios.get<ReceivingData[]>(
+    const response = await axios.get<Pagination<ReceivingData>>(
       `${baseURL}/${receivingDataURL}`,
       { params, withCredentials: true }
     )

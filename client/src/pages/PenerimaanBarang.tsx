@@ -17,6 +17,7 @@ import {
   updateReceivingRecord,
 } from '../dataHandling/API_receiving'
 import {
+  Pagination,
   ProductsData,
   ReceivingData,
   ReceivingDataDetails,
@@ -35,11 +36,13 @@ import {
 import { fetchProductsData } from '../dataHandling/API_products'
 import { useUserContext } from '../components/UserContext'
 import { AxiosError } from 'axios'
+import { useParams } from 'react-router-dom'
 
 const componentTitle = 'Penerimaan Barang'
 
 const PenerimaanBarang = () => {
-  const [receivingList, setReceivingList] = useState<ReceivingData[]>([])
+  const [receivingData, setReceivingData] =
+    useState<Pagination<ReceivingData> | null>(null)
   const [selectedReceiving, setSelectedReceiving] = useState<
     ReceivingDataDetails[]
   >([])
@@ -51,6 +54,7 @@ const PenerimaanBarang = () => {
   const [searchTerm, setSearchTerm] = useState<string | null>(null)
   const [showAddItemRow, setShowAddItemRow] = useState(false)
   const { setUserName } = useUserContext()
+  const params = useParams()
 
   const idFormComponentList = ['checkTglFaktur']
   const labelFormComponentList = ['Tanggal Faktur']
@@ -61,7 +65,7 @@ const PenerimaanBarang = () => {
     const fetchData = async () => {
       try {
         const data = await fetchReceivingData(searchTerm)
-        setReceivingList(data)
+        setReceivingData(data)
       } catch (error) {
         const axiosError = error as AxiosError
         if (axiosError.response?.status === 401) {
@@ -96,7 +100,7 @@ const PenerimaanBarang = () => {
     const fetchData = async () => {
       try {
         const data = await fetchProductsData()
-        setProductList(data)
+        setProductList(data.result)
       } catch (error) {
         const axiosError = error as AxiosError
         if (axiosError.response?.status === 401) {
@@ -184,7 +188,7 @@ const PenerimaanBarang = () => {
     })
 
   const tableData = () =>
-    receivingList?.map((PenerimaanBarangData, index) => {
+    receivingData?.result.map((PenerimaanBarangData, index) => {
       return (
         <tr key={index}>
           <td>{PenerimaanBarangData?.id}</td>
@@ -251,7 +255,7 @@ const PenerimaanBarang = () => {
       case EDIT_DIMSCREEN:
       case DELETE_DIMSCREEN:
         setIDToChange(IDToChangeParam)
-        const selectedReceivingID = receivingList.find(
+        const selectedReceivingID = receivingData?.result.find(
           (receiving) => receiving.id === IDToChangeParam
         ) as ReceivingData
         const dateToChange = epochmillisToInputDate(selectedReceivingID.tanggal)
@@ -377,6 +381,8 @@ const PenerimaanBarang = () => {
           tableDataObject={tableData()}
           onClickAdd={() => onClickAction(ADD_DIMSCREEN)}
           register={register}
+          pages={receivingData?.pages}
+          currentPage={Number(params.id) | 1}
         />
         <DimScreenTemplate
           idScreenFormat="dimScreen"

@@ -16,7 +16,11 @@ import {
   updateCustomersRecord,
 } from '../dataHandling/API_customers'
 import { fetchSalesData } from '../dataHandling/API_sales'
-import { CustomersData, SalesData } from '../dataHandling/interfaces'
+import {
+  CustomersData,
+  Pagination,
+  SalesData,
+} from '../dataHandling/interfaces'
 import {
   ADD_DIMSCREEN,
   DELETE_DIMSCREEN,
@@ -26,11 +30,13 @@ import {
 } from '../dataHandling/Constants'
 import { useUserContext } from '../components/UserContext'
 import { AxiosError } from 'axios'
+import { useParams } from 'react-router-dom'
 
 const componentTitle = 'Master Pelanggan'
 
 const MasterPelanggan = () => {
-  const [customersList, setCustomersList] = useState<CustomersData[]>([])
+  const [customersData, setCustomersData] =
+    useState<Pagination<CustomersData> | null>(null)
   const [salesList, setSalesList] = useState<SalesData[]>([])
   const [toggleDimScreen, setToogle] = useState(HIDE_DIMSCREEN)
   const [IDToChange, setIDToChange] = useState<number | null>(null)
@@ -39,6 +45,7 @@ const MasterPelanggan = () => {
   const [searchTerm, setSearchTerm] = useState<string | null>(null)
   const [searchItemObject, setsearchItemObject] = useState<any | null>(null)
   const { setUserName } = useUserContext()
+  const params = useParams()
 
   const idFormComponentList = [
     'checkCustomerName',
@@ -62,11 +69,11 @@ const MasterPelanggan = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let data = {} as CustomersData[]
+        let data = {} as Pagination<CustomersData>
         if (searchTerm != null && searchCategory != null)
           data = await fetchCustomersData(searchCategory, searchTerm)
         else data = await fetchCustomersData()
-        setCustomersList(data)
+        setCustomersData(data)
       } catch (error) {
         const axiosError = error as AxiosError
         if (axiosError.response?.status === 401) {
@@ -82,7 +89,7 @@ const MasterPelanggan = () => {
     const fetchData = async () => {
       try {
         const data = await fetchSalesData()
-        setSalesList(data)
+        setSalesList(data.result)
       } catch (error) {
         const axiosError = error as AxiosError
         if (axiosError.response?.status === 401) {
@@ -120,7 +127,7 @@ const MasterPelanggan = () => {
     })
 
   const tableData = () =>
-    customersList?.map((CustomerData, index) => {
+    customersData?.result.map((CustomerData, index) => {
       return (
         <tr key={index}>
           <td>{CustomerData?.id}</td>
@@ -155,7 +162,7 @@ const MasterPelanggan = () => {
     dimScreenName == HIDE_DIMSCREEN && reset()
 
     if (dimScreenName == EDIT_DIMSCREEN || dimScreenName == DELETE_DIMSCREEN) {
-      const selectedSale = customersList.find(
+      const selectedSale = customersData?.result.find(
         (sale) => sale.id === IDToChangeParam
       ) as CustomersData
       setValue(idFormComponentList[0], selectedSale.nama_toko)
@@ -238,6 +245,8 @@ const MasterPelanggan = () => {
           handleOnChangeCategory={handleOnChangeCategory}
           searchItemObject={searchItemObject}
           register={register}
+          pages={customersData?.pages}
+          currentPage={Number(params.id) | 1}
         />
         <DimScreenTemplate
           idScreenFormat="dimScreen"

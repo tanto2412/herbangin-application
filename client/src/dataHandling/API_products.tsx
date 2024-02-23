@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { ProductsData } from './interfaces'
+import { Pagination, ProductsData } from './interfaces'
 import { baseURL } from './Constants'
 
 const productsDataURL = 'products'
@@ -7,19 +7,35 @@ const productsDataURL = 'products'
 export const fetchProductsData = async (
   searchCategory: string = 'nama_barang',
   searchTerm?: string | null
-): Promise<ProductsData[]> => {
+): Promise<Pagination<ProductsData>> => {
   try {
     let params: Record<string, string | number> = {}
     if (searchTerm != null && searchTerm !== '') {
       params[searchCategory] = searchTerm
     }
-    const response = await axios.get<ProductsData[]>(
+    const response = await axios.get<Pagination<ProductsData>>(
       `${baseURL}/${productsDataURL}`,
       { params, withCredentials: true }
     )
     return response.data
   } catch (error) {
     console.error('Error fetching products data:', error)
+    throw error
+  }
+}
+
+export const fetchProductsDataByID = async (
+  searchID?: string | null
+): Promise<ProductsData> => {
+  try {
+    console.log
+    const response = await axios.get<ProductsData>(
+      `${baseURL}/${productsDataURL}/${searchID}`,
+      { withCredentials: true }
+    )
+    return response.data
+  } catch (error) {
+    console.error('Error fetching products data by ID:', error)
     throw error
   }
 }

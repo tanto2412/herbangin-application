@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { OrderData, OrderDataDetails } from './interfaces'
+import { OrderData, OrderDataDetails, Pagination } from './interfaces'
 import { baseURL } from './Constants'
 
 const orderDataURL = 'order'
@@ -7,13 +7,13 @@ const orderDataURL = 'order'
 export const fetchOrderData = async (
   searchCategory: string = 'nomor',
   searchTerm?: string | null
-): Promise<OrderData[]> => {
+): Promise<Pagination<OrderData>> => {
   try {
     let params: Record<string, string | number> = {}
     if (searchTerm != null && searchTerm !== '') {
       params[searchCategory] = searchTerm
     }
-    const response = await axios.get<OrderData[]>(
+    const response = await axios.get<Pagination<OrderData>>(
       `${baseURL}/${orderDataURL}`,
       { params, withCredentials: true }
     )
