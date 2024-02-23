@@ -58,12 +58,6 @@ async function count({
   page_size = 20,
 }) {
   return await knex('retur')
-    .select(
-      'retur.*',
-      'sales.nama as nama_sales',
-      'customer.nama_toko',
-      'order.tanggal_faktur'
-    )
     .leftJoin('order', 'order.nomor_faktur', '=', 'retur.nomor_faktur')
     .leftJoin('sales', 'sales.id', '=', 'retur.sales_id')
     .leftJoin('customer', 'customer.id', '=', 'retur.customer_id')
