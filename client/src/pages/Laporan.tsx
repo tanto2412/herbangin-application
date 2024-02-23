@@ -103,7 +103,7 @@ const Laporan = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await fetchSalesData(undefined, undefined, true)
+        const data = await fetchSalesData()
         setSalesList(data.result)
       } catch (error) {
         const axiosError = error as AxiosError

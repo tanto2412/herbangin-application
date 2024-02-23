@@ -41,8 +41,10 @@ const MasterPelanggan = () => {
   const [toggleDimScreen, setToogle] = useState(HIDE_DIMSCREEN)
   const [IDToChange, setIDToChange] = useState<number | null>(null)
   const [nameToChange, setNameToChange] = useState<string | null>(null)
-  const [searchCategory, setSearchCategory] = useState<string | null>(null)
-  const [searchTerm, setSearchTerm] = useState<string | null>(null)
+  const [searchCategory, setSearchCategory] = useState<string | undefined>(
+    undefined
+  )
+  const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined)
   const [searchItemObject, setsearchItemObject] = useState<any | null>(null)
   const { setUserName } = useUserContext()
   const params = useParams()
@@ -69,10 +71,12 @@ const MasterPelanggan = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let data = {} as Pagination<CustomersData>
-        if (searchTerm != null && searchCategory != null)
-          data = await fetchCustomersData(searchCategory, searchTerm)
-        else data = await fetchCustomersData()
+        const data = await fetchCustomersData(
+          searchCategory,
+          searchTerm,
+          Number(params.page),
+          false
+        )
         setCustomersData(data)
       } catch (error) {
         const axiosError = error as AxiosError
@@ -212,8 +216,8 @@ const MasterPelanggan = () => {
         break
     }
     if (data.checkSearch == '' && data.checkSearchItemObject == '') {
-      setSearchTerm(null)
-      setSearchCategory(null)
+      setSearchTerm(undefined)
+      setSearchCategory(undefined)
       setsearchItemObject(null)
       reset()
     } else {

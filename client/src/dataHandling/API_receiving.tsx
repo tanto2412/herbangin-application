@@ -5,12 +5,20 @@ import { baseURL } from './Constants'
 const receivingDataURL = 'receiving'
 
 export const fetchReceivingData = async (
-  searchTerm?: string | null
+  searchTerm?: string | null,
+  page?: number | null,
+  all: boolean = true
 ): Promise<Pagination<ReceivingData>> => {
   try {
-    let params = {}
+    const params = new URLSearchParams()
     if (searchTerm != null && searchTerm != '') {
-      params = { nomor: searchTerm }
+      params.append('nomor', searchTerm)
+    }
+    if (page != null) {
+      params.append('page', page.toString())
+    }
+    if (all) {
+      params.append('page_size', '0')
     }
     const response = await axios.get<Pagination<ReceivingData>>(
       `${baseURL}/${receivingDataURL}`,

@@ -64,7 +64,7 @@ const PenerimaanBarang = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await fetchReceivingData(searchTerm)
+        const data = await fetchReceivingData(searchTerm, undefined, false)
         setReceivingData(data)
       } catch (error) {
         const axiosError = error as AxiosError

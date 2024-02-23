@@ -7,7 +7,7 @@ const salesDataURL = 'sales'
 export const fetchSalesData = async (
   searchTerm?: string | null,
   page?: number | null,
-  all?: boolean | null
+  all: boolean = true
 ): Promise<Pagination<SalesData>> => {
   try {
     const params = new URLSearchParams()

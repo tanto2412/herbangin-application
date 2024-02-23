@@ -37,8 +37,10 @@ const MasterBarang = () => {
   const [toggleDimScreen, setToogle] = useState(HIDE_DIMSCREEN)
   const [IDToChange, setIDToChange] = useState<number | null>(null)
   const [nameToChange, setNameToChange] = useState<string | null>(null)
-  const [searchCategory, setSearchCategory] = useState<string | null>(null)
-  const [searchTerm, setSearchTerm] = useState<string | null>(null)
+  const [searchCategory, setSearchCategory] = useState<string | undefined>(
+    undefined
+  )
+  const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined)
   const [disableStateBatasFastMoving, setdisableStateBatasFastMoving] =
     useState(false)
   const { setUserName } = useUserContext()
@@ -66,11 +68,12 @@ const MasterBarang = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let data = {} as Pagination<ProductsData>
-        if (searchTerm != null && searchCategory != null)
-          data = await fetchProductsData(searchCategory, searchTerm)
-        else data = await fetchProductsData()
-
+        const data = await fetchProductsData(
+          searchCategory,
+          searchTerm,
+          undefined,
+          false
+        )
         setProductsData(data)
       } catch (error) {
         const axiosError = error as AxiosError
@@ -188,8 +191,8 @@ const MasterBarang = () => {
     }
 
     if (data.checkSearch == '') {
-      setSearchTerm(null)
-      setSearchCategory(null)
+      setSearchTerm(undefined)
+      setSearchCategory(undefined)
       reset()
     } else {
       setSearchTerm(data.checkSearch)

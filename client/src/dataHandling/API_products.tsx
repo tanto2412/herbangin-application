@@ -6,12 +6,20 @@ const productsDataURL = 'products'
 
 export const fetchProductsData = async (
   searchCategory: string = 'nama_barang',
-  searchTerm?: string | null
+  searchTerm?: string | null,
+  page?: number | null,
+  all: boolean = true
 ): Promise<Pagination<ProductsData>> => {
   try {
-    let params: Record<string, string | number> = {}
-    if (searchTerm != null && searchTerm !== '') {
-      params[searchCategory] = searchTerm
+    const params = new URLSearchParams()
+    if (searchTerm != null && searchTerm != '') {
+      params.append(searchCategory, searchTerm)
+    }
+    if (page != null) {
+      params.append('page', page.toString())
+    }
+    if (all) {
+      params.append('page_size', '0')
     }
     const response = await axios.get<Pagination<ProductsData>>(
       `${baseURL}/${productsDataURL}`,
