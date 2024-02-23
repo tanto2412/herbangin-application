@@ -1,9 +1,8 @@
 import PageTitle from '../components/PageTitle'
-import PdfViewer from '../components/PdfViewer'
 import { useForm } from 'react-hook-form'
 import FloatingLabelFormComponent from '../components/FloatingLabelFormComponent'
 import { dateToEpochmillis } from '../dataHandling/Constants'
-import { createSearchParams, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { fetchCustomersData } from '../dataHandling/API_customers'
 import {
@@ -104,8 +103,8 @@ const Laporan = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await fetchSalesData()
-        setSalesList(data)
+        const data = await fetchSalesData(undefined, undefined, true)
+        setSalesList(data.result)
       } catch (error) {
         const axiosError = error as AxiosError
         if (axiosError.response?.status === 401) {

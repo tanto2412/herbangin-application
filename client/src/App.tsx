@@ -40,37 +40,82 @@ function App() {
               element={
                 <ProtectedRoute redirectTo="/" outlet={<MasterUser />} />
               }
-            />
+            >
+              <Route
+                path=":page"
+                element={
+                  <ProtectedRoute redirectTo="/" outlet={<MasterUser />} />
+                }
+              />
+            </Route>
             <Route
               path="pelanggan"
               element={
                 <ProtectedRoute redirectTo="/" outlet={<MasterPelanggan />} />
               }
-            />
+            >
+              <Route
+                path=":page"
+                element={
+                  <ProtectedRoute redirectTo="/" outlet={<MasterPelanggan />} />
+                }
+              />
+            </Route>
             <Route
               path="sales"
               element={
                 <ProtectedRoute redirectTo="/" outlet={<MasterSales />} />
               }
-            />
+            >
+              <Route
+                path=":page"
+                element={
+                  <ProtectedRoute redirectTo="/" outlet={<MasterSales />} />
+                }
+              />
+            </Route>
             <Route
               path="barang"
               element={
                 <ProtectedRoute redirectTo="/" outlet={<MasterBarang />} />
               }
-            />
+            >
+              <Route
+                path=":page"
+                element={
+                  <ProtectedRoute redirectTo="/" outlet={<MasterBarang />} />
+                }
+              />
+            </Route>
             <Route
               path="penerimaan"
               element={
                 <ProtectedRoute redirectTo="/" outlet={<PenerimaanBarang />} />
               }
-            />
+            >
+              <Route
+                path=":page"
+                element={
+                  <ProtectedRoute
+                    redirectTo="/"
+                    outlet={<PenerimaanBarang />}
+                  />
+                }
+              />
+            </Route>
             <Route
               path="penjualan"
               element={
                 <ProtectedRoute redirectTo="/" outlet={<PenjualanBarang />} />
               }
-            />
+            >
+              <Route
+                path=":page"
+                element={
+                  <ProtectedRoute redirectTo="/" outlet={<PenjualanBarang />} />
+                }
+              />
+            </Route>
             <Route
               path="retur"
               element={
@@ -79,7 +124,17 @@ function App() {
                   outlet={<ReturPenjualanBarang />}
                 />
               }
-            />
+            >
+              <Route
+                path=":page"
+                element={
+                  <ProtectedRoute
+                    redirectTo="/"
+                    outlet={<ReturPenjualanBarang />}
+                  />
+                }
+              />
+            </Route>
             <Route
               path="pembayaran"
               element={
@@ -88,13 +143,30 @@ function App() {
                   outlet={<PembayaranJualBarang />}
                 />
               }
-            />
+            >
+              <Route
+                path=":page"
+                element={
+                  <ProtectedRoute
+                    redirectTo="/"
+                    outlet={<PembayaranJualBarang />}
+                  />
+                }
+              />
+            </Route>
             <Route
               path="giro"
               element={
                 <ProtectedRoute redirectTo="/" outlet={<GiroPenjualan />} />
               }
-            />
+            >
+              <Route
+                path=":page"
+                element={
+                  <ProtectedRoute redirectTo="/" outlet={<GiroPenjualan />} />
+                }
+              />
+            </Route>
             <Route
               path="report"
               element={<ProtectedRoute redirectTo="/" outlet={<Laporan />} />}

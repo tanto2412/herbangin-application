@@ -4,7 +4,11 @@ const logger = require('../../logger')
 
 async function search(req, res) {
   const giros = await giroModel.search(req.query)
-  res.json(giros)
+  const pagination = {
+    result: giros,
+    pages: await giroModel.count(req.query),
+  }
+  res.json(pagination)
 }
 
 async function getById(req, res) {

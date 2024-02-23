@@ -1,3 +1,8 @@
+export interface Pagination<Type> {
+  result: Type[]
+  pages: number
+}
+
 export interface UsersData {
   id: number
   nama: string

@@ -38,6 +38,30 @@ async function search({
     })
 }
 
+async function count({
+  nomor_faktur = null,
+  jenis_pembayaran = null,
+  page_size = 20,
+}) {
+  return await knex('payment')
+    .where((builder) => {
+      if (nomor_faktur) {
+        builder.where('nomor_faktur', nomor_faktur)
+      }
+
+      if (jenis_pembayaran) {
+        builder.where('jenis_pembayaran', jenis_pembayaran)
+      }
+    })
+    .count('*')
+    .then((result) => {
+      return Math.ceil(parseInt(result[0].count, 10) / page_size)
+    })
+    .catch((error) => {
+      console.error(error)
+    })
+}
+
 async function getById(id) {
   return await knex('payment').where('id', id).first()
 }
@@ -173,6 +197,7 @@ async function removeByOrderId(id, trx) {
 module.exports = {
   JenisPembayaran,
   search,
+  count,
   getById,
   create,
   edit,

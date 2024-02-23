@@ -6,7 +6,11 @@ const logger = require('../../logger')
 
 async function search(req, res) {
   const returs = await returModel.search(req.query)
-  res.json(returs)
+  const pagination = {
+    result: returs,
+    pages: await returModel.count(req.query),
+  }
+  res.json(pagination)
 }
 
 async function getById(req, res) {

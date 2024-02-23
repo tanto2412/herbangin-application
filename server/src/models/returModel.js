@@ -50,6 +50,49 @@ async function search({
     })
 }
 
+async function count({
+  nomor_faktur = null,
+  nomor_retur = null,
+  customer = null,
+  sales = null,
+  page_size = 20,
+}) {
+  return await knex('retur')
+    .select(
+      'retur.*',
+      'sales.nama as nama_sales',
+      'customer.nama_toko',
+      'order.tanggal_faktur'
+    )
+    .leftJoin('order', 'order.nomor_faktur', '=', 'retur.nomor_faktur')
+    .leftJoin('sales', 'sales.id', '=', 'retur.sales_id')
+    .leftJoin('customer', 'customer.id', '=', 'retur.customer_id')
+    .where((builder) => {
+      if (nomor_faktur) {
+        builder.where('retur.nomor_faktur', nomor_faktur)
+      }
+
+      if (nomor_retur) {
+        builder.where('retur.id', nomor_retur)
+      }
+
+      if (sales) {
+        builder.where('retur.sales_id', sales)
+      }
+
+      if (customer) {
+        builder.where('retur.customer_id', customer)
+      }
+    })
+    .count('*')
+    .then((result) => {
+      return Math.ceil(parseInt(result[0].count, 10) / page_size)
+    })
+    .catch((error) => {
+      console.error(error)
+    })
+}
+
 async function getById(id) {
   return await knex('retur')
     .select(
@@ -301,6 +344,7 @@ async function removeByOrderId(id, trx) {
 
 module.exports = {
   search,
+  count,
   getById,
   getItemsById,
   getItemsByIds,

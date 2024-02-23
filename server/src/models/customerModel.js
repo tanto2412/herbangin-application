@@ -11,12 +11,10 @@ async function search({
   return await knex('customer')
     .select('customer.*', 'sales.nama as nama_sales')
     .where((builder) => {
-      // Check if 'name' is provided and apply the condition
       if (nama_toko) {
         builder.where('nama_toko', 'ilike', `%${nama_toko}%`)
       }
 
-      // Check if 'sales' is provided and apply the condition
       if (sales) {
         builder.where('sales_id', sales)
       }
@@ -31,6 +29,27 @@ async function search({
     .catch((error) => {
       logger.error(error)
       return []
+    })
+}
+
+async function count({ nama_toko = null, sales = null, page_size = 20 }) {
+  return await knex('customer')
+    .where((builder) => {
+      if (nama_toko) {
+        builder.where('nama_toko', 'ilike', `%${nama_toko}%`)
+      }
+
+      if (sales) {
+        builder.where('sales_id', sales)
+      }
+    })
+    .leftJoin('sales', 'sales.id', '=', 'customer.sales_id')
+    .count('*')
+    .then((result) => {
+      return Math.ceil(parseInt(result[0].count, 10) / page_size)
+    })
+    .catch((error) => {
+      console.error(error)
     })
 }
 
@@ -93,6 +112,7 @@ async function remove(id) {
 
 module.exports = {
   search,
+  count,
   getById,
   create,
   edit,

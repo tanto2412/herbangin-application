@@ -22,6 +22,22 @@ async function search({ nomor = null, page = 1, page_size = 20 }) {
     })
 }
 
+async function count({ nomor = null, page_size = 20 }) {
+  return await knex('receiving')
+    .where((builder) => {
+      if (nomor) {
+        builder.where('id', nomor)
+      }
+    })
+    .count('*')
+    .then((result) => {
+      return Math.ceil(parseInt(result[0].count, 10) / page_size)
+    })
+    .catch((error) => {
+      console.error(error)
+    })
+}
+
 async function getById(id) {
   return await knex('receiving').where('id', id).first()
 }
@@ -195,6 +211,7 @@ async function remove(id) {
 
 module.exports = {
   search,
+  count,
   getById,
   getItemsById,
   create,

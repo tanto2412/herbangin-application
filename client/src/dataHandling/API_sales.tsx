@@ -1,18 +1,26 @@
 import axios from 'axios'
-import { SalesData } from './interfaces'
+import { Pagination, SalesData } from './interfaces'
 import { baseURL } from './Constants'
 
 const salesDataURL = 'sales'
 
 export const fetchSalesData = async (
-  searchTerm?: string | null
-): Promise<SalesData[]> => {
+  searchTerm?: string | null,
+  page?: number | null,
+  all?: boolean | null
+): Promise<Pagination<SalesData>> => {
   try {
-    let params = {}
+    const params = new URLSearchParams()
     if (searchTerm != null && searchTerm != '') {
-      params = { nama: searchTerm }
+      params.append('nama', searchTerm)
     }
-    const response = await axios.get<SalesData[]>(
+    if (page != null) {
+      params.append('page', page.toString())
+    }
+    if (all) {
+      params.append('page_size', '0')
+    }
+    const response = await axios.get<Pagination<SalesData>>(
       `${baseURL}/${salesDataURL}`,
       { params, withCredentials: true }
     )

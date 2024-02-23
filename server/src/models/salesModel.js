@@ -5,7 +5,6 @@ const logger = require('../../logger')
 async function search({ nama = null, page = 1, page_size = 20 }) {
   return await knex('sales')
     .where((builder) => {
-      // Check if 'name' is provided and apply the condition
       if (nama) {
         builder.where('nama', 'ilike', `%${nama}%`)
       }
@@ -18,6 +17,22 @@ async function search({ nama = null, page = 1, page_size = 20 }) {
     })
     .catch(() => {
       return []
+    })
+}
+
+async function count({ nama = null, page_size = 20 }) {
+  return await knex('sales')
+    .where((builder) => {
+      if (nama) {
+        builder.where('nama', 'ilike', `%${nama}%`)
+      }
+    })
+    .count('*')
+    .then((result) => {
+      return Math.ceil(parseInt(result[0].count, 10) / page_size)
+    })
+    .catch((error) => {
+      console.error(error)
     })
 }
 
@@ -49,6 +64,7 @@ async function remove(id) {
 
 module.exports = {
   search,
+  count,
   getById,
   create,
   edit,

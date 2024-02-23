@@ -1,6 +1,7 @@
 import { ReactNode } from 'react'
 import ActionButton from './ActionButton'
 import PageTitle from './PageTitle'
+import { NavLink } from 'react-router-dom'
 
 interface Props {
   titleNameString: string
@@ -11,6 +12,8 @@ interface Props {
   onClickAdd?: () => void
   handleOnChangeCategory?: (e: React.ChangeEvent<HTMLSelectElement>) => void
   searchItemObject?: ReactNode | null
+  pages?: number | undefined
+  currentPage?: number | undefined
 }
 
 const ShowDataTemplate = ({
@@ -22,6 +25,8 @@ const ShowDataTemplate = ({
   onClickAdd,
   handleOnChangeCategory,
   searchItemObject,
+  pages = 0,
+  currentPage = 1,
 }: Props) => {
   return (
     <>
@@ -93,28 +98,34 @@ const ShowDataTemplate = ({
           <div className="col-6">
             <nav>
               <ul className="pagination pagination-sm justify-content-end">
-                <li className="page-item disabled">
-                  <a className="page-link">Previous</a>
-                </li>
                 <li className="page-item">
-                  <a className="page-link" href="#">
-                    1
-                  </a>
+                  <NavLink
+                    to={`${currentPage > 1 ? currentPage - 1 : 1}`}
+                    className={({ isActive }) =>
+                      (isActive ? 'disabled' : '') + ' page-link'
+                    }
+                  >
+                    Previous
+                  </NavLink>
                 </li>
+                {Array.from({ length: pages }, (_, index) => (
+                  <NavLink
+                    to={`./${index + 1}`}
+                    key={index}
+                    className="page-link"
+                  >
+                    {index + 1}
+                  </NavLink>
+                ))}
                 <li className="page-item">
-                  <a className="page-link" href="#">
-                    2
-                  </a>
-                </li>
-                <li className="page-item">
-                  <a className="page-link" href="#">
-                    3
-                  </a>
-                </li>
-                <li className="page-item">
-                  <a className="page-link" href="#">
+                  <NavLink
+                    to={`./${pages}`}
+                    className={({ isActive }) =>
+                      (isActive ? 'disabled' : '') + ' page-link'
+                    }
+                  >
                     Next
-                  </a>
+                  </NavLink>
                 </li>
               </ul>
             </nav>

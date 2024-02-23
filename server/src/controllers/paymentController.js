@@ -5,7 +5,11 @@ const logger = require('../../logger')
 
 async function search(req, res) {
   const payments = await paymentModel.search(req.query)
-  res.json(payments)
+  const pagination = {
+    result: payments,
+    pages: await paymentModel.count(req.query),
+  }
+  res.json(pagination)
 }
 
 async function getById(req, res) {

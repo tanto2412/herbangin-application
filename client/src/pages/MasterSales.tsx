@@ -15,7 +15,7 @@ import {
   updateSalesRecord,
   deleteSalesRecord,
 } from '../dataHandling/API_sales'
-import { SalesData } from '../dataHandling/interfaces'
+import { Pagination, SalesData } from '../dataHandling/interfaces'
 import {
   ADD_DIMSCREEN,
   DELETE_DIMSCREEN,
@@ -25,16 +25,18 @@ import {
 } from '../dataHandling/Constants'
 import { useUserContext } from '../components/UserContext'
 import { AxiosError } from 'axios'
+import { useParams } from 'react-router-dom'
 
 const componentTitle = 'Master Sales'
 
 const MasterSales = () => {
-  const [salesList, setSalesList] = useState<SalesData[]>([])
+  const [salesData, setSalesData] = useState<Pagination<SalesData> | null>(null)
   const [toggleDimScreen, setToogle] = useState(HIDE_DIMSCREEN)
   const [IDToChange, setIDToChange] = useState<number | null>(null)
   const [nameToChange, setNameToChange] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState<string | null>(null)
   const { setUserName } = useUserContext()
+  const params = useParams()
 
   const idFormComponentList = ['checkSalesName']
   const labelFormComponentList = ['Sales Name']
@@ -42,8 +44,12 @@ const MasterSales = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await fetchSalesData(searchTerm)
-        setSalesList(data)
+        const data = await fetchSalesData(
+          searchTerm,
+          Number(params.page),
+          false
+        )
+        setSalesData(data)
       } catch (error) {
         const axiosError = error as AxiosError
         if (axiosError.response?.status === 401) {
@@ -53,7 +59,7 @@ const MasterSales = () => {
     }
 
     fetchData()
-  }, [IDToChange, toggleDimScreen, searchTerm, setUserName])
+  }, [IDToChange, toggleDimScreen, searchTerm, setUserName, params])
 
   const selectItemColumns = () => (
     <option key={1} value="nama">
@@ -67,7 +73,7 @@ const MasterSales = () => {
     })
 
   const tableData = () =>
-    salesList.map((SalesData) => {
+    salesData?.result.map((SalesData) => {
       return (
         <tr key={SalesData.id}>
           <td>{SalesData?.id}</td>
@@ -96,7 +102,7 @@ const MasterSales = () => {
     dimScreenName == HIDE_DIMSCREEN && reset()
 
     if (dimScreenName == EDIT_DIMSCREEN || dimScreenName == DELETE_DIMSCREEN) {
-      const selectedSale = salesList.find(
+      const selectedSale = salesData?.result.find(
         (sale) => sale.id === IDToChangeParam
       ) as SalesData
       setValue(idFormComponentList[0], selectedSale.nama)
@@ -145,6 +151,8 @@ const MasterSales = () => {
           tableDataObject={tableData()}
           onClickAdd={() => onClickAction(ADD_DIMSCREEN)}
           register={register}
+          pages={salesData?.pages}
+          currentPage={Number(params.id) | 1}
         />
         <DimScreenTemplate
           idScreenFormat="dimScreen"

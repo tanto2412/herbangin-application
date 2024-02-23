@@ -4,7 +4,11 @@ const logger = require('../../logger')
 
 async function search(req, res) {
   const products = await productModel.search(req.query)
-  res.json(products)
+  const pagination = {
+    result: products,
+    pages: await productModel.count(req.query),
+  }
+  res.json(pagination)
 }
 
 async function getById(req, res) {

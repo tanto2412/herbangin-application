@@ -21,7 +21,6 @@ async function search({
 }) {
   return await knex('product')
     .where((builder) => {
-      // Check if 'name' is provided and apply the condition
       if (nama_barang) {
         builder.where('nama_barang', 'ilike', `%${nama_barang}%`)
       }
@@ -38,6 +37,30 @@ async function search({
     })
     .catch(() => {
       return []
+    })
+}
+
+async function count({
+  kode_barang = null,
+  nama_barang = null,
+  page_size = 20,
+}) {
+  return await knex('product')
+    .where((builder) => {
+      if (nama_barang) {
+        builder.where('nama_barang', 'ilike', `%${nama_barang}%`)
+      }
+
+      if (kode_barang) {
+        builder.where('kode_barang', 'ilike', `%${kode_barang}%`)
+      }
+    })
+    .count('*')
+    .then((result) => {
+      return Math.ceil(parseInt(result[0].count, 10) / page_size)
+    })
+    .catch((error) => {
+      console.error(error)
     })
 }
 
@@ -149,6 +172,7 @@ module.exports = {
   JenisBarang,
   ReferenceType,
   search,
+  count,
   getById,
   getByIds,
   create,

@@ -2,15 +2,15 @@ import { NavLink, Outlet } from 'react-router-dom'
 
 const menuMap = new Map<string, string>([
   ['Home', ''],
-  ['Master User', 'user'],
-  ['Master Pelanggan', 'pelanggan'],
-  ['Master Sales', 'sales'],
-  ['Master Barang', 'barang'],
-  ['Penerimaan Barang', 'penerimaan'],
-  ['Penjualan Barang', 'penjualan'],
-  ['Retur Barang', 'retur'],
-  ['Pembayaran Jual Barang', 'pembayaran'],
-  ['Giro Penjualan', 'giro'],
+  ['Master User', 'user/1'],
+  ['Master Pelanggan', 'pelanggan/1'],
+  ['Master Sales', 'sales/1'],
+  ['Master Barang', 'barang/1'],
+  ['Penerimaan Barang', 'penerimaan/1'],
+  ['Penjualan Barang', 'penjualan/1'],
+  ['Retur Barang', 'retur/1'],
+  ['Pembayaran Jual Barang', 'pembayaran/1'],
+  ['Giro Penjualan', 'giro/1'],
   ['Laporan', 'report'],
 ])
 

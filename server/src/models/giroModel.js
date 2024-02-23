@@ -18,7 +18,6 @@ async function search({
 }) {
   return await knex('giro')
     .where((builder) => {
-      // Check if 'nomor_faktur' is provided and apply the condition
       if (nomor_faktur) {
         builder.where('nomor_faktur', nomor_faktur)
       }
@@ -43,6 +42,40 @@ async function search({
     })
     .catch(() => {
       return []
+    })
+}
+
+async function count({
+  nomor_faktur = null,
+  nomor_pembayaran = null,
+  nomor_giro = null,
+  status_pembayaran = null,
+  page_size = 20,
+}) {
+  return await knex('giro')
+    .where((builder) => {
+      if (nomor_faktur) {
+        builder.where('nomor_faktur', nomor_faktur)
+      }
+
+      if (nomor_pembayaran) {
+        builder.where('nomor_pembayaran', nomor_pembayaran)
+      }
+
+      if (nomor_giro) {
+        builder.where('nomor_giro', 'ILIKE', `%${nomor_giro}%`)
+      }
+
+      if (status_pembayaran) {
+        builder.where('status_pembayaran', status_pembayaran)
+      }
+    })
+    .count('*')
+    .then((result) => {
+      return Math.ceil(parseInt(result[0].count, 10) / page_size)
+    })
+    .catch((error) => {
+      console.error(error)
     })
 }
 
@@ -144,6 +177,7 @@ async function removeByOrderId(id, trx) {
 module.exports = {
   StatusPembayaran,
   search,
+  count,
   getById,
   getByPaymentId,
   editByPaymentId,
