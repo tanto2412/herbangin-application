@@ -1,7 +1,7 @@
 import PageTitle from '../components/PageTitle'
 import { useForm } from 'react-hook-form'
 import FloatingLabelFormComponent from '../components/FloatingLabelFormComponent'
-import { dateToEpochmillis } from '../dataHandling/Constants'
+import { dateToEpochmillis } from '../utils/DateFunction'
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { fetchCustomersData } from '../dataHandling/API_customers'

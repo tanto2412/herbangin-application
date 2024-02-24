@@ -1,16 +1,25 @@
 interface Props {
-  itemID: number | null
+  itemID?: number | null
   itemName: string | null
+  actionString?: string
 }
 
-const DeleteScreenContent = ({ itemID, itemName }: Props) => {
+const DeleteScreenContent = ({
+  itemID,
+  itemName,
+  actionString = 'menghapus record',
+}: Props) => {
   return (
     <>
       <div className="pb-5">
-        <div>Apakah anda yakin untuk menghapus record ini?</div>
+        <div>Apakah anda yakin untuk {actionString} ini?</div>
         <div>
           <br />
-          ID: <b>{itemID}</b> <br />
+          {itemID && (
+            <>
+              ID: <b>{itemID}</b> <br />
+            </>
+          )}
           <b>{itemName}</b>
         </div>
       </div>

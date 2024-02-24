@@ -29,10 +29,12 @@ import {
   HIDE_DIMSCREEN,
   ReceivingColumns,
   ReceivingItemsColumns,
+} from '../dataHandling/Constants'
+import {
   dateToEpochmillis,
   epochmillisToDate,
   epochmillisToInputDate,
-} from '../dataHandling/Constants'
+} from '../utils/DateFunction'
 import { fetchProductsData } from '../dataHandling/API_products'
 import { useUserContext } from '../components/UserContext'
 import { AxiosError } from 'axios'

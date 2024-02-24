@@ -82,18 +82,28 @@ const ShowDataTemplate = ({
                   <th>Actions</th>
                 </tr>
               </thead>
-              <tbody className="table-group-divider">{tableDataObject}</tbody>
+              <tbody className="table-group-divider">
+                {tableDataObject}
+                {tableDataObject != null &&
+                  Object.keys(tableDataObject).length === 0 && (
+                    <tr key={0}>
+                      <td>Data kosong</td>
+                    </tr>
+                  )}
+              </tbody>
             </table>
           </div>
         </div>
         <div className="row justify-content-between">
           <div className="col-6">
-            <ActionButton
-              buttonCaption="Add"
-              buttonSize={15}
-              showCaption={true}
-              onClick={onClickAdd}
-            />
+            {onClickAdd && (
+              <ActionButton
+                buttonCaption="Add"
+                buttonSize={15}
+                showCaption={true}
+                onClick={onClickAdd}
+              />
+            )}
           </div>
           <div className="col-6">
             <nav>

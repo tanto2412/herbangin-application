@@ -20,6 +20,7 @@ import {
   CustomersData,
   OrderData,
   OrderDataDetails,
+  Pagination,
   ProductsData,
   SalesData,
 } from '../dataHandling/interfaces'
@@ -30,20 +31,23 @@ import {
   HIDE_DIMSCREEN,
   OrderColumns,
   OrderItemsColumns,
+} from '../dataHandling/Constants'
+import {
   dateToEpochmillis,
   epochmillisToDate,
   epochmillisToInputDate,
-} from '../dataHandling/Constants'
+} from '../utils/DateFunction'
 import { fetchProductsData } from '../dataHandling/API_products'
 import { fetchCustomersData } from '../dataHandling/API_customers'
 import { fetchSalesData } from '../dataHandling/API_sales'
 import { useUserContext } from '../components/UserContext'
 import { AxiosError } from 'axios'
+import { useParams } from 'react-router-dom'
 
 const componentTitle = 'Penjualan Barang'
 
 const PenjualanBarang = () => {
-  const [orderList, setOrderList] = useState<OrderData[]>([])
+  const [orderData, setOrderData] = useState<Pagination<OrderData> | null>(null)
   const [selectedOrder, setSelectedOrder] = useState<OrderDataDetails[]>([])
   const [productList, setProductList] = useState<ProductsData[]>([])
   const [customersList, setCustomersList] = useState<CustomersData[]>([])
@@ -56,8 +60,10 @@ const PenjualanBarang = () => {
   const [IDToChange, setIDToChange] = useState<number | null>(null)
   const [nameToChange, setNameToChange] = useState<string | null>(null)
 
-  const [searchCategory, setSearchCategory] = useState<string | null>(null)
-  const [searchTerm, setSearchTerm] = useState<string | null>(null)
+  const [searchCategory, setSearchCategory] = useState<string | undefined>(
+    undefined
+  )
+  const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined)
   const [searchSalesCustomer, setSearchSalesCustomer] = useState<string | null>(
     null
   )
@@ -65,24 +71,36 @@ const PenjualanBarang = () => {
 
   const [showAddItemRow, setShowAddItemRow] = useState(false)
   const { setUserName } = useUserContext()
+  const params = useParams()
+
+  const [productCheckStock, setProductCheckStock] = useState(0)
+  const [productCheckStockID, setProductCheckStockID] = useState<string | null>(
+    null
+  )
 
   const idFormComponentList = [
     'checkTglFaktur',
     'checkSalesName',
     'checkCustomerNameAddr',
   ]
-  const labelFormComponentList = ['Tanggal Faktur', 'Nama Sales', 'Pelanggan']
+  const labelFormComponentList = [
+    'Tanggal Faktur Penjualan',
+    'Nama Sales',
+    'Pelanggan',
+  ]
 
   const idFormComponentListItem = ['checkProductID', 'checkJumlahBarang']
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let data = {} as OrderData[]
-        if (searchTerm != null && searchCategory != null)
-          data = await fetchOrderData(searchCategory, searchTerm)
-        else data = await fetchOrderData()
-        setOrderList(data)
+        const data = await fetchOrderData(
+          searchCategory,
+          searchTerm,
+          Number(params.page),
+          false
+        )
+        setOrderData(data)
       } catch (error) {
         const axiosError = error as AxiosError
         if (axiosError.response?.status === 401) {
@@ -117,7 +135,7 @@ const PenjualanBarang = () => {
     const fetchData = async () => {
       try {
         const data = await fetchProductsData()
-        setProductList(data)
+        setProductList(data.result)
       } catch (error) {
         const axiosError = error as AxiosError
         if (axiosError.response?.status === 401) {
@@ -127,13 +145,36 @@ const PenjualanBarang = () => {
     }
 
     fetchData()
-  }, [setUserName])
+  }, [toggleDimScreen, setUserName])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (productCheckStockID == null) {
+          setProductCheckStock(0)
+        } else {
+          const data = productList.find(
+            (product) => product.id === Number(productCheckStockID)
+          )
+          if (data) setProductCheckStock(data.stok_barang)
+          else setProductCheckStock(0)
+        }
+      } catch (error) {
+        const axiosError = error as AxiosError
+        if (axiosError.response?.status === 401) {
+          setUserName('')
+        }
+      }
+    }
+
+    fetchData()
+  }, [productCheckStockID, setUserName])
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const data = await fetchSalesData()
-        setSalesList(data)
+        setSalesList(data.result)
       } catch (error) {
         const axiosError = error as AxiosError
         if (axiosError.response?.status === 401) {
@@ -149,7 +190,7 @@ const PenjualanBarang = () => {
     const fetchData = async () => {
       try {
         const data = await fetchCustomersData()
-        setCustomersListToSearch(data)
+        setCustomersListToSearch(data.result)
       } catch (error) {
         const axiosError = error as AxiosError
         if (axiosError.response?.status === 401) {
@@ -164,8 +205,10 @@ const PenjualanBarang = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await fetchCustomersData('sales', searchSalesCustomer)
-        setCustomersList(data)
+        if (searchSalesCustomer != null) {
+          const data = await fetchCustomersData('sales', searchSalesCustomer)
+          setCustomersList(data.result)
+        } else setCustomersList([])
       } catch (error) {
         const axiosError = error as AxiosError
         if (axiosError.response?.status === 401) {
@@ -227,6 +270,13 @@ const PenjualanBarang = () => {
       )
     })
 
+  const handleOnChangeCheckStock = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const selectedValue = e.target.value
+    setProductCheckStockID(selectedValue)
+  }
+
   const addItemRow = () => (
     <>
       <tr key={999}>
@@ -234,10 +284,11 @@ const PenjualanBarang = () => {
         <td>
           <select
             className="form-select form-select-sm"
-            id={idFormComponentList[0]}
+            id={idFormComponentListItem[0]}
             {...register('checkProductID', {
               required: true,
             })}
+            onChange={handleOnChangeCheckStock}
           >
             {productListOptions()}
           </select>
@@ -248,8 +299,10 @@ const PenjualanBarang = () => {
             id={idFormComponentListItem[1]}
             className="form-control form-control-sm"
             autoComplete="off"
+            placeholder={'Max: ' + productCheckStock}
             {...register('checkJumlahBarang', {
               required: true,
+              max: productCheckStock,
             })}
           />
         </td>
@@ -287,7 +340,7 @@ const PenjualanBarang = () => {
     })
 
   const tableData = () =>
-    orderList?.map((PenjualanBarangData, index) => {
+    orderData?.result.map((PenjualanBarangData, index) => {
       return (
         <tr key={index}>
           <td>{PenjualanBarangData?.nomor_faktur}</td>
@@ -353,6 +406,7 @@ const PenjualanBarang = () => {
     switch (dimScreenName) {
       case ADD_DIMSCREEN:
         setIDToChange(null)
+        setValue(idFormComponentList[0], '')
         setValue(idFormComponentList[1], '')
         setValue(idFormComponentList[2], '')
         setSearchSalesCustomer(null)
@@ -360,7 +414,7 @@ const PenjualanBarang = () => {
       case EDIT_DIMSCREEN:
       case DELETE_DIMSCREEN:
         setIDToChange(IDToChangeParam)
-        const selectedOrderID = orderList.find(
+        const selectedOrderID = orderData?.result.find(
           (order) => order.nomor_faktur === IDToChangeParam
         ) as OrderData
         const dateToChange = epochmillisToInputDate(
@@ -375,6 +429,7 @@ const PenjualanBarang = () => {
       case HIDE_DIMSCREEN:
         setShowAddItemRow(false)
         setSearchSalesCustomer(null)
+        setProductCheckStockID(null)
         reset()
         break
     }
@@ -384,6 +439,8 @@ const PenjualanBarang = () => {
     switch (itemAction) {
       case ADD_DIMSCREEN:
         setShowAddItemRow(true)
+        setValue(idFormComponentListItem[0], '')
+        setValue(idFormComponentListItem[1], '')
         clearErrors()
         break
       case EDIT_DIMSCREEN:
@@ -397,6 +454,7 @@ const PenjualanBarang = () => {
         break
       case HIDE_DIMSCREEN:
         setShowAddItemRow(false)
+        setProductCheckStockID(null)
         clearErrors()
         break
     }
@@ -409,6 +467,10 @@ const PenjualanBarang = () => {
       setError('checkJumlahBarang', { type: 'manual' })
       return
     }
+    if (Number(added_jumlah_barang) > productCheckStock) {
+      setError('checkJumlahBarang', { type: 'manual' })
+      return
+    }
     const selectedProduct = productList.find(
       (product) => product.id === Number(added_product_id)
     ) as ProductsData
@@ -416,6 +478,8 @@ const PenjualanBarang = () => {
     const subTotalTemp = Number(added_jumlah_barang) * selectedProduct.harga
 
     const newRow: OrderDataDetails = {
+      //id as dummy value
+      id: 0,
       product_id: Number(added_product_id),
       kode_barang: selectedProduct.kode_barang,
       nama_barang: selectedProduct.nama_barang,
@@ -427,6 +491,7 @@ const PenjualanBarang = () => {
 
     setSelectedOrder([...selectedOrder, newRow])
     setShowAddItemRow(false)
+    setProductCheckStockID(null)
     resetField('checkProductID')
     resetField('checkJumlahBarang')
   }
@@ -481,8 +546,8 @@ const PenjualanBarang = () => {
     }
 
     if (data.checkSearch == '' && data.checkSearchItemObject == '') {
-      setSearchTerm(null)
-      setSearchCategory(null)
+      setSearchTerm(undefined)
+      setSearchCategory(undefined)
       setsearchItemObject(null)
       reset()
     } else {
@@ -496,6 +561,11 @@ const PenjualanBarang = () => {
     }
 
     setToogle(HIDE_DIMSCREEN)
+    setValue(idFormComponentList[0], '')
+    setValue(idFormComponentList[1], '')
+    setValue(idFormComponentList[2], '')
+    setSearchSalesCustomer(null)
+    setProductCheckStockID(null)
   }
 
   const handleOnChangeSalesCustomer = (
@@ -525,6 +595,8 @@ const PenjualanBarang = () => {
           handleOnChangeCategory={handleOnChangeCategory}
           searchItemObject={searchItemObject}
           register={register}
+          pages={orderData?.pages}
+          currentPage={Number(params.id) | 1}
         />
         <DimScreenTemplate
           idScreenFormat="dimScreen"
@@ -602,7 +674,7 @@ const PenjualanBarang = () => {
                     : errors.checkCustomerNameAddr
                     ? 'Nama Pelanggan harus dipilih'
                     : errors.checkJumlahBarang
-                    ? 'Nama dan Jumlah barang harus diisi'
+                    ? 'Nama dan Jumlah barang harus diisi dengan benar'
                     : errors.checkProductID
                     ? 'Data Penjualan harus ada'
                     : ''}

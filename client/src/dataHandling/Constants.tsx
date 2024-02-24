@@ -6,6 +6,10 @@ export const DELETE_DIMSCREEN = 'Delete'
 export const FAST_MOVING = 'FAST_MOVING'
 export const SLOW_MOVING = 'SLOW_MOVING'
 
+export const LUNAS = 'LUNAS'
+export const DITOLAK = 'DITOLAK'
+export const BELUM_LUNAS = 'BELUM_LUNAS'
+
 export const baseURL = 'http://localhost:3000/api'
 
 export const SalesColumns = ['Sales ID', 'Nama Sales']
@@ -46,6 +50,14 @@ export const OrderColumns = [
   'Nama Sales',
   'Total Penjualan',
 ]
+export const ReturColumns = [
+  'Nomor Penjualan',
+  'Nomor Retur',
+  'Tanggal Retur',
+  'Nama Customer',
+  'Nama Sales',
+  'Total Retur',
+]
 export const OrderItemsColumns = [
   'Kode Barang',
   'Nama Barang',
@@ -53,29 +65,32 @@ export const OrderItemsColumns = [
   'Harga satuan',
   'Subtotal',
 ]
-
-export const epochmillisToDate = (epochMillis: number) => {
-  const date: Date = new Date(Number(epochMillis))
-  const formattedDate: string = new Intl.DateTimeFormat('id-ID').format(date)
-  return formattedDate
-}
-
-export const epochmillisToInputDate = (epochMillis: number) => {
-  const date: Date = new Date(Number(epochMillis))
-  const dateString: string = new Intl.DateTimeFormat('id-ID').format(date)
-  const [day, month, year] = dateString.split('/').map(Number)
-  const formattedDate =
-    year +
-    '-' +
-    String(month).padStart(2, '0') +
-    '-' +
-    String(day).padStart(2, '0')
-  return formattedDate
-}
-
-export const dateToEpochmillis = (dateString: string) => {
-  const [year, month, day] = dateString.split('-').map(Number)
-  const date: Date = new Date(year, month - 1, day) // Month is 0-based in JavaScript Date constructor
-  const epochMillis: number = date.getTime()
-  return epochMillis
-}
+export const ReturItemsColumns = [
+  'Item Penjualan',
+  'Nama Barang',
+  'Jumlah',
+  'Harga satuan',
+  'Subtotal',
+]
+export const PaymentColumns = [
+  'Nomor Pembayaran',
+  'Nomor Penjualan',
+  'Tanggal Pembayaran',
+  'Nama Sales',
+  'Nama Customer',
+  'Total pembayaran',
+  'Cara pembayaran',
+  'Nomor Giro',
+  'Tanggal Jatuh Tempo',
+  'Nama Bank',
+  'Keterangan',
+]
+export const GiroColumns = [
+  'Nomor Giro',
+  'Nomor Pembayaran',
+  'Nomor Penjualan',
+  'Nama Bank',
+  'Tanggal Jatuh Tempo',
+  'Tanggal Pencairan',
+  'Status Pembayaran',
+]
