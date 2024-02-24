@@ -19,6 +19,8 @@ async function search({
   return await knex('payment')
     .select(
       'payment.*',
+      'sales.nama as nama_sales',
+      'customer.nama_toko',
       'giro.id as giro_id',
       'giro.nomor_giro',
       'giro.nama_bank',
@@ -26,6 +28,9 @@ async function search({
       'giro.tanggal_pencairan',
       'giro.status_pembayaran'
     )
+    .leftJoin('order', 'order.nomor_faktur', '=', 'payment.nomor_faktur')
+    .leftJoin('sales', 'sales.id', '=', 'order.sales_id')
+    .leftJoin('customer', 'customer.id', '=', 'order.customer_id')
     .leftJoin('giro', 'giro.nomor_pembayaran', '=', 'payment.id')
     .where((builder) => {
       // Check if 'nomor_faktur' is provided and apply the condition
@@ -78,6 +83,8 @@ async function getById(id) {
   return await knex('payment')
     .select(
       'payment.*',
+      'sales.nama as nama_sales',
+      'customer.nama_toko',
       'giro.id as giro_id',
       'giro.nomor_giro',
       'giro.nama_bank',
@@ -85,6 +92,9 @@ async function getById(id) {
       'giro.tanggal_pencairan',
       'giro.status_pembayaran'
     )
+    .leftJoin('order', 'order.nomor_faktur', '=', 'payment.nomor_faktur')
+    .leftJoin('sales', 'sales.id', '=', 'order.sales_id')
+    .leftJoin('customer', 'customer.id', '=', 'order.customer_id')
     .leftJoin('giro', 'giro.nomor_pembayaran', '=', 'payment.id')
     .where('payment.id', id)
     .first()
