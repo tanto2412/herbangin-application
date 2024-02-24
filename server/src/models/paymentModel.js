@@ -153,6 +153,7 @@ async function edit(
     nomor_faktur,
     tanggal,
     jumlah_pembayaran,
+    jenis_pembayaran,
     remarks,
     nomor_giro,
     tanggal_jatuh_tempo,
@@ -167,6 +168,7 @@ async function edit(
             nomor_faktur,
             tanggal,
             jumlah_pembayaran,
+            jenis_pembayaran,
             remarks,
             updated_at: knex.raw('now()'),
           })
@@ -180,6 +182,7 @@ async function edit(
           nomor_pembayaran: payment.id,
           nomor_giro,
           tanggal_jatuh_tempo,
+          jenis_pembayaran,
           nama_bank,
         }
         let giro = await giroModel.editByPaymentId(giroSpec, trx)
@@ -187,6 +190,8 @@ async function edit(
           await trx.rollback()
           return null
         }
+      } else {
+        let giro = await giroModel.removeByPaymentId(payment.id, trx)
       }
 
       return payment
