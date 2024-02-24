@@ -58,8 +58,8 @@ const PenerimaanBarang = () => {
   const { setUserName } = useUserContext()
   const params = useParams()
 
-  const idFormComponentList = ['checkTglFaktur']
-  const labelFormComponentList = ['Tanggal Faktur']
+  const idFormComponentList = ['checkTglPenerimaan']
+  const labelFormComponentList = ['Tanggal Penerimaan']
 
   const idFormComponentListItem = ['checkProductID', 'checkJumlahBarang']
 
@@ -159,12 +159,6 @@ const PenerimaanBarang = () => {
         <td> </td>
         <td> </td>
         <td className="text-center" width={100}>
-          {/* <ActionButton
-            buttonCaption="Delete"
-            buttonSize={20}
-            showCaption={false}
-            onClick={() => onClickItemAction(DELETE_DIMSCREEN, index)}
-          /> */}
           <OKCancelButton
             okString={'OK'}
             okButtonType={'button'}
@@ -337,7 +331,7 @@ const PenerimaanBarang = () => {
     switch (toggleDimScreen) {
       case ADD_DIMSCREEN:
       case EDIT_DIMSCREEN:
-        const dateToChange = dateToEpochmillis(data.checkTglFaktur)
+        const dateToChange = dateToEpochmillis(data.checkTglPenerimaan)
         const data_to_change: ReceivingData = {
           // id and total as dummy value
           id: 0,
@@ -408,12 +402,13 @@ const PenerimaanBarang = () => {
                     id={idFormComponentList[0]}
                     className="form-control"
                     autoComplete="off"
-                    {...register('checkTglFaktur', {
+                    {...register('checkTglPenerimaan', {
                       required: true,
                     })}
                   />
                   <div id="invalid-feedback">
-                    {errors.checkTglFaktur && 'Tanggal Penerimaan harus diisi'}
+                    {errors.checkTglPenerimaan &&
+                      'Tanggal Penerimaan harus diisi'}
                     {errors.checkJumlahBarang &&
                       'Nama dan Jumlah barang harus diisi'}
                     {errors.checkProductID && 'Data Penerimaan harus ada'}

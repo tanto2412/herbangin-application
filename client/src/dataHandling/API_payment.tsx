@@ -32,22 +32,6 @@ export const fetchPaymentData = async (
   }
 }
 
-export const fetchPaymentDataByID = async (
-  searchID?: string | null
-): Promise<PaymentData> => {
-  try {
-    console.log
-    const response = await axios.get<PaymentData>(
-      `${baseURL}/${paymentDataURL}/${searchID}`,
-      { withCredentials: true }
-    )
-    return response.data
-  } catch (error) {
-    console.error('Error fetching payment data by ID:', error)
-    throw error
-  }
-}
-
 export const addPaymentRecord = async (newPayment: PaymentData) => {
   try {
     const response = await axios.post(

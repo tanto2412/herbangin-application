@@ -63,6 +63,7 @@ export interface OrderData {
   total: number
   alamat: string
   items: OrderDataDetails[]
+  remainingAmount: number
 }
 
 export interface OrderDataDetails {
@@ -104,9 +105,7 @@ export interface PaymentData {
   id: number
   nomor_faktur: number
   tanggal: number
-  customer_id: number
   nama_toko: string
-  sales_id: number
   nama_sales: string
   jumlah_pembayaran: number
   jenis_pembayaran: string

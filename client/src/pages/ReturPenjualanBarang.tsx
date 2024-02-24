@@ -139,7 +139,7 @@ const PenjualanBarang = () => {
         if (selectedNomorFaktur != null) {
           const data = await fetchOrderDataDetails(selectedNomorFaktur)
           setOrderItemList(data)
-        }
+        } else setOrderItemList([])
       } catch (error) {
         const axiosError = error as AxiosError
         if (axiosError.response?.status === 401) {
@@ -221,7 +221,7 @@ const PenjualanBarang = () => {
     }
 
     fetchData()
-  }, [productSoldCheckStockID, setUserName])
+  }, [productSoldCheckStockID, selectedNomorFaktur, setUserName])
 
   const selectItemColumns = () => (
     <>
@@ -289,7 +289,7 @@ const PenjualanBarang = () => {
         <td>
           <select
             className="form-select form-select-sm"
-            id={idFormComponentList[0]}
+            id={idFormComponentListItem[0]}
             {...register('checkOrderItemID', {
               required: true,
             })}
@@ -411,10 +411,16 @@ const PenjualanBarang = () => {
     switch (dimScreenName) {
       case ADD_DIMSCREEN:
         setIDToChange(null)
-        setValue(idFormComponentList[0], '')
-        setValue(idFormComponentList[1], '')
-        setValue(idFormComponentListItem[0], '')
-        setValue(idFormComponentListItem[1], '')
+        setSelectedNomorFaktur(null)
+        setProductSoldCheckStockID(null)
+        setProductSoldCheckStock(0)
+
+        idFormComponentList.forEach((id) => {
+          setValue(id, '')
+        })
+        idFormComponentListItem.forEach((id) => {
+          setValue(id, '')
+        })
         break
       case EDIT_DIMSCREEN:
       case DELETE_DIMSCREEN:
@@ -433,11 +439,14 @@ const PenjualanBarang = () => {
         setNameToChange(dateToChange)
 
         setSelectedNomorFaktur(selectedReturID.nomor_faktur)
-        setValue(idFormComponentListItem[0], '')
-        setValue(idFormComponentListItem[1], '')
+        idFormComponentListItem.forEach((id) => {
+          setValue(id, '')
+        })
         break
       case HIDE_DIMSCREEN:
         setShowAddItemRow(false)
+        setProductSoldCheckStockID(null)
+        setProductSoldCheckStock(0)
         reset()
         break
     }
@@ -446,8 +455,18 @@ const PenjualanBarang = () => {
   const onClickItemAction = (itemAction: string, indexToChangeParam?: any) => {
     switch (itemAction) {
       case ADD_DIMSCREEN:
-        setShowAddItemRow(true)
-        clearErrors()
+        if (selectedNomorFaktur == null) {
+          setError('checkNomorFaktur', { type: 'manual' })
+        } else {
+          setShowAddItemRow(true)
+          setProductSoldCheckStockID(null)
+          setProductSoldCheckStock(0)
+          idFormComponentListItem.forEach((id) => {
+            setValue(id, '')
+          })
+          clearErrors()
+        }
+
         break
       case EDIT_DIMSCREEN:
         break
@@ -459,7 +478,12 @@ const PenjualanBarang = () => {
         }
         break
       case HIDE_DIMSCREEN:
+        setProductSoldCheckStockID(null)
+        setProductSoldCheckStock(0)
         setShowAddItemRow(false)
+        idFormComponentListItem.forEach((id) => {
+          setValue(id, '')
+        })
         clearErrors()
         break
     }
@@ -472,7 +496,7 @@ const PenjualanBarang = () => {
       setError('checkJumlahBarang', { type: 'manual' })
       return
     }
-    if (Number(added_jumlah_barang) > productSoldCheckStock) {
+    if (Number(added_jumlah_barang) > Number(productSoldCheckStock)) {
       setError('checkJumlahBarang', { type: 'manual' })
       return
     }
@@ -495,9 +519,14 @@ const PenjualanBarang = () => {
     }
 
     setSelectedRetur([...selectedRetur, newRow])
+    setProductSoldCheckStockID(null)
+    setProductSoldCheckStock(0)
     setShowAddItemRow(false)
     resetField('checkOrderItemID')
     resetField('checkJumlahBarang')
+    idFormComponentListItem.forEach((id) => {
+      setValue(id, '')
+    })
   }
 
   const {
@@ -575,8 +604,13 @@ const PenjualanBarang = () => {
   const handleOnChangeNoFaktur = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedValue = e.target.value
     setSelectedNomorFaktur(Number(selectedValue))
-    setValue(idFormComponentListItem[0], '')
-    setValue(idFormComponentListItem[1], '')
+    setProductSoldCheckStockID(null)
+    setProductSoldCheckStock(0)
+    setShowAddItemRow(false)
+    clearErrors()
+    idFormComponentListItem.forEach((id) => {
+      setValue(id, '')
+    })
   }
 
   const handleOnChangeCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {

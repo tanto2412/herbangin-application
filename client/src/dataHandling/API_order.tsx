@@ -32,6 +32,21 @@ export const fetchOrderData = async (
   }
 }
 
+export const fetchOrderRemainingAmount = async (
+  id: number
+): Promise<number> => {
+  try {
+    const response = await axios.get<OrderData>(
+      `${baseURL}/${orderDataURL}/${id}`,
+      { withCredentials: true }
+    )
+    return response.data.remainingAmount
+  } catch (error) {
+    console.error('Error fetching order data details:', error)
+    throw error
+  }
+}
+
 export const fetchOrderDataDetails = async (
   id: number
 ): Promise<OrderDataDetails[]> => {

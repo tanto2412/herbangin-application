@@ -10,6 +10,11 @@ export const LUNAS = 'LUNAS'
 export const DITOLAK = 'DITOLAK'
 export const BELUM_LUNAS = 'BELUM_LUNAS'
 
+export const TUNAI = 'TUNAI'
+export const GIRO = 'GIRO'
+export const TRANSFER = 'TRANSFER'
+export const LAIN_LAIN = 'LAIN_LAIN'
+
 export const baseURL = 'http://localhost:3000/api'
 
 export const SalesColumns = ['Sales ID', 'Nama Sales']
@@ -44,14 +49,14 @@ export const ReceivingItemsColumns = [
   'Subtotal',
 ]
 export const OrderColumns = [
-  'Nomor Penjualan',
+  'Nomor Faktur',
   'Tanggal Penjualan',
   'Nama Customer',
   'Nama Sales',
   'Total Penjualan',
 ]
 export const ReturColumns = [
-  'Nomor Penjualan',
+  'Nomor Faktur',
   'Nomor Retur',
   'Tanggal Retur',
   'Nama Customer',
@@ -74,7 +79,7 @@ export const ReturItemsColumns = [
 ]
 export const PaymentColumns = [
   'Nomor Pembayaran',
-  'Nomor Penjualan',
+  'Nomor Faktur',
   'Tanggal Pembayaran',
   'Nama Sales',
   'Nama Customer',
@@ -88,7 +93,7 @@ export const PaymentColumns = [
 export const GiroColumns = [
   'Nomor Giro',
   'Nomor Pembayaran',
-  'Nomor Penjualan',
+  'Nomor Faktur',
   'Nama Bank',
   'Tanggal Jatuh Tempo',
   'Tanggal Pencairan',

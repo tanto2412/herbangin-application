@@ -406,9 +406,12 @@ const PenjualanBarang = () => {
     switch (dimScreenName) {
       case ADD_DIMSCREEN:
         setIDToChange(null)
-        setValue(idFormComponentList[0], '')
-        setValue(idFormComponentList[1], '')
-        setValue(idFormComponentList[2], '')
+        idFormComponentList.forEach((id) => {
+          setValue(id, '')
+        })
+        idFormComponentListItem.forEach((id) => {
+          setValue(id, '')
+        })
         setSearchSalesCustomer(null)
         break
       case EDIT_DIMSCREEN:
@@ -439,8 +442,12 @@ const PenjualanBarang = () => {
     switch (itemAction) {
       case ADD_DIMSCREEN:
         setShowAddItemRow(true)
-        setValue(idFormComponentListItem[0], '')
-        setValue(idFormComponentListItem[1], '')
+        idFormComponentListItem.forEach((id) => {
+          setValue(id, '')
+        })
+        idFormComponentListItem.forEach((id) => {
+          setValue(id, '')
+        })
         clearErrors()
         break
       case EDIT_DIMSCREEN:
@@ -514,7 +521,7 @@ const PenjualanBarang = () => {
       case EDIT_DIMSCREEN:
         const dateToChange = dateToEpochmillis(data.checkTglFaktur)
         const data_to_change: OrderData = {
-          // nomor_faktur, nama_toko, sales_id, nama_sales, total and alamat as dummy value
+          // nomor_faktur, nama_toko, sales_id, nama_sales, total, alamat, remainingAmout as dummy value
           nomor_faktur: 0,
           tanggal_faktur: dateToChange,
           customer_id: Number(data.checkCustomerNameAddr),
@@ -524,6 +531,7 @@ const PenjualanBarang = () => {
           total: 0,
           alamat: '',
           items: selectedOrder,
+          remainingAmount: 0,
         }
 
         if (toggleDimScreen == ADD_DIMSCREEN) {

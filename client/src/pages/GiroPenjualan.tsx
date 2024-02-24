@@ -5,6 +5,7 @@ import DimScreenTemplate from '../components/DimScreenTemplate'
 import ShowDataTemplate from '../components/ShowDataTemplate'
 
 import FloatingLabelFormComponent from '../components/FloatingLabelFormComponent'
+import DeleteScreenContent from '../components/DeleteScreenContent'
 import OKCancelButton from '../components/OKCancelButton'
 
 import {
@@ -25,7 +26,6 @@ import {
 import { useUserContext } from '../components/UserContext'
 import { AxiosError } from 'axios'
 import { useParams } from 'react-router-dom'
-import DeleteScreenContent from '../components/DeleteScreenContent'
 import { dateToEpochmillis, epochmillisToDate } from '../utils/DateFunction'
 
 const componentTitle = 'Giro Penjualan'
