@@ -2,6 +2,7 @@
 const orderModel = require('../models/orderModel')
 const productModel = require('../models/productModel')
 const customerModel = require('../models/customerModel')
+const paymentModel = require('../models/paymentModel')
 const logger = require('../../logger')
 
 async function search(req, res) {
@@ -23,6 +24,15 @@ async function getById(req, res) {
 
   const orderItems = await orderModel.getItemsById(req.params.id)
   order.items = orderItems
+
+  let existingPayments = await paymentModel.search({ nomor_faktur })
+  let existingAmount = order.total
+  for (let payment of existingPayments) {
+    if (payment.id != id) {
+      existingAmount -= payment.jumlah_pembayaran
+    }
+  }
+  order.remainingAmount = existingAmount
 
   res.json(order)
 }
