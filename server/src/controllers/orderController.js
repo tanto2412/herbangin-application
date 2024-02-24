@@ -25,12 +25,12 @@ async function getById(req, res) {
   const orderItems = await orderModel.getItemsById(req.params.id)
   order.items = orderItems
 
-  let existingPayments = await paymentModel.search({ nomor_faktur })
+  let existingPayments = await paymentModel.search({
+    nomor_faktur: req.params.id,
+  })
   let existingAmount = order.total
   for (let payment of existingPayments) {
-    if (payment.id != id) {
-      existingAmount -= payment.jumlah_pembayaran
-    }
+    existingAmount -= payment.jumlah_pembayaran
   }
   order.remainingAmount = existingAmount
 
