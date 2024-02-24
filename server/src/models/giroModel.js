@@ -144,14 +144,23 @@ async function editByPaymentId(
     trx = knex
   }
   return await trx('giro')
+    .insert({
+      nomor_faktur,
+      nomor_giro,
+      nomor_pembayaran,
+      tanggal_jatuh_tempo,
+      nama_bank,
+      status_pembayaran,
+    })
+    .onConflict('nomor_pembayaran')
     .update({
       nomor_faktur,
       nomor_giro,
       tanggal_jatuh_tempo,
       nama_bank,
       status_pembayaran,
+      tanggal_pencairan: null,
     })
-    .where('nomor_pembayaran', nomor_pembayaran)
     .returning('*')
 }
 
