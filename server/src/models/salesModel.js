@@ -9,7 +9,9 @@ async function search({ nama = null, page = 1, page_size = 20 }) {
         builder.where('nama', 'ilike', `%${nama}%`)
       }
     })
-    .limit(page_size === 0 ? null : page_size)
+    .modify((queryBuilder) => {
+      if (page_size > 0) queryBuilder.limit(page_size)
+    })
     .offset((page - 1) * page_size)
     .orderBy('id')
     .then((rows) => {

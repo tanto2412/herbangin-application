@@ -135,8 +135,21 @@ async function pembayaran({
     .leftJoin('sales', 'sales.id', '=', 'order.sales_id')
     .leftJoin('customer', 'customer.id', '=', 'order.customer_id')
     .where((builder) => {
+      if (product) {
+        builder.whereExists(
+          knex('order_item')
+            .select('*')
+            .where(
+              'order_item.nomor_faktur',
+              '=',
+              knex.raw('"order".nomor_faktur')
+            )
+            .andWhere('order_item.product_id', '=', product)
+        )
+      }
+
       if (from && to) {
-        builder.whereBetween('payment.tanggal', [
+        builder.andWhereBetween('payment.tanggal', [
           from,
           Number(to) + 24 * 60 * 60 * 1000,
         ])
@@ -187,8 +200,21 @@ async function piutang({
     .leftJoin('customer', 'customer.id', '=', 'order.customer_id')
     .leftJoin('payment', 'payment.nomor_faktur', '=', 'order.nomor_faktur')
     .where((builder) => {
+      if (product) {
+        builder.whereExists(
+          knex('order_item')
+            .select('*')
+            .where(
+              'order_item.nomor_faktur',
+              '=',
+              knex.raw('"order".nomor_faktur')
+            )
+            .andWhere('order_item.product_id', '=', product)
+        )
+      }
+
       if (from && to) {
-        builder.whereBetween('order.tanggal_faktur', [
+        builder.andWhereBetween('order.tanggal_faktur', [
           from,
           Number(to) + 24 * 60 * 60 * 1000,
         ])
@@ -217,7 +243,7 @@ async function piutang({
 }
 
 async function giro(
-  { sales = null, customer = null, from = null, to = null },
+  { product = null, sales = null, customer = null, from = null, to = null },
   status_pembayaran
 ) {
   return await knex('giro')
@@ -236,8 +262,21 @@ async function giro(
     .leftJoin('order', 'order.nomor_faktur', '=', 'giro.nomor_faktur')
     .leftJoin('customer', 'customer.id', '=', 'order.customer_id')
     .where((builder) => {
+      if (product) {
+        builder.whereExists(
+          knex('order_item')
+            .select('*')
+            .where(
+              'order_item.nomor_faktur',
+              '=',
+              knex.raw('"order".nomor_faktur')
+            )
+            .andWhere('order_item.product_id', '=', product)
+        )
+      }
+
       if (from && to) {
-        builder.whereBetween('giro.tanggal', [
+        builder.andWhereBetween('giro.tanggal', [
           from,
           Number(to) + 24 * 60 * 60 * 1000,
         ])

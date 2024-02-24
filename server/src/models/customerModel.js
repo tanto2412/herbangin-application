@@ -20,7 +20,9 @@ async function search({
       }
     })
     .leftJoin('sales', 'sales.id', '=', 'customer.sales_id')
-    .limit(page_size === 0 ? null : page_size)
+    .modify((queryBuilder) => {
+      if (page_size > 0) queryBuilder.limit(page_size)
+    })
     .offset((page - 1) * page_size)
     .orderBy('customer.id')
     .then((rows) => {

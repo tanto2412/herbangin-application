@@ -29,7 +29,9 @@ async function search({
         builder.where('kode_barang', 'ilike', `%${kode_barang}%`)
       }
     })
-    .limit(page_size === 0 ? null : page_size)
+    .modify((queryBuilder) => {
+      if (page_size > 0) queryBuilder.limit(page_size)
+    })
     .offset((page - 1) * page_size)
     .orderBy('id')
     .then((rows) => {
