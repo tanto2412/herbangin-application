@@ -19,6 +19,7 @@ async function search({
   return await knex('payment')
     .select(
       'payment.*',
+      'giro.id as giro_id',
       'giro.nomor_giro',
       'giro.nama_bank',
       'giro.tanggal_jatuh_tempo',
@@ -75,6 +76,7 @@ async function getById(id) {
   return await knex('payment')
     .select(
       'payment.*',
+      'giro.id as giro_id',
       'giro.nomor_giro',
       'giro.nama_bank',
       'giro.tanggal_jatuh_tempo',
