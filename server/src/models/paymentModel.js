@@ -17,10 +17,19 @@ async function search({
   page_size = 20,
 }) {
   return await knex('payment')
+    .select(
+      'payment.*',
+      'giro.nomor_giro',
+      'giro.nama_bank',
+      'giro.tanggal_jatuh_tempo',
+      'giro.tanggal_pencairan',
+      'giro.status_pembayaran'
+    )
+    .leftJoin('giro', 'giro.nomor_pembayaran', '=', 'payment.id')
     .where((builder) => {
       // Check if 'nomor_faktur' is provided and apply the condition
       if (nomor_faktur) {
-        builder.where('nomor_faktur', nomor_faktur)
+        builder.where('payment.nomor_faktur', nomor_faktur)
       }
 
       if (jenis_pembayaran) {
@@ -29,7 +38,7 @@ async function search({
     })
     .limit(page_size === 0 ? null : page_size)
     .offset((page - 1) * page_size)
-    .orderBy('id')
+    .orderBy('payment.id')
     .then((rows) => {
       return rows
     })
@@ -63,7 +72,18 @@ async function count({
 }
 
 async function getById(id) {
-  return await knex('payment').where('id', id).first()
+  return await knex('payment')
+    .select(
+      'payment.*',
+      'giro.nomor_giro',
+      'giro.nama_bank',
+      'giro.tanggal_jatuh_tempo',
+      'giro.tanggal_pencairan',
+      'giro.status_pembayaran'
+    )
+    .leftJoin('giro', 'giro.nomor_pembayaran', '=', 'payment.id')
+    .where('payment.id', id)
+    .first()
 }
 
 async function create({
