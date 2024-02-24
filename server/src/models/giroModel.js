@@ -137,6 +137,7 @@ async function editByPaymentId(
     tanggal_jatuh_tempo,
     nama_bank,
     status_pembayaran = StatusPembayaran.BELUM_LUNAS,
+    tanggal_pencairan = null,
   },
   trx = null
 ) {
@@ -151,16 +152,17 @@ async function editByPaymentId(
       tanggal_jatuh_tempo,
       nama_bank,
       status_pembayaran,
+      tanggal_pencairan,
     })
     .onConflict('nomor_pembayaran')
-    .update({
-      nomor_faktur,
-      nomor_giro,
-      tanggal_jatuh_tempo,
-      nama_bank,
-      status_pembayaran,
-      tanggal_pencairan: null,
-    })
+    .merge([
+      'nomor_faktur',
+      'nomor_giro',
+      'tanggal_jatuh_tempo',
+      'nama_bank',
+      'status_pembayaran',
+      'tanggal_pencairan',
+    ])
     .returning('*')
 }
 

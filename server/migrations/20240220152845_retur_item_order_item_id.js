@@ -10,7 +10,7 @@ exports.up = function (knex) {
       .notNullable()
       .references('id')
       .inTable('order_item')
-      .defaultTo(12)
+      .defaultTo(1)
   })
 }
 
