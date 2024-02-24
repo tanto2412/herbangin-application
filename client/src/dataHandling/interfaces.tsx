@@ -66,6 +66,7 @@ export interface OrderData {
 }
 
 export interface OrderDataDetails {
+  id: number
   product_id: number
   kode_barang: string
   nama_barang: string
@@ -73,4 +74,55 @@ export interface OrderDataDetails {
   satuan_terkecil: string
   harga_satuan: number
   subtotal: number
+}
+
+export interface ReturData {
+  id: number
+  nomor_faktur: number
+  tanggal_faktur: number
+  tanggal: number
+  customer_id: number
+  nama_toko: string
+  sales_id: number
+  nama_sales: string
+  total: number
+  items: ReturDataDetails[]
+}
+
+export interface ReturDataDetails {
+  order_item_id: number
+  product_id: number
+  kode_barang: string
+  nama_barang: string
+  jumlah_barang: number
+  satuan_terkecil: string
+  harga_satuan: number
+  subtotal: number
+}
+
+export interface PaymentData {
+  id: number
+  nomor_faktur: number
+  tanggal: number
+  customer_id: number
+  nama_toko: string
+  sales_id: number
+  nama_sales: string
+  jumlah_pembayaran: number
+  jenis_pembayaran: string
+  remarks: string
+  nomor_giro: string
+  nama_bank: string
+  tanggal_jatuh_tempo: number
+}
+
+export interface GiroData {
+  id: number
+  nomor_giro: string
+  nomor_faktur: number
+  nomor_pembayaran: number
+  nama_bank: string
+  tanggal_jatuh_tempo: number
+  tanggal_pencairan: number
+  status_pembayaran: string
 }
