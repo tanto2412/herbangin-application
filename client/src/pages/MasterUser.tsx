@@ -9,8 +9,8 @@ import DeleteScreenContent from '../components/DeleteScreenContent'
 import ActionButton from '../components/ActionButton'
 import OKCancelButton from '../components/OKCancelButton'
 
-import UserColumns from '../dataTable/UserColumns.json'
-import UserData from '../dataTable/UserData.json'
+import UserColumns from '../dummyDataTable/UserColumns.json'
+import UserData from '../dummyDataTable/UserData.json'
 
 const componentTitle = 'Master User'
 

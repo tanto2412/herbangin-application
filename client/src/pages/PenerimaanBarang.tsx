@@ -242,6 +242,14 @@ const PenerimaanBarang = () => {
       )
     })
 
+  const getTotalFromItems = () => {
+    let tempTotal = 0
+    selectedReceiving?.map((receivingItemDetails) => {
+      tempTotal += Number(receivingItemDetails.subtotal)
+    })
+    return tempTotal
+  }
+
   const onClickAction = (dimScreenName: string, IDToChangeParam?: any) => {
     setToogle(dimScreenName)
     switch (dimScreenName) {
@@ -440,6 +448,15 @@ const PenerimaanBarang = () => {
                         {showAddItemRow && addItemRow()}
                         {selectedReceiving && tableDataItems()}
                       </tbody>
+                      <tfoot>
+                        <tr className="table-dark fw-bold">
+                          <td colSpan={3}>Total</td>
+                          <td>
+                            Rp. {Number(getTotalFromItems()).toLocaleString()}
+                          </td>
+                          <td></td>
+                        </tr>
+                      </tfoot>
                     </table>
                   </div>
                 </div>

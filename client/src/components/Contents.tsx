@@ -1,8 +1,8 @@
 import { NavLink, Outlet } from 'react-router-dom'
 
+// ['Master User', 'user/1'],
 const menuMap = new Map<string, string>([
   ['Home', ''],
-  ['Master User', 'user/1'],
   ['Master Pelanggan', 'pelanggan/1'],
   ['Master Sales', 'sales/1'],
   ['Master Barang', 'barang/1'],

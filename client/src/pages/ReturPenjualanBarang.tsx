@@ -406,6 +406,14 @@ const PenjualanBarang = () => {
       )
     })
 
+  const getTotalFromItems = () => {
+    let tempTotal = 0
+    selectedRetur?.map((returItemDetails) => {
+      tempTotal += Number(returItemDetails.subtotal)
+    })
+    return tempTotal
+  }
+
   const onClickAction = (dimScreenName: string, IDToChangeParam?: any) => {
     setToogle(dimScreenName)
     switch (dimScreenName) {
@@ -749,7 +757,16 @@ const PenjualanBarang = () => {
                       <tbody className="table-group-divider">
                         {showAddItemRow && addItemRow()}
                         {selectedRetur && tableDataItems()}
-                      </tbody>
+                      </tbody>{' '}
+                      <tfoot>
+                        <tr className="table-dark fw-bold">
+                          <td colSpan={4}>Total</td>
+                          <td>
+                            Rp. {Number(getTotalFromItems()).toLocaleString()}
+                          </td>
+                          <td></td>
+                        </tr>
+                      </tfoot>
                     </table>
                   </div>
                 </div>

@@ -30,15 +30,15 @@ const ShowDataTemplate = ({
 }: Props) => {
   return (
     <>
-      <div className="container">
+      <div className="container ms-0">
         <div className="row">
           <div className="col-12">
             <PageTitle titleName={titleNameString} />
           </div>
         </div>
-        <div className="row p-2">
-          <div className="col-12 align-bottom">
-            Filter{' '}
+        <div className="p-2 d-flex flex-row">
+          <div className="d-inline-flex me-1 my-auto">Filter</div>
+          <div className="d-inline-flex me-1">
             <select
               className="form-select-sm"
               name="checkSearchColumns"
@@ -47,15 +47,19 @@ const ShowDataTemplate = ({
             >
               {selectItemObject}
             </select>{' '}
-            {!searchItemObject && (
+          </div>
+          {!searchItemObject && (
+            <div className="d-inline-flex me-1">
               <input
                 type="input"
                 className="form-control-sm"
                 id="checkSearch"
                 {...register('checkSearch')}
               />
-            )}{' '}
-            {searchItemObject && (
+            </div>
+          )}{' '}
+          {searchItemObject && (
+            <div className="d-inline-flex me-1">
               <select
                 className="form-select-sm"
                 name="checkSearchItemObject"
@@ -63,7 +67,9 @@ const ShowDataTemplate = ({
               >
                 {searchItemObject}
               </select>
-            )}{' '}
+            </div>
+          )}{' '}
+          <div className="d-inline-flex me-1">
             <ActionButton
               buttonCaption="Search"
               buttonSize={15}
