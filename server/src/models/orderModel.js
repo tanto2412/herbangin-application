@@ -284,7 +284,6 @@ async function remove(nomor_faktur) {
     })
   } catch (error) {
     logger.error(error)
-    console.log(error)
     return null
   }
 }
