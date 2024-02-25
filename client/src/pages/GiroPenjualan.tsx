@@ -25,7 +25,7 @@ import {
 } from '../dataHandling/Constants'
 import { useUserContext } from '../components/UserContext'
 import { AxiosError } from 'axios'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { dateToEpochmillis, epochmillisToDate } from '../utils/DateFunction'
 
 const componentTitle = 'Giro Penjualan'
@@ -43,6 +43,7 @@ const GiroPenjualan = () => {
 
   const { setUserName } = useUserContext()
   const params = useParams()
+  const navigate = useNavigate()
 
   const idFormComponentList = ['checkNomorGiro', 'checkTglPencairan']
   const labelFormComponentList = ['Nomor Giro', 'Tanggal Pencairan']
@@ -181,6 +182,7 @@ const GiroPenjualan = () => {
       setsearchItemObject(null)
       reset()
     } else {
+      navigate('./1')
       setSearchCategory(data.checkSearchColumns)
       if (
         data.checkSearchColumns == 'nomor_giro' ||

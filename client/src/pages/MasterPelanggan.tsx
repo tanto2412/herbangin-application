@@ -30,7 +30,7 @@ import {
 } from '../dataHandling/Constants'
 import { useUserContext } from '../components/UserContext'
 import { AxiosError } from 'axios'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 const componentTitle = 'Master Pelanggan'
 
@@ -48,6 +48,7 @@ const MasterPelanggan = () => {
   const [searchItemObject, setsearchItemObject] = useState<any | null>(null)
   const { setUserName } = useUserContext()
   const params = useParams()
+  const navigate = useNavigate()
 
   const idFormComponentList = [
     'checkCustomerName',
@@ -221,6 +222,7 @@ const MasterPelanggan = () => {
       setsearchItemObject(null)
       reset()
     } else {
+      navigate('./1')
       setSearchCategory(data.checkSearchColumns)
       if (data.checkSearchColumns == 'nama_toko')
         setSearchTerm(data.checkSearch)

@@ -27,7 +27,7 @@ import {
 } from '../dataHandling/Constants'
 import { useUserContext } from '../components/UserContext'
 import { AxiosError } from 'axios'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 const componentTitle = 'Master Barang'
 
@@ -45,6 +45,7 @@ const MasterBarang = () => {
     useState(false)
   const { setUserName } = useUserContext()
   const params = useParams()
+  const navigate = useNavigate()
 
   const idFormComponentList = [
     'checkProductCode',
@@ -195,6 +196,7 @@ const MasterBarang = () => {
       setSearchCategory(undefined)
       reset()
     } else {
+      navigate('./1')
       setSearchTerm(data.checkSearch)
       setSearchCategory(data.checkSearchColumns)
     }

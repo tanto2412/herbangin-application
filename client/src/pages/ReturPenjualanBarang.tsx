@@ -46,7 +46,7 @@ import {
 } from '../dataHandling/API_order'
 import { AxiosError } from 'axios'
 import { useUserContext } from '../components/UserContext'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 const componentTitle = 'Retur Penjualan Barang'
 
@@ -74,6 +74,7 @@ const PenjualanBarang = () => {
   const [showAddItemRow, setShowAddItemRow] = useState(false)
   const { setUserName } = useUserContext()
   const params = useParams()
+  const navigate = useNavigate()
 
   const [productSoldCheckStock, setProductSoldCheckStock] = useState(0)
   const [productSoldCheckStockID, setProductSoldCheckStockID] = useState<
@@ -593,6 +594,7 @@ const PenjualanBarang = () => {
       setsearchItemObject(null)
       reset()
     } else {
+      navigate('./1')
       setSearchCategory(data.checkSearchColumns)
       if (
         data.checkSearchColumns == 'nomor_faktur' ||

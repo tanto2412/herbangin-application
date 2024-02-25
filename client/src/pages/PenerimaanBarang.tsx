@@ -38,7 +38,7 @@ import {
 import { fetchProductsData } from '../dataHandling/API_products'
 import { useUserContext } from '../components/UserContext'
 import { AxiosError } from 'axios'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 const componentTitle = 'Penerimaan Barang'
 
@@ -57,6 +57,7 @@ const PenerimaanBarang = () => {
   const [showAddItemRow, setShowAddItemRow] = useState(false)
   const { setUserName } = useUserContext()
   const params = useParams()
+  const navigate = useNavigate()
 
   const idFormComponentList = ['checkTglPenerimaan']
   const labelFormComponentList = ['Tanggal Penerimaan']
@@ -370,7 +371,10 @@ const PenerimaanBarang = () => {
     if (data.checkSearch == '') {
       setSearchTerm(null)
       reset()
-    } else setSearchTerm(data.checkSearch)
+    } else {
+      navigate('./1')
+      setSearchTerm(data.checkSearch)
+    }
 
     setToogle(HIDE_DIMSCREEN)
   }

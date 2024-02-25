@@ -25,7 +25,7 @@ import {
 } from '../dataHandling/Constants'
 import { useUserContext } from '../components/UserContext'
 import { AxiosError } from 'axios'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 const componentTitle = 'Master Sales'
 
@@ -37,6 +37,7 @@ const MasterSales = () => {
   const [searchTerm, setSearchTerm] = useState<string | null>(null)
   const { setUserName } = useUserContext()
   const params = useParams()
+  const navigate = useNavigate()
 
   const idFormComponentList = ['checkSalesName']
   const labelFormComponentList = ['Sales Name']
@@ -136,7 +137,10 @@ const MasterSales = () => {
     if (data.checkSearch == '') {
       setSearchTerm(null)
       reset()
-    } else setSearchTerm(data.checkSearch)
+    } else {
+      navigate('./1')
+      setSearchTerm(data.checkSearch)
+    }
 
     setToogle(HIDE_DIMSCREEN)
   }
