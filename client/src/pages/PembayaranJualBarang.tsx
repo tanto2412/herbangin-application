@@ -34,6 +34,7 @@ import {
   dateToEpochmillis,
   epochmillisToDate,
   epochmillisToInputDate,
+  isTutupBuku,
 } from '../utils/DateFunction'
 import {
   fetchOrderData,
@@ -212,6 +213,7 @@ const PembayaranJualBarang = () => {
               buttonCaption="Edit"
               buttonSize={20}
               showCaption={false}
+              disabled={isTutupBuku(PembayaranPenjualanData?.tanggal)}
               onClick={() =>
                 onClickAction(EDIT_DIMSCREEN, PembayaranPenjualanData?.id)
               }
@@ -220,6 +222,7 @@ const PembayaranJualBarang = () => {
               buttonCaption="Delete"
               buttonSize={20}
               showCaption={false}
+              disabled={isTutupBuku(PembayaranPenjualanData?.tanggal)}
               onClick={() =>
                 onClickAction(DELETE_DIMSCREEN, PembayaranPenjualanData?.id)
               }

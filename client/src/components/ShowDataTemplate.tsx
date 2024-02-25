@@ -46,7 +46,7 @@ const ShowDataTemplate = ({
               onChange={handleOnChangeCategory}
             >
               {selectItemObject}
-            </select>{' '}
+            </select>
           </div>
           {!searchItemObject && (
             <div className="d-inline-flex me-1">
@@ -57,7 +57,7 @@ const ShowDataTemplate = ({
                 {...register('checkSearch')}
               />
             </div>
-          )}{' '}
+          )}
           {searchItemObject && (
             <div className="d-inline-flex me-1">
               <select
@@ -68,7 +68,7 @@ const ShowDataTemplate = ({
                 {searchItemObject}
               </select>
             </div>
-          )}{' '}
+          )}
           <div className="d-inline-flex me-1">
             <ActionButton
               buttonCaption="Search"

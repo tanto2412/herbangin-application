@@ -36,6 +36,7 @@ import {
   dateToEpochmillis,
   epochmillisToDate,
   epochmillisToInputDate,
+  isTutupBuku,
 } from '../utils/DateFunction'
 import { fetchProductsData } from '../dataHandling/API_products'
 import { fetchCustomersData } from '../dataHandling/API_customers'
@@ -354,6 +355,7 @@ const PenjualanBarang = () => {
               buttonCaption="Edit"
               buttonSize={20}
               showCaption={false}
+              disabled={isTutupBuku(PenjualanBarangData?.tanggal_faktur)}
               onClick={() =>
                 onClickAction(EDIT_DIMSCREEN, PenjualanBarangData?.nomor_faktur)
               }
@@ -362,6 +364,7 @@ const PenjualanBarang = () => {
               buttonCaption="Delete"
               buttonSize={20}
               showCaption={false}
+              disabled={isTutupBuku(PenjualanBarangData?.tanggal_faktur)}
               onClick={() =>
                 onClickAction(
                   DELETE_DIMSCREEN,

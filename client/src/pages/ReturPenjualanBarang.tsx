@@ -37,6 +37,7 @@ import {
   dateToEpochmillis,
   epochmillisToDate,
   epochmillisToInputDate,
+  isTutupBuku,
 } from '../utils/DateFunction'
 import { fetchCustomersData } from '../dataHandling/API_customers'
 import { fetchSalesData } from '../dataHandling/API_sales'
@@ -362,6 +363,7 @@ const PenjualanBarang = () => {
               buttonCaption="Edit"
               buttonSize={20}
               showCaption={false}
+              disabled={isTutupBuku(ReturPenjualanBarangData?.tanggal_faktur)}
               onClick={() =>
                 onClickAction(EDIT_DIMSCREEN, ReturPenjualanBarangData?.id)
               }
@@ -370,6 +372,7 @@ const PenjualanBarang = () => {
               buttonCaption="Delete"
               buttonSize={20}
               showCaption={false}
+              disabled={isTutupBuku(ReturPenjualanBarangData?.tanggal_faktur)}
               onClick={() =>
                 onClickAction(DELETE_DIMSCREEN, ReturPenjualanBarangData?.id)
               }
@@ -759,7 +762,7 @@ const PenjualanBarang = () => {
                       <tbody className="table-group-divider">
                         {showAddItemRow && addItemRow()}
                         {selectedRetur && tableDataItems()}
-                      </tbody>{' '}
+                      </tbody>
                       <tfoot>
                         <tr className="table-dark fw-bold">
                           <td colSpan={4}>Total</td>

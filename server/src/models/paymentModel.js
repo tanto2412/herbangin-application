@@ -173,8 +173,18 @@ async function edit(
             updated_at: knex.raw('now()'),
           })
           .where('id', id)
+          .andWhere(
+            knex.raw("date_trunc('month', to_timestamp(tanggal/1000.0))"),
+            '>',
+            knex.raw("date_trunc('month', now() - INTERVAL '2 months')")
+          )
           .returning('*')
       )[0]
+
+      if (!payment) {
+        trx.rollback()
+        return null
+      }
 
       if (payment.jenis_pembayaran == JenisPembayaran.GIRO) {
         let giroSpec = {

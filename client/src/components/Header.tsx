@@ -57,15 +57,15 @@ const Header = () => {
             <img src="/Herba.svg" alt="Herba" width="30" height="24" /> Herba
             Store Application
           </a>
-          <div>
-            Hello, {username}{' '}
+          <div className="d-flex flex-row">
+            <div className="me-2">Hello, {username}</div>
             <button
-              className="btn btn-sm btn-outline-success"
+              className="btn btn-sm btn-outline-success me-2"
               type="button"
               onClick={onClickChangePwd}
             >
               Ubah Password
-            </button>{' '}
+            </button>
             <button
               className="btn btn-sm btn-outline-secondary"
               type="button"

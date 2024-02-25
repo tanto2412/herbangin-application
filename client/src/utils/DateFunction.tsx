@@ -23,3 +23,12 @@ export const dateToEpochmillis = (dateString: string) => {
   const epochMillis: number = date.getTime()
   return epochMillis
 }
+
+export const isTutupBuku = (epochMillis: number) => {
+  let date = new Date()
+  date.setMonth(date.getMonth() - 1)
+  const firstDay = new Date(date.getFullYear(), date.getMonth(), 1)
+  const comparedDate = new Date(Number(epochMillis))
+
+  return comparedDate < firstDay
+}

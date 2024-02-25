@@ -175,8 +175,20 @@ async function edit({
             updated_at: knex.raw('now()'),
           })
           .where('nomor_faktur', nomor_faktur)
+          .andWhere(
+            knex.raw(
+              "date_trunc('month', to_timestamp(tanggal_faktur/1000.0))"
+            ),
+            '>',
+            knex.raw("date_trunc('month', now() - INTERVAL '2 months')")
+          )
           .returning('*')
       )[0]
+
+      if (!order) {
+        await trx.rollback()
+        return null
+      }
 
       await paymentModel.removeByOrderId(nomor_faktur, trx)
       await returModel.removeByOrderId(nomor_faktur, trx)
