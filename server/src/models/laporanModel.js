@@ -62,6 +62,7 @@ async function penjualan({
       'order_item.jumlah_barang',
       'order_item.satuan_terkecil',
       'order_item.harga_satuan',
+      'order_item.subtotal',
       'product.jenis_barang'
     )
     .leftJoin('order', 'order.nomor_faktur', '=', 'order_item.nomor_faktur')
@@ -184,15 +185,16 @@ async function piutang({
 }) {
   return await knex('order')
     .select(
+      'order.customer_id',
       'customer.nama_toko',
       knex.raw('to_char("order".nomor_faktur, \'fm00000\') AS nomor_faktur'),
       knex.raw(
         'to_char(to_timestamp("order".tanggal_faktur / 1000), \'dd-mm-yyyy\') as tanggal'
       ),
       'order.total',
-      knex.raw('sum(payment.jumlah_pembayaran) as sudah_dibayar'),
+      knex.raw('coalesce(sum(payment.jumlah_pembayaran), 0) as sudah_dibayar'),
       knex.raw(
-        '"order".total - sum(payment.jumlah_pembayaran) as belum_dibayar'
+        '"order".total - coalesce(sum(payment.jumlah_pembayaran), 0) as belum_dibayar'
       )
     )
     .leftJoin('customer', 'customer.id', '=', 'order.customer_id')
@@ -240,7 +242,7 @@ async function piutang({
 }
 
 async function giro(
-  { product = null, sales = null, customer = null },
+  { product = null, sales = null, customer = null, from = null, to = null },
   status_pembayaran
 ) {
   return await knex('giro')

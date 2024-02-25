@@ -1,6 +1,7 @@
 // controllers/laporanController.js
 const laporanModel = require('../models/laporanModel')
 const giroModel = require('../models/giroModel')
+const rupiahFormatter = require('../utils/converter')
 const puppeteer = require('puppeteer')
 const logger = require('../../logger')
 
@@ -9,13 +10,19 @@ async function penerimaan(req, res) {
     const laporanPenerimaan = await laporanModel.penerimaan(req.query)
 
     let penerimaanMap = new Map()
+    let grandTotal = 0
     laporanPenerimaan.forEach((item) => {
-      if (penerimaanMap.has(item.receiving_id))
-        penerimaanMap.set(item.receiving_id, [
-          ...Array.from(penerimaanMap.get(item.receiving_id)),
-          item,
-        ])
-      else penerimaanMap.set(item.receiving_id, [item])
+      grandTotal += Number(item.subtotal)
+      if (penerimaanMap.has(item.receiving_id)) {
+        let penerimaan = penerimaanMap.get(item.receiving_id)
+        penerimaan.items.push(item)
+        penerimaan.subtotal += Number(item.subtotal)
+        penerimaanMap.set(item.receiving_id, penerimaan)
+      } else
+        penerimaanMap.set(item.receiving_id, {
+          items: [item],
+          subtotal: Number(item.subtotal),
+        })
     })
 
     // HTML template with placeholders for dynamic data
@@ -65,6 +72,11 @@ async function penerimaan(req, res) {
             text-align: left;
           }
 
+          td.subtotal {
+            padding-top: 10px;
+            padding-bottom: 10px;
+          }
+
           th {
             border-collapse: collapse;
             padding: 5px;
@@ -87,6 +99,11 @@ async function penerimaan(req, res) {
             border-bottom: 1px solid;
           }
 
+          tr.foot {
+            border-collapse: collapse;
+            border-top: 1px solid;
+          }
+
           h1 {
             text-align: center;
             width: 100%;
@@ -107,31 +124,48 @@ async function penerimaan(req, res) {
                 <th class="right"><u>Subtotal</u></th>
               </tr>
               ${Array.from(penerimaanMap)
-                .map(([_, itemList]) =>
-                  itemList
-                    .map(
-                      (item, index) =>
-                        `<tr>
+                .map(
+                  ([_, penerimaan]) =>
+                    penerimaan.items
+                      .map(
+                        (item, index) =>
+                          `<tr>
                         ${
                           index == 0
                             ? `
-                          <td class="w15 center" rowspan="${itemList.length}">${item.receiving_id}</td>
-                          <td class="w15 center" rowspan="${itemList.length}">${item.tanggal}</td>
+                          <td class="w15 center" rowspan="${penerimaan.items.length}">${item.receiving_id}</td>
+                          <td class="w15 center" rowspan="${penerimaan.items.length}">${item.tanggal}</td>
                           `
                             : ''
                         }
                         <td class="w25 left">${item.nama_barang}</td>
                         <td class="w15 right">${item.jumlah_barang} ${
-                          item.satuan_terkecil
-                        }</td>
-                        <td class="w15 right">${item.harga_satuan}</td>
-                        <td class="w15 right">${item.subtotal}</td>
+                            item.satuan_terkecil
+                          }</td>
+                        <td class="w15 right">${rupiahFormatter.format(
+                          item.harga_satuan
+                        )}</td>
+                        <td class="w15 right">${rupiahFormatter.format(
+                          item.subtotal
+                        )}</td>
                       </tr>
                       `
-                    )
-                    .join('')
+                      )
+                      .join('') +
+                    `<tr>
+                      <td class="right subtotal" colspan="5"><b>Subtotal :</b></td>
+                      <td class="subtotal"><b>${rupiahFormatter.format(
+                        penerimaan.subtotal
+                      )}</b></td>
+                    </tr>`
                 )
                 .join('')}
+              <tr class="foot">
+                <td class="right subtotal" colspan="5"><b>Grand Total :</b></td>
+                <td class="subtotal"><b>${rupiahFormatter.format(
+                  grandTotal
+                )}</b></td>
+              </tr>
             </table>
           </td>
         </table>
@@ -164,13 +198,19 @@ async function penjualan(req, res) {
     const laporanPenjualan = await laporanModel.penjualan(req.query)
 
     let fakturMap = new Map()
+    let grandTotal = 0
     laporanPenjualan.forEach((item) => {
-      if (fakturMap.has(item.nomor_faktur))
-        fakturMap.set(item.nomor_faktur, [
-          ...Array.from(fakturMap.get(item.nomor_faktur)),
-          item,
-        ])
-      else fakturMap.set(item.nomor_faktur, [item])
+      grandTotal += Number(item.subtotal)
+      if (fakturMap.has(item.nomor_faktur)) {
+        let faktur = fakturMap.get(item.nomor_faktur)
+        faktur.items.push(item)
+        faktur.subtotal += Number(item.subtotal)
+        fakturMap.set(item.nomor_faktur, faktur)
+      } else
+        fakturMap.set(item.nomor_faktur, {
+          items: [item],
+          subtotal: Number(item.subtotal),
+        })
     })
 
     // HTML template with placeholders for dynamic data
@@ -220,6 +260,11 @@ async function penjualan(req, res) {
             text-align: left;
           }
 
+          td.subtotal {
+            padding-top: 10px;
+            padding-bottom: 10px;
+          }
+
           th {
             border-collapse: collapse;
             padding: 5px;
@@ -240,6 +285,11 @@ async function penjualan(req, res) {
           tr.head {
             border-collapse: collapse;
             border-bottom: 1px solid;
+          }
+
+          tr.foot {
+            border-collapse: collapse;
+            border-top: 1px solid;
           }
 
           h1 {
@@ -263,32 +313,47 @@ async function penjualan(req, res) {
                 <th class="center"><u>Keterangan</u></th>
               </tr>
               ${Array.from(fakturMap)
-                .map(([_, itemList]) =>
-                  itemList
-                    .map(
-                      (item, index) =>
-                        `<tr>
+                .map(
+                  ([_, faktur]) =>
+                    faktur.items
+                      .map(
+                        (item, index) =>
+                          `<tr>
                         ${
                           index == 0
                             ? `
-                          <td class="w15 left" rowspan="${itemList.length}">${item.nama}</td>
-                          <td class="w15 center" rowspan="${itemList.length}">${item.tanggal}</td>
-                          <td class="w11 center" rowspan="${itemList.length}">${item.nomor_faktur}</td>
+                          <td class="w15 left" rowspan="${faktur.items.length}">${item.nama}</td>
+                          <td class="w15 center" rowspan="${faktur.items.length}">${item.tanggal}</td>
+                          <td class="w11 center" rowspan="${faktur.items.length}">${item.nomor_faktur}</td>
                           `
                             : ''
                         }
                         <td class="w18 left">${item.nama_barang}</td>
                         <td class="w15 right">${item.jumlah_barang} ${
-                          item.satuan_terkecil
-                        }</td>
-                        <td class="w15 right">${item.harga_satuan}</td>
+                            item.satuan_terkecil
+                          }</td>
+                        <td class="w15 right">${rupiahFormatter.format(
+                          item.harga_satuan
+                        )}</td>
                         <td class="w11 center">${item.jenis_barang}</td>
                       </tr>
                       `
-                    )
-                    .join('')
+                      )
+                      .join('') +
+                    `<tr>
+                      <td class="right subtotal" colspan="5"><b>Subtotal :</b></td>
+                      <td class="subtotal"><b>${rupiahFormatter.format(
+                        faktur.subtotal
+                      )}</b></td>
+                    </tr>`
                 )
                 .join('')}
+                <tr class="foot">
+                  <td class="right subtotal" colspan="5"><b>Grand Total :</b></td>
+                  <td class="subtotal"><b>${rupiahFormatter.format(
+                    grandTotal
+                  )}</b></td>
+                </tr>
             </table>
           </td>
         </table>
@@ -321,13 +386,27 @@ async function piutang(req, res) {
     const laporanPiutang = await laporanModel.piutang(req.query)
 
     let piutangMap = new Map()
+    let grandTotal = 0
+    let grandTotalBelumDibayar = 0
+    let grandTotalSudahDibayar = 0
     laporanPiutang.forEach((item) => {
-      if (piutangMap.has(item.nama_toko))
-        piutangMap.set(item.nama_toko, [
-          ...Array.from(piutangMap.get(item.nama_toko)),
-          item,
-        ])
-      else piutangMap.set(item.nama_toko, [item])
+      grandTotal += Number(item.total)
+      grandTotalBelumDibayar += Number(item.belum_dibayar)
+      grandTotalSudahDibayar += Number(item.sudah_dibayar)
+      if (piutangMap.has(item.customer_id)) {
+        let piutang = piutangMap.get(item.customer_id)
+        piutang.items.push(item)
+        piutang.subtotal += Number(item.total)
+        piutang.belum_dibayar += Number(item.belum_dibayar)
+        piutang.sudah_dibayar += Number(item.sudah_dibayar)
+        piutangMap.set(item.customer_id, piutang)
+      } else
+        piutangMap.set(item.customer_id, {
+          items: [item],
+          subtotal: Number(item.total),
+          belum_dibayar: Number(item.belum_dibayar),
+          sudah_dibayar: Number(item.sudah_dibayar),
+        })
     })
 
     // HTML template with placeholders for dynamic data
@@ -377,6 +456,11 @@ async function piutang(req, res) {
             text-align: left;
           }
 
+          td.subtotal {
+            padding-top: 10px;
+            padding-bottom: 10px;
+          }
+
           th {
             border-collapse: collapse;
             padding: 5px;
@@ -399,6 +483,11 @@ async function piutang(req, res) {
             border-bottom: 1px solid;
           }
 
+          tr.foot {
+            border-collapse: collapse;
+            border-top: 1px solid;
+          }
+
           h1 {
             text-align: center;
             width: 100%;
@@ -419,29 +508,60 @@ async function piutang(req, res) {
                 <th class="right"><u>Belum Dibayar</u></th>
               </tr>
               ${Array.from(piutangMap)
-                .map(([_, itemList]) =>
-                  itemList
-                    .map(
-                      (item, index) =>
-                        `<tr>
+                .map(
+                  ([_, piutang]) =>
+                    piutang.items
+                      .map(
+                        (item, index) =>
+                          `<tr>
                         ${
                           index == 0
                             ? `
-                          <td class="w18 left" rowspan="${itemList.length}">${item.nama_toko}</td>
+                          <td class="w18 left" rowspan="${piutang.items.length}">${item.nama_toko}</td>
                           `
                             : ''
                         }
                         <td class="w12 center">${item.nomor_faktur}</td>
                         <td class="w15 center">${item.tanggal}</td>
-                        <td class="w15 right">${item.total}</td>
-                        <td class="w15 right">${item.sudah_dibayar}</td>
-                        <td class="w15 right">${item.belum_dibayar}</td>
+                        <td class="w15 right">${rupiahFormatter.format(
+                          item.total
+                        )}</td>
+                        <td class="w15 right">${rupiahFormatter.format(
+                          item.sudah_dibayar
+                        )}</td>
+                        <td class="w15 right">${rupiahFormatter.format(
+                          item.belum_dibayar
+                        )}</td>
                       </tr>
                       `
-                    )
-                    .join('')
+                      )
+                      .join('') +
+                    `<tr>
+                      <td class="right subtotal" colspan="3"><b>Subtotal :</b></td>
+                      <td class="subtotal"><b>${rupiahFormatter.format(
+                        piutang.subtotal
+                      )}</b></td>
+                      <td class="subtotal"><b>${rupiahFormatter.format(
+                        piutang.sudah_dibayar
+                      )}</b></td>
+                      <td class="subtotal"><b>${rupiahFormatter.format(
+                        piutang.belum_dibayar
+                      )}</b></td>
+                    </tr>`
                 )
                 .join('')}
+                <tr class="foot">
+                  <td class="right subtotal" colspan="3"><b>Grand Total :</b></td>
+                  <td class="subtotal"><b>${rupiahFormatter.format(
+                    grandTotal
+                  )}</b></td>
+                  <td class="subtotal"><b>${rupiahFormatter.format(
+                    grandTotalSudahDibayar
+                  )}</b></td>
+                  <td class="subtotal"><b>${rupiahFormatter.format(
+                    grandTotalBelumDibayar
+                  )}</b></td>
+                </tr>
             </table>
           </td>
         </table>
@@ -474,13 +594,19 @@ async function pembayaran(req, res) {
     const laporanPembayaran = await laporanModel.pembayaran(req.query)
 
     let pembayaranMap = new Map()
+    let grandTotal = 0
     laporanPembayaran.forEach((item) => {
-      if (pembayaranMap.has(item.nomor_faktur))
-        pembayaranMap.set(item.nomor_faktur, [
-          ...Array.from(pembayaranMap.get(item.nomor_faktur)),
-          item,
-        ])
-      else pembayaranMap.set(item.nomor_faktur, [item])
+      grandTotal += Number(item.jumlah_pembayaran)
+      if (pembayaranMap.has(item.nomor_faktur)) {
+        let pembayaran = pembayaranMap.get(item.nomor_faktur)
+        pembayaran.items.push(item)
+        pembayaran.subtotal += Number(item.jumlah_pembayaran)
+        pembayaranMap.set(item.nomor_faktur, pembayaran)
+      } else
+        pembayaranMap.set(item.nomor_faktur, {
+          items: [item],
+          subtotal: Number(item.jumlah_pembayaran),
+        })
     })
 
     // HTML template with placeholders for dynamic data
@@ -535,6 +661,11 @@ async function pembayaran(req, res) {
             text-align: left;
           }
 
+          td.subtotal {
+            padding-top: 10px;
+            padding-bottom: 10px;
+          }
+
           th {
             border-collapse: collapse;
             padding: 5px;
@@ -555,6 +686,11 @@ async function pembayaran(req, res) {
           tr.head {
             border-collapse: collapse;
             border-bottom: 1px solid;
+          }
+
+          tr.foot {
+            border-collapse: collapse;
+            border-top: 1px solid;
           }
 
           h1 {
@@ -579,33 +715,50 @@ async function pembayaran(req, res) {
                 <th class="center"><u>Status Komisi</u></th>
               </tr>
               ${Array.from(pembayaranMap)
-                .map(([_, itemList]) =>
-                  itemList
-                    .map(
-                      (item, index) =>
-                        `<tr>
+                .map(
+                  ([_, pembayaran]) =>
+                    pembayaran.items
+                      .map(
+                        (item, index) =>
+                          `<tr>
                         ${
                           index == 0
                             ? `
-                          <td class="w15 left" rowspan="${itemList.length}">${item.nama}</td>
-                          <td class="w12 center" rowspan="${itemList.length}">${item.nomor_faktur}</td>
-                          <td class="w15 left" rowspan="${itemList.length}">${item.nama_toko}</td>
+                          <td class="w15 left" rowspan="${pembayaran.items.length}">${item.nama}</td>
+                          <td class="w12 center" rowspan="${pembayaran.items.length}">${item.nomor_faktur}</td>
+                          <td class="w15 left" rowspan="${pembayaran.items.length}">${item.nama_toko}</td>
                           `
                             : ''
                         }
                         <td class="w10 center">${item.id}</td>
                         <td class="w11 center">${item.tanggal}</td>
-                        <td class="w12 right">${item.jumlah_pembayaran}</td>
-                        <td class="w15 left">${item.remarks}</td>
+                        <td class="w12 right">${rupiahFormatter.format(
+                          item.jumlah_pembayaran
+                        )}</td>
+                        <td class="w15 left">${
+                          item.remarks ? item.remarks : ''
+                        }</td>
                         <td class="w10 center">${
                           item.komisi ? 'DAPAT' : 'TIDAK'
                         }</td>
                       </tr>
                       `
-                    )
-                    .join('')
+                      )
+                      .join('') +
+                    `<tr>
+                      <td class="right subtotal" colspan="5"><b>Subtotal :</b></td>
+                      <td class="subtotal"><b>${rupiahFormatter.format(
+                        pembayaran.subtotal
+                      )}</b></td>
+                    </tr>`
                 )
                 .join('')}
+                <tr class="foot">
+                  <td class="right subtotal" colspan="5"><b>Grand Total :</b></td>
+                  <td class="subtotal"><b>${rupiahFormatter.format(
+                    grandTotal
+                  )}</b></td>
+                </tr>
             </table>
           </td>
         </table>
@@ -640,7 +793,12 @@ async function giroDitolak(req, res) {
       giroModel.StatusPembayaran.DITOLAK
     )
 
-    const htmlTemplate = await createGiroHtml(laporanGiroDitolak)
+    const grandTotal = laporanGiroDitolak.reduce(
+      (a, b) => a + Number(b.jumlah_pembayaran),
+      0
+    )
+
+    const htmlTemplate = await createGiroHtml(laporanGiroDitolak, grandTotal)
 
     const browser = await puppeteer.launch()
     const page = await browser.newPage()
@@ -669,7 +827,12 @@ async function giroBlmDibayar(req, res) {
       giroModel.StatusPembayaran.BELUM_LUNAS
     )
 
-    const htmlTemplate = await createGiroHtml(laporanGiroBlmDibayar)
+    const grandTotal = laporanGiroBlmDibayar.reduce(
+      (a, b) => a + Number(b.jumlah_pembayaran),
+      0
+    )
+
+    const htmlTemplate = await createGiroHtml(laporanGiroBlmDibayar, grandTotal)
 
     const browser = await puppeteer.launch()
     const page = await browser.newPage()
@@ -691,7 +854,7 @@ async function giroBlmDibayar(req, res) {
   }
 }
 
-async function createGiroHtml(laporanGiro) {
+async function createGiroHtml(laporanGiro, grandTotal) {
   // HTML template with placeholders for dynamic data
   return `
   <html>
@@ -739,6 +902,11 @@ async function createGiroHtml(laporanGiro) {
           text-align: left;
         }
 
+        td.subtotal {
+          padding-top: 10px;
+          padding-bottom: 10px;
+        }
+
         th {
           border-collapse: collapse;
           padding: 5px;
@@ -759,6 +927,11 @@ async function createGiroHtml(laporanGiro) {
         tr.head {
           border-collapse: collapse;
           border-bottom: 1px solid;
+        }
+
+        tr.foot {
+          border-collapse: collapse;
+          border-top: 1px solid;
         }
 
         h1 {
@@ -788,7 +961,9 @@ async function createGiroHtml(laporanGiro) {
                     <td class="w11 left">${giro.nomor_giro}</td>
                     <td class="w15 left">${giro.nama_bank}</td>
                     <td class="w18 center">${giro.tanggal_jatuh_tempo}</td>
-                    <td class="w15 right">${giro.jumlah_pembayaran}</td>
+                    <td class="w15 right">${rupiahFormatter.format(
+                      giro.jumlah_pembayaran
+                    )}</td>
                     <td class="w11 center">${giro.nomor_pembayaran}</td>
                     <td class="w11 center">${giro.nomor_faktur}</td>
                     <td class="w18 left">${giro.nama_toko}</td>
@@ -796,6 +971,12 @@ async function createGiroHtml(laporanGiro) {
                   `
               )
               .join('')}
+              <tr class="foot">
+                <td class="right subtotal" colspan="3"><b>Grand Total :</b></td>
+                <td class="subtotal"><b>${rupiahFormatter.format(
+                  grandTotal
+                )}</b></td>
+              </tr>
           </table>
         </td>
       </table>
@@ -865,6 +1046,11 @@ async function retur(req, res) {
             text-align: left;
           }
 
+          td.subtotal {
+            padding-top: 10px;
+            padding-bottom: 10px;
+          }
+
           th {
             border-collapse: collapse;
             padding: 5px;
@@ -885,6 +1071,11 @@ async function retur(req, res) {
           tr.head {
             border-collapse: collapse;
             border-bottom: 1px solid;
+          }
+
+          tr.foot {
+            border-collapse: collapse;
+            border-top: 1px solid;
           }
 
           h1 {
