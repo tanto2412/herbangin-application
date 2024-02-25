@@ -126,6 +126,10 @@ async function getItemsByIds(ids) {
   return await knex('retur_item').whereIn('retur_id', ids)
 }
 
+async function getItemsByOrderItemIds(ids) {
+  return await knex('retur_item').whereIn('order_item_id', ids)
+}
+
 async function create({
   nomor_faktur,
   customer_id,
@@ -344,6 +348,7 @@ module.exports = {
   getById,
   getItemsById,
   getItemsByIds,
+  getItemsByOrderItemIds,
   create,
   edit,
   remove,

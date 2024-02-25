@@ -3,6 +3,7 @@ const orderModel = require('../models/orderModel')
 const productModel = require('../models/productModel')
 const customerModel = require('../models/customerModel')
 const paymentModel = require('../models/paymentModel')
+const returModel = require('../models/returModel')
 const logger = require('../../logger')
 
 async function search(req, res) {
@@ -23,7 +24,23 @@ async function getById(req, res) {
   }
 
   const orderItems = await orderModel.getItemsById(req.params.id)
-  order.items = orderItems
+  const orderItemIds = orderItemIds.map((item) => item.id)
+  const returItems = await returModel.getItemsByOrderItemIds(orderItemIds)
+  let returItemMap = new Map()
+  for (let returItem of returItems) {
+    if (returItemMap.has(returItem.order_item_id)) {
+      let jumlah_barang = returItemMap.get(returItem.order_item_id)
+      returItem.jumlah_barang += jumlah_barang
+      returItemMap.set(returItem.order_item_id, returItem)
+    } else {
+      returItemMap.set(returItem.order_item_id, returItem)
+    }
+  }
+  order.items = orderItems.map((orderItem) => {
+    orderItem.remainingRetur =
+      orderItem.jumlah_barang - (returItemMap.get(orderItem.id) || 0)
+    return orderItem
+  })
 
   let existingPayments = await paymentModel.search({
     nomor_faktur: req.params.id,
