@@ -161,7 +161,6 @@ const GiroPenjualan = () => {
   } = useForm()
 
   const onSubmit = async (data: any) => {
-    console.log(data)
     switch (toggleDimScreen) {
       case EDIT_DIMSCREEN:
         if (IDToChange != null)

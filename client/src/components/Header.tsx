@@ -29,7 +29,6 @@ const Header = () => {
   } = useForm()
 
   const onSubmit = async (data: any) => {
-    console.log(data)
     try {
       const loginData = await fetchLogin(username, data.oldPassword)
       await changePassword(loginData.id, data.newPassword)
