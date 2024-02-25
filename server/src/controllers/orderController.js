@@ -24,21 +24,21 @@ async function getById(req, res) {
   }
 
   const orderItems = await orderModel.getItemsById(req.params.id)
-  const orderItemIds = orderItemIds.map((item) => item.id)
+  const orderItemIds = orderItems.map((item) => item.id)
   const returItems = await returModel.getItemsByOrderItemIds(orderItemIds)
   let returItemMap = new Map()
   for (let returItem of returItems) {
     if (returItemMap.has(returItem.order_item_id)) {
       let jumlah_barang = returItemMap.get(returItem.order_item_id)
-      returItem.jumlah_barang += jumlah_barang
-      returItemMap.set(returItem.order_item_id, returItem)
+      jumlah_barang += returItem.jumlah_barang
+      returItemMap.set(returItem.order_item_id, jumlah_barang)
     } else {
-      returItemMap.set(returItem.order_item_id, returItem)
+      returItemMap.set(returItem.order_item_id, returItem.jumlah_barang)
     }
   }
   order.items = orderItems.map((orderItem) => {
     orderItem.remainingRetur =
-      orderItem.jumlah_barang - (returItemMap.get(orderItem.id) || 0)
+      orderItem.jumlah_barang - (returItemMap.get(orderItem.id) | 0)
     return orderItem
   })
 
