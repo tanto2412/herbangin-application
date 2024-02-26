@@ -940,7 +940,7 @@ async function cashIn(req, res) {
         </style>
       </head>
       <body>
-        <h1>LAPORAN REKAP PEMBAYARAN</h1>
+        <h1>LAPORAN REKAP CASH IN</h1>
         <table>
           <td>
             <table>
@@ -1297,7 +1297,7 @@ async function retur(req, res) {
         </style>
       </head>
       <body>
-        <h1>LAPORAN PENERIMAAN</h1>
+        <h1>LAPORAN REKAP RETUR</h1>
         <table>
           <td>
             <table>

@@ -798,7 +798,11 @@ async function giroDitolak(req, res) {
       0
     )
 
-    const htmlTemplate = await createGiroHtml(laporanGiroDitolak, grandTotal)
+    const htmlTemplate = await createGiroHtml(
+      laporanGiroDitolak,
+      giroModel.StatusPembayaran.DITOLAK,
+      grandTotal
+    )
 
     const browser = await puppeteer.launch()
     const page = await browser.newPage()
@@ -832,7 +836,11 @@ async function giroBlmDibayar(req, res) {
       0
     )
 
-    const htmlTemplate = await createGiroHtml(laporanGiroBlmDibayar, grandTotal)
+    const htmlTemplate = await createGiroHtml(
+      laporanGiroBlmDibayar,
+      giroModel.StatusPembayaran.BELUM_LUNAS,
+      grandTotal
+    )
 
     const browser = await puppeteer.launch()
     const page = await browser.newPage()
@@ -854,7 +862,7 @@ async function giroBlmDibayar(req, res) {
   }
 }
 
-async function createGiroHtml(laporanGiro, grandTotal) {
+async function createGiroHtml(laporanGiro, status, grandTotal) {
   // HTML template with placeholders for dynamic data
   return `
   <html>
@@ -941,7 +949,11 @@ async function createGiroHtml(laporanGiro, grandTotal) {
       </style>
     </head>
     <body>
-      <h1>LAPORAN GIRO PENJUALAN BELUM DIBAYAR</h1>
+      <h1>LAPORAN GIRO PENJUALAN ${
+        status === giroModel.StatusPembayaran.BELUM_LUNAS
+          ? 'BELUM DIBAYAR'
+          : 'DITOLAK'
+      }</h1>
       <table>
         <td>
           <table>
@@ -1085,7 +1097,7 @@ async function retur(req, res) {
         </style>
       </head>
       <body>
-        <h1>LAPORAN PENERIMAAN</h1>
+        <h1>LAPORAN RETUR</h1>
         <table>
           <td>
             <table>
