@@ -9,5 +9,6 @@ router.get('/piutang', rekapController.piutang)
 router.get('/pembayaran', rekapController.pembayaran)
 router.get('/penerimaan', rekapController.penerimaan)
 router.get('/retur', rekapController.retur)
+router.get('/cash-in', rekapController.cashIn)
 
 module.exports = router

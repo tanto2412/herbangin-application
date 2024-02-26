@@ -112,6 +112,8 @@ async function pembayaran({
 }) {
   return await knex('payment')
     .select(
+      'order.sales_id',
+      'order.customer_id',
       'sales.nama',
       'payment.id',
       knex.raw("to_char(payment.nomor_faktur, 'fm00000') AS nomor_faktur"),
@@ -184,6 +186,8 @@ async function piutang({
 }) {
   return await knex('order')
     .select(
+      'order.customer_id',
+      'order.sales_id',
       'customer.nama_toko',
       'sales.nama',
       knex.raw('to_char("order".nomor_faktur, \'fm00000\') AS nomor_faktur'),
