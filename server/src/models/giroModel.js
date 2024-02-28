@@ -17,6 +17,8 @@ async function search({
   page_size = 20,
 }) {
   return await knex('giro')
+    .select('giro.*', 'payment.nama_bank')
+    .leftJoin('payment', 'payment.id', '=', 'giro.nomor_pembayaran')
     .where((builder) => {
       if (nomor_faktur) {
         builder.where('nomor_faktur', nomor_faktur)
@@ -55,6 +57,8 @@ async function count({
   page_size = 20,
 }) {
   return await knex('giro')
+    .select('giro.*', 'payment.nama_bank')
+    .leftJoin('payment', 'payment.id', '=', 'giro.nomor_pembayaran')
     .where((builder) => {
       if (nomor_faktur) {
         builder.where('nomor_faktur', nomor_faktur)
@@ -109,7 +113,6 @@ async function create(
     nomor_pembayaran,
     nomor_giro,
     tanggal_jatuh_tempo,
-    nama_bank,
     status_pembayaran = StatusPembayaran.BELUM_LUNAS,
   },
   trx = null
@@ -123,7 +126,6 @@ async function create(
       nomor_pembayaran,
       nomor_giro,
       tanggal_jatuh_tempo,
-      nama_bank,
       status_pembayaran,
     })
     .returning('*')
@@ -135,7 +137,6 @@ async function editByPaymentId(
     nomor_pembayaran,
     nomor_giro,
     tanggal_jatuh_tempo,
-    nama_bank,
     status_pembayaran = StatusPembayaran.BELUM_LUNAS,
     tanggal_pencairan = null,
   },
@@ -150,7 +151,6 @@ async function editByPaymentId(
       nomor_giro,
       nomor_pembayaran,
       tanggal_jatuh_tempo,
-      nama_bank,
       status_pembayaran,
       tanggal_pencairan,
     })
@@ -159,7 +159,6 @@ async function editByPaymentId(
       'nomor_faktur',
       'nomor_giro',
       'tanggal_jatuh_tempo',
-      'nama_bank',
       'status_pembayaran',
       'tanggal_pencairan',
     ])

@@ -1,6 +1,7 @@
 // controllers/paymentController.js
 const paymentModel = require('../models/paymentModel')
 const orderModel = require('../models/orderModel')
+const returModel = require('../models/returModel')
 const logger = require('../../logger')
 
 async function search(req, res) {
@@ -85,7 +86,7 @@ async function remove(req, res) {
 
 async function checkPaymentAmount(
   id,
-  { nomor_faktur, tanggal, jumlah_pembayaran, jenis_pembayaran, remarks }
+  { nomor_faktur, jumlah_pembayaran, jenis_pembayaran, remarks }
 ) {
   if (!(jenis_pembayaran in paymentModel.JenisPembayaran)) {
     return 'jenis_pembayaran must be [TUNAI, GIRO, TRANSFER, LAIN_LAIN]'
@@ -108,7 +109,12 @@ async function checkPaymentAmount(
     }
   }
 
-  if (jumlah_pembayaran > existingAmount) {
+  let existingRetur = await returModel.search({ nomor_faktur })
+  for (let retur of existingRetur) {
+    existingAmount -= retur.total
+  }
+
+  if (jumlah_pembayaran != 0 && jumlah_pembayaran > existingAmount) {
     return `exceed outstanding amount: ${existingAmount}`
   }
 
@@ -121,6 +127,11 @@ async function checkParams({
   nama_bank,
   tanggal_jatuh_tempo,
 }) {
+  if (jenis_pembayaran == paymentModel.JenisPembayaran.TRANSFER) {
+    if (nama_bank === undefined || nama_bank === null) {
+      return 'missing nama_bank'
+    }
+  }
   if (jenis_pembayaran == paymentModel.JenisPembayaran.GIRO) {
     if (nomor_giro === undefined || nomor_giro === null) {
       return 'missing nomor_giro'

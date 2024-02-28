@@ -21,17 +21,21 @@ const ActionButton = ({
     <>
       <button
         type={buttonType}
-        className={'btn btn-sm btn-outline-info ' + (hideBorder && 'border-0')}
+        className={
+          'btn btn-sm btn-outline-secondary ' + (hideBorder && 'border-0')
+        }
         onClick={onClick}
         disabled={disabled}
       >
-        <img
-          src={'/' + buttonCaption + '.svg'}
-          alt={buttonCaption}
-          width={buttonSize}
-          height={buttonSize}
-        />
-        {showCaption && buttonCaption}
+        <div className="d-flex align-items-center">
+          <img
+            src={'/' + buttonCaption + '.svg'}
+            alt={buttonCaption}
+            width={buttonSize}
+            height={buttonSize}
+          />
+          {showCaption && <div className="ms-1">{buttonCaption}</div>}
+        </div>
       </button>
     </>
   )

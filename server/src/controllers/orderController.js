@@ -49,6 +49,11 @@ async function getById(req, res) {
   for (let payment of existingPayments) {
     existingAmount -= payment.jumlah_pembayaran
   }
+
+  let existingRetur = await returModel.search({ nomor_faktur: req.params.id })
+  for (let retur of existingRetur) {
+    existingAmount -= retur.total
+  }
   order.remainingAmount = existingAmount
 
   res.json(order)

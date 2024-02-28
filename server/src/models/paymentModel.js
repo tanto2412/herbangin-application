@@ -23,7 +23,6 @@ async function search({
       'customer.nama_toko',
       'giro.id as giro_id',
       'giro.nomor_giro',
-      'giro.nama_bank',
       'giro.tanggal_jatuh_tempo',
       'giro.tanggal_pencairan',
       'giro.status_pembayaran'
@@ -87,7 +86,6 @@ async function getById(id) {
       'customer.nama_toko',
       'giro.id as giro_id',
       'giro.nomor_giro',
-      'giro.nama_bank',
       'giro.tanggal_jatuh_tempo',
       'giro.tanggal_pencairan',
       'giro.status_pembayaran'
@@ -120,6 +118,7 @@ async function create({
             jumlah_pembayaran,
             jenis_pembayaran,
             remarks,
+            nama_bank,
           })
           .returning('*')
       )[0]
@@ -130,7 +129,6 @@ async function create({
           nomor_pembayaran: payment.id,
           nomor_giro,
           tanggal_jatuh_tempo,
-          nama_bank,
         }
         let giro = await giroModel.create(giroSpec, trx)
         if (!giro || !giro.length) {
@@ -170,6 +168,7 @@ async function edit(
             jumlah_pembayaran,
             jenis_pembayaran,
             remarks,
+            nama_bank,
             updated_at: knex.raw('now()'),
           })
           .where('id', id)
@@ -193,7 +192,6 @@ async function edit(
           nomor_giro,
           tanggal_jatuh_tempo,
           jenis_pembayaran,
-          nama_bank,
         }
         let giro = await giroModel.editByPaymentId(giroSpec, trx)
         if (!giro || !giro.length) {
