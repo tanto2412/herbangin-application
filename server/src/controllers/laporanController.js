@@ -605,6 +605,12 @@ async function pembayaran(req, res) {
       } else
         pembayaranMap.set(item.nomor_faktur, {
           items: [item],
+          nomor_faktur: item.nomor_faktur,
+          nama_toko: item.nama_toko,
+          nama: item.nama,
+          tanggal_faktur: item.tanggal_faktur,
+          komisi: item.komisi,
+          total_faktur: item.total,
           subtotal: Number(item.jumlah_pembayaran),
         })
     })
@@ -625,11 +631,23 @@ async function pembayaran(req, res) {
             width: 100%;
           }
 
+          table.no-border {
+            border: 0px;
+          }
+
           td {
             border-collapse: collapse;
             padding: 5px;
             text-align: right;
             vertical-align: top;
+          }
+
+          td.p10 {
+            padding: 10px;
+          }
+
+          td.w5 {
+            width: 5%;
           }
 
           td.w10 {
@@ -645,8 +663,12 @@ async function pembayaran(req, res) {
             width: 15%;
           }
 
-          td.w12 {
-            width: 12%;
+          td.w20 {
+            width: 20%;
+          }
+
+          td.w30 {
+            width: 30%;
           }
 
           td.center {
@@ -703,62 +725,97 @@ async function pembayaran(req, res) {
         <h1>LAPORAN PEMBAYARAN</h1>
         <table>
           <td>
-            <table>
-              <tr class="head">
-                <th class="left"><u>Sales</u></th>
-                <th class="center"><u>No Faktur</u></th>
-                <th class="left"><u>Pelanggan</u></th>
-                <th class="center"><u>No Bayar</u></th>
-                <th class="center"><u>Tanggal Bayar</u></th>
-                <th class="right"><u>Besar Pembayaran</u></th>
-                <th class="left"><u>Keterangan</u></th>
-                <th class="center"><u>Status Komisi</u></th>
-              </tr>
-              ${Array.from(pembayaranMap)
-                .map(
-                  ([_, pembayaran]) =>
-                    pembayaran.items
-                      .map(
-                        (item, index) =>
-                          `<tr>
-                        ${
-                          index == 0
-                            ? `
-                          <td class="w15 left" rowspan="${pembayaran.items.length}">${item.nama}</td>
-                          <td class="w12 center" rowspan="${pembayaran.items.length}">${item.nomor_faktur}</td>
-                          <td class="w15 left" rowspan="${pembayaran.items.length}">${item.nama_toko}</td>
-                          `
-                            : ''
-                        }
-                        <td class="w10 center">${item.id}</td>
-                        <td class="w11 center">${item.tanggal}</td>
-                        <td class="w12 right">${rupiahFormatter.format(
-                          item.jumlah_pembayaran
-                        )}</td>
-                        <td class="w15 left">${
-                          item.remarks ? item.remarks : ''
-                        }</td>
-                        <td class="w10 center">${
-                          item.komisi ? 'DAPAT' : 'TIDAK'
-                        }</td>
+            ${Array.from(pembayaranMap)
+              .map(
+                ([_, pembayaran]) =>
+                  `<table><td class="p10">
+                    <table class="no-border">
+                      <tr><td class="left" colspan="6"><b>Nama Penjual : ${
+                        pembayaran.nama
+                      }</b></td></tr>
+                      <tr>
+                        <td class="w5"></td>
+                        <td class="w20 left">Nomor Faktur :</td>
+                        <td class="w30 left">${pembayaran.nomor_faktur}</td>
+                        <td class="w20 left">Tanggal Faktur :</td>
+                        <td class="w20 left">${pembayaran.tanggal_faktur}</td>
+                        <td class="w5 left"></td>
                       </tr>
-                      `
-                      )
-                      .join('') +
-                    `<tr>
-                      <td class="right subtotal" colspan="5"><b>Subtotal :</b></td>
-                      <td class="subtotal"><b>${rupiahFormatter.format(
-                        pembayaran.subtotal
-                      )}</b></td>
-                    </tr>`
-                )
-                .join('')}
-                <tr class="foot">
-                  <td class="right subtotal" colspan="5"><b>Grand Total :</b></td>
-                  <td class="subtotal"><b>${rupiahFormatter.format(
-                    grandTotal
-                  )}</b></td>
-                </tr>
+                      <tr>
+                        <td class="w5"></td>
+                        <td class="w20 left">Nama Pelanggan :</td>
+                        <td class="w30 left">${pembayaran.nama_toko}</td>
+                        <td class="w20 left">Status Pembayaran :</td>
+                        <td class="w20 left">${
+                          Number(pembayaran.subtotal) <
+                          Number(pembayaran.total_faktur)
+                            ? 'BELUM LUNAS'
+                            : 'LUNAS'
+                        }</td>
+                        <td class="w5"></td>
+                      </tr>
+                      <tr>
+                        <td class="w5"></td>
+                        <td class="w20 left">Nama Sales :</td>
+                        <td class="w30 left">${pembayaran.nama}</td>
+                        <td class="w20 left">Status Komisi :</td>
+                        <td class="w20 left">${
+                          pembayaran.komisi ? 'DAPAT' : 'TIDAK'
+                        }</td>
+                        <td class="w5"></td>
+                      </tr>
+                    </table>
+                    ` +
+                  `<table>
+                      <tr class="head">
+                        <th class="center"><u>No Bayar</u></th>
+                        <th class="left"><u>Cara Pembayaran</u></th>
+                        <th class="right"><u>Besar Pembayaran</u></th>
+                        <th class="center"><u>Tgl Bayar</u></th>
+                        <th class="left"><u>Bank</u></th>
+                        <th class="left"><u>No Giro</u></th>
+                        <th class="left"><u>Keterangan</u></th>
+                      </tr>
+                    ` +
+                  pembayaran.items
+                    .map(
+                      (item) =>
+                        `<tr>
+                            <td class="w12 center">${item.id}</td>
+                            <td class="w12 left">${item.jenis_pembayaran}</td>
+                            <td class="w20 right">${rupiahFormatter.format(
+                              item.jumlah_pembayaran
+                            )}</td>
+                            <td class="w12 center">${item.tanggal}</td>
+                            <td class="w12 left">${
+                              item.nama_bank ? item.nama_bank : ''
+                            }</td>
+                            <td class="w12 left">${
+                              item.nomor_giro ? item.nomor_giro : ''
+                            }</td>
+                            <td class="w20 left">${
+                              item.remarks ? item.remarks : ''
+                            }</td>
+                          </tr>
+                          `
+                    )
+                    .join('') +
+                  `<tr>
+                    <td class="right subtotal" colspan="2"><b>Subtotal :</b></td>
+                    <td class="subtotal"><b>${rupiahFormatter.format(
+                      pembayaran.subtotal
+                    )}</b></td>
+                  </tr></table>
+                </td></table>`
+              )
+              .join('')}
+            <table>
+              <tr>
+                <td class="w30 right"><b>Grand Total : </b></td>
+                <td class="left"><b>${rupiahFormatter.format(
+                  grandTotal
+                )}</b></td>
+              </tr>
             </table>
           </td>
         </table>

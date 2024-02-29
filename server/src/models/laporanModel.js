@@ -120,8 +120,21 @@ async function pembayaran({
       knex.raw(
         "to_char(to_timestamp(payment.tanggal / 1000), 'dd-mm-yyyy') as tanggal"
       ),
+      knex.raw(
+        `to_char(to_timestamp("order".tanggal_faktur / 1000), 'dd-mm-yyyy') as tanggal_faktur`
+      ),
+      'order.total',
       'payment.jumlah_pembayaran',
+      'payment.jenis_pembayaran',
       'payment.remarks',
+      'payment.nama_bank',
+      'giro.nomor_giro',
+      knex.raw(
+        `CASE WHEN giro.id IS NOT NULL
+          THEN giro.status_pembayaran
+          ELSE 'LUNAS'
+        END as status_pembayaran`
+      ),
       knex.raw(
         `EXISTS(
       SELECT 1
@@ -135,6 +148,7 @@ async function pembayaran({
     .leftJoin('order', 'order.nomor_faktur', '=', 'payment.nomor_faktur')
     .leftJoin('sales', 'sales.id', '=', 'order.sales_id')
     .leftJoin('customer', 'customer.id', '=', 'order.customer_id')
+    .leftJoin('giro', 'giro.nomor_pembayaran', '=', 'payment.id')
     .where((builder) => {
       if (product) {
         builder.whereExists(
