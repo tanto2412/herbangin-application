@@ -57,8 +57,6 @@ async function count({
   page_size = 20,
 }) {
   return await knex('giro')
-    .select('giro.*', 'payment.nama_bank')
-    .leftJoin('payment', 'payment.id', '=', 'giro.nomor_pembayaran')
     .where((builder) => {
       if (nomor_faktur) {
         builder.where('nomor_faktur', nomor_faktur)
