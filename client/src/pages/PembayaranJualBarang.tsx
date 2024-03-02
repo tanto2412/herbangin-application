@@ -56,7 +56,9 @@ const PembayaranJualBarang = () => {
   const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined)
   const [searchItemObject, setsearchItemObject] = useState<any | null>(null)
 
-  const [showDetailGiro, setShowDetailGiro] = useState(false)
+  const [jenisPembayaran, setJenisPembayaran] = useState<string | undefined>(
+    undefined
+  )
   const [selectedNomorFaktur, setSelectedNomorFaktur] = useState<number | null>(
     null
   )
@@ -238,7 +240,7 @@ const PembayaranJualBarang = () => {
     dimScreenName == HIDE_DIMSCREEN && reset()
 
     if (dimScreenName == ADD_DIMSCREEN) {
-      setShowDetailGiro(false)
+      setJenisPembayaran(false)
       setSelectedNomorFaktur(null)
       setFakturRemaininingAmount(0)
       setEditFakturAmount(0)
@@ -269,8 +271,8 @@ const PembayaranJualBarang = () => {
       setEditFakturAmount(selectedPayment.jumlah_pembayaran)
       setNameToChange(dateToChange)
 
-      if (selectedPayment.jenis_pembayaran == GIRO) setShowDetailGiro(true)
-      else setShowDetailGiro(false)
+      if (selectedPayment.jenis_pembayaran == GIRO) setJenisPembayaran(true)
+      else setJenisPembayaran(false)
     }
   }
 
@@ -301,6 +303,13 @@ const PembayaranJualBarang = () => {
             setError('checkNamaBank', { type: 'manual' })
             isError = true
           }
+        } else if (data.checkCaraPembayaran == TRANSFER) {
+          if (data.checkNamaBank == '') {
+            setError('checkNamaBank', { type: 'manual' })
+            isError = true
+          }
+          data.checkNomorGiro = ''
+          data.checkTglJatuhTempo = ''
         } else {
           data.checkNomorGiro = ''
           data.checkNamaBank = ''
@@ -375,9 +384,7 @@ const PembayaranJualBarang = () => {
   }
 
   const handleOnChangeCaraBayar = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedValue = e.target.value
-    if (selectedValue == GIRO) setShowDetailGiro(true)
-    else setShowDetailGiro(false)
+    setJenisPembayaran(e.target.value)
   }
   const handleOnChangeCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedValue = e.target.value
@@ -487,7 +494,7 @@ const PembayaranJualBarang = () => {
                   </div>
                 </FloatingLabelFormComponent>
 
-                {showDetailGiro && (
+                {jenisPembayaran === 'GIRO' && (
                   <>
                     <div className="input-group">
                       <FloatingLabelFormComponent
@@ -524,25 +531,26 @@ const PembayaranJualBarang = () => {
                           <br />
                         </div>
                       </FloatingLabelFormComponent>
-
-                      <FloatingLabelFormComponent
-                        idInputComponent={idFormComponentList[5]}
-                        labelName={labelFormComponentList[5]}
-                      >
-                        <input
-                          type="text"
-                          id={idFormComponentList[5]}
-                          className="form-control"
-                          autoComplete="off"
-                          {...register('checkNamaBank')}
-                        />
-                        <div id="invalid-feedback">
-                          {errors.checkNamaBank && 'Nama Bank harus diisi'}
-                          <br />
-                        </div>
-                      </FloatingLabelFormComponent>
                     </div>
                   </>
+                )}
+                {(jenisPembayaran == TRANSFER || jenisPembayaran == GIRO) && (
+                  <FloatingLabelFormComponent
+                    idInputComponent={idFormComponentList[5]}
+                    labelName={labelFormComponentList[5]}
+                  >
+                    <input
+                      type="text"
+                      id={idFormComponentList[5]}
+                      className="form-control"
+                      autoComplete="off"
+                      {...register('checkNamaBank')}
+                    />
+                    <div id="invalid-feedback">
+                      {errors.checkNamaBank && 'Nama Bank harus diisi'}
+                      <br />
+                    </div>
+                  </FloatingLabelFormComponent>
                 )}
                 <FloatingLabelFormComponent
                   idInputComponent={idFormComponentList[6]}

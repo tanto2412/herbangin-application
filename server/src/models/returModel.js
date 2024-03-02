@@ -115,6 +115,10 @@ async function getByOrderId(id, trx) {
   return await trx('retur').where('nomor_faktur', id)
 }
 
+async function getByOrderIds(ids) {
+  return await knex('retur').whereIn('nomor_faktur', ids)
+}
+
 async function getItemsById(id) {
   return await knex('retur_item')
     .select('retur_item.*', 'product.nama_barang', 'product.kode_barang')
@@ -348,14 +352,14 @@ async function removeByOrderId(id, trx) {
     return null
   }
 
-  retur.items = returItems
-  return retur
+  return returs
 }
 
 module.exports = {
   search,
   count,
   getById,
+  getByOrderIds,
   getItemsById,
   getItemsByIds,
   getItemsByOrderItemIds,

@@ -112,7 +112,14 @@ const PenjualanBarang = () => {
     }
 
     fetchData()
-  }, [IDToChange, toggleDimScreen, searchTerm, setUserName])
+  }, [
+    IDToChange,
+    toggleDimScreen,
+    searchTerm,
+    setUserName,
+    params,
+    searchCategory,
+  ])
 
   useEffect(() => {
     const fetchDataItems = async () => {
@@ -170,7 +177,7 @@ const PenjualanBarang = () => {
     }
 
     fetchData()
-  }, [productCheckStockID, setUserName])
+  }, [productCheckStockID, setUserName, productList])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -303,8 +310,11 @@ const PenjualanBarang = () => {
             autoComplete="off"
             placeholder={'Max: ' + productCheckStock}
             {...register('checkJumlahBarang', {
-              required: true,
-              max: productCheckStock,
+              required: 'Jumlah barang harus diisi',
+              max: {
+                value: productCheckStock,
+                message: `Jumlah barang tidak bisa melebihi ${productCheckStock}`,
+              },
             })}
           />
         </td>
@@ -483,11 +493,17 @@ const PenjualanBarang = () => {
     const added_product_id = getValues('checkProductID')
     const added_jumlah_barang = getValues('checkJumlahBarang')
     if (added_product_id == '' || added_jumlah_barang == '') {
-      setError('checkJumlahBarang', { type: 'manual' })
+      setError('checkJumlahBarang', {
+        type: 'manual',
+        message: `Jumlah barang harus diisi`,
+      })
       return
     }
     if (Number(added_jumlah_barang) > productCheckStock) {
-      setError('checkJumlahBarang', { type: 'manual' })
+      setError('checkJumlahBarang', {
+        type: 'manual',
+        message: `Jumlah barang tidak bisa melebihi ${productCheckStock}`,
+      })
       return
     }
     const selectedProduct = productList.find(
@@ -551,12 +567,30 @@ const PenjualanBarang = () => {
             setError('checkProductID', { type: 'manual' })
             return
           }
-          await addOrderRecord(data_to_change)
+          try {
+            await addOrderRecord(data_to_change)
+          } catch (error) {
+            const axiosError = error as AxiosError
+            setError('checkCustomerNameAddr', {
+              type: 'manual',
+              message: axiosError.response?.data as string,
+            })
+            return
+          }
         }
 
         if (toggleDimScreen == EDIT_DIMSCREEN) {
           if (IDToChange != null)
-            await updateOrderRecord(IDToChange, data_to_change)
+            try {
+              await updateOrderRecord(IDToChange, data_to_change)
+            } catch (error) {
+              const axiosError = error as AxiosError
+              setError('checkCustomerNameAddr', {
+                type: 'manual',
+                message: axiosError.response?.data as string,
+              })
+              return
+            }
         }
         break
       case DELETE_DIMSCREEN:
@@ -685,7 +719,7 @@ const PenjualanBarang = () => {
                     className="form-select"
                     id={idFormComponentList[2]}
                     {...register('checkCustomerNameAddr', {
-                      required: true,
+                      required: 'Nama Pelanggan harus dipilih',
                     })}
                   >
                     {customersListOptions()}
@@ -700,11 +734,11 @@ const PenjualanBarang = () => {
                 </div>
                 <div id="invalid-feedback">
                   {errors.checkCustomerNameAddr &&
-                    'Nama Pelanggan harus dipilih'}
+                    errors.checkCustomerNameAddr.message?.toString()}
                 </div>
                 <div id="invalid-feedback">
                   {errors.checkJumlahBarang &&
-                    'Nama dan Jumlah barang harus diisi dengan benar'}
+                    errors.checkJumlahBarang.message?.toString()}
                 </div>
                 <div id="invalid-feedback">
                   {errors.checkProductID && 'Data Penjualan harus ada'}

@@ -98,6 +98,25 @@ async function getById(id) {
     .first()
 }
 
+async function getByOrderIds(ids) {
+  return await knex('payment')
+    .select(
+      'payment.*',
+      'sales.nama as nama_sales',
+      'customer.nama_toko',
+      'giro.id as giro_id',
+      'giro.nomor_giro',
+      'giro.tanggal_jatuh_tempo',
+      'giro.tanggal_pencairan',
+      'giro.status_pembayaran'
+    )
+    .leftJoin('order', 'order.nomor_faktur', '=', 'payment.nomor_faktur')
+    .leftJoin('sales', 'sales.id', '=', 'order.sales_id')
+    .leftJoin('customer', 'customer.id', '=', 'order.customer_id')
+    .leftJoin('giro', 'giro.nomor_pembayaran', '=', 'payment.id')
+    .whereIn('payment.nomor_faktur', ids)
+}
+
 async function create({
   nomor_faktur,
   tanggal,
@@ -246,6 +265,7 @@ module.exports = {
   search,
   count,
   getById,
+  getByOrderIds,
   create,
   edit,
   remove,

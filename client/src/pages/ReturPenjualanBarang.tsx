@@ -211,7 +211,7 @@ const PenjualanBarang = () => {
             (productorder) =>
               productorder.id === Number(productSoldCheckStockID)
           )
-          if (data) setProductSoldCheckStock(data.jumlah_barang)
+          if (data) setProductSoldCheckStock(data.remainingRetur)
           else setProductSoldCheckStock(0)
         }
       } catch (error) {

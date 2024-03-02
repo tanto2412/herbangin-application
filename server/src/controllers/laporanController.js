@@ -1,6 +1,7 @@
 // controllers/laporanController.js
 const laporanModel = require('../models/laporanModel')
 const giroModel = require('../models/giroModel')
+const returModel = require('../models/returModel')
 const rupiahFormatter = require('../utils/converter')
 const puppeteer = require('puppeteer')
 const logger = require('../../logger')
@@ -601,6 +602,10 @@ async function pembayaran(req, res) {
         let pembayaran = pembayaranMap.get(item.nomor_faktur)
         pembayaran.items.push(item)
         pembayaran.subtotal += Number(item.jumlah_pembayaran)
+        pembayaran.subtotal_lunas +=
+          item.status_pembayaran === 'LUNAS'
+            ? Number(item.jumlah_pembayaran)
+            : 0
         pembayaranMap.set(item.nomor_faktur, pembayaran)
       } else
         pembayaranMap.set(item.nomor_faktur, {
@@ -612,7 +617,25 @@ async function pembayaran(req, res) {
           komisi: item.komisi,
           total_faktur: item.total,
           subtotal: Number(item.jumlah_pembayaran),
+          subtotal_lunas:
+            item.status_pembayaran === 'LUNAS'
+              ? Number(item.jumlah_pembayaran)
+              : 0,
         })
+    })
+
+    const orderIds = Array.from(pembayaranMap.keys())
+    const returs = await returModel.getByOrderIds(orderIds)
+    let returMap = new Map()
+    returs.forEach((retur) => {
+      if (returMap.has(retur.nomor_faktur)) {
+        returMap.set(
+          retur.nomor_faktur,
+          returMap.get(retur.nomor_faktur) + Number(retur.total)
+        )
+      } else {
+        returMap.set(retur.nomor_faktur, Number(retur.total))
+      }
     })
 
     // HTML template with placeholders for dynamic data
@@ -747,8 +770,9 @@ async function pembayaran(req, res) {
                         <td class="w30 left">${pembayaran.nama_toko}</td>
                         <td class="w20 left">Status Pembayaran :</td>
                         <td class="w20 left">${
-                          Number(pembayaran.subtotal) <
-                          Number(pembayaran.total_faktur)
+                          Number(pembayaran.subtotal_lunas) <
+                          Number(pembayaran.total_faktur) -
+                            (returMap.get(Number(pembayaran.nomor_faktur)) | 0)
                             ? 'BELUM LUNAS'
                             : 'LUNAS'
                         }</td>

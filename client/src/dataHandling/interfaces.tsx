@@ -75,6 +75,7 @@ export interface OrderDataDetails {
   satuan_terkecil: string
   harga_satuan: number
   subtotal: number
+  remaining_retur: number
 }
 
 export interface ReturData {

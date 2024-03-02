@@ -4,6 +4,7 @@ const productModel = require('../models/productModel')
 const customerModel = require('../models/customerModel')
 const paymentModel = require('../models/paymentModel')
 const returModel = require('../models/returModel')
+const giroModel = require('../models/giroModel')
 const logger = require('../../logger')
 
 async function search(req, res) {
@@ -123,7 +124,7 @@ async function buildCreateSpec(
   const customer = await customerModel.getById(customer_id)
   if (!customer) {
     return {
-      error: `missing customer: ${customer_id}`,
+      error: `pelanggan tidak ditemukan: ${customer_id}`,
       result: null,
     }
   }
@@ -138,6 +139,31 @@ async function buildCreateSpec(
   let existingOrderItemMap = new Map()
   for (let existingOrderItem of existingOrderItems) {
     existingOrderItemMap.set(existingOrderItem.product_id, existingOrderItem)
+  }
+
+  const otherOrders = await orderModel.search({ customer: customer_id })
+  let batasPiutang = Number(customer.batas_piutang)
+  let otherOrderIds = []
+  for (let otherOrder of otherOrders) {
+    if (otherOrder.nomor_faktur != nomor_faktur) {
+      batasPiutang -= Number(otherOrder.total)
+      otherOrderIds.push(otherOrder.nomor_faktur)
+    }
+  }
+
+  const payments = await paymentModel.getByOrderIds(otherOrderIds)
+  for (let payment of payments) {
+    if (
+      !payment.status_pembayaran ||
+      payment.status_pembayaran === giroModel.StatusPembayaran.LUNAS
+    ) {
+      batasPiutang += Number(payment.jumlah_pembayaran)
+    }
+  }
+
+  const returs = await returModel.getByOrderIds(otherOrderIds)
+  for (let retur of returs) {
+    batasPiutang += Number(retur.total)
   }
 
   let total = 0
@@ -179,21 +205,28 @@ async function buildCreateSpec(
 
   if (missingJumlah.length) {
     return {
-      error: `missing jumlah barang: ${missingJumlah}`,
+      error: `jumlah barang tidak ditemukan: ${missingJumlah}`,
       result: null,
     }
   }
 
   if (missingItems.length) {
     return {
-      error: `missing items: ${missingItems}`,
+      error: `product tidak ditemukan: ${missingItems}`,
       result: null,
     }
   }
 
   if (exceedStok.length) {
     return {
-      error: `exceed stock product: ${exceedStok}`,
+      error: `produk melebihi stok: ${exceedStok}`,
+      result: null,
+    }
+  }
+
+  if (batasPiutang < total) {
+    return {
+      error: `penjualan (${total}) melebihi batas piutang pelanggan (${batasPiutang})`,
       result: null,
     }
   }

@@ -85,9 +85,11 @@ async function isSalesExists(sales_id) {
 }
 
 function clean(body) {
-  if (!body.email.length) body.email = null
-  if (!body.nomor_handphone.length) body.nomor_handphone = null
-  if (!body.nomor_telepon.length) body.nomor_telepon = null
+  if (body.email && !body.email.length) body.email = null
+  if (body.nomor_handphone && !body.nomor_handphone.length)
+    body.nomor_handphone = null
+  if (body.nomor_telepon && !body.nomor_telepon.length)
+    body.nomor_telepon = null
   return body
 }
 
