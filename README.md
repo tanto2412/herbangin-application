@@ -9,6 +9,10 @@ Herbangin application
 5. Run `npm run migrate`
 6. Run `npm run seed`
 
+## Preparation
+1. Copy Folders
+2. Run `npm install` on client and server
+
 ## Run
 1. Run `npm install -g pm2`
 2. Open `taskschd.msc`

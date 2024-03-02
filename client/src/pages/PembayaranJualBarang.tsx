@@ -452,12 +452,16 @@ const PembayaranJualBarang = () => {
                     className="form-control"
                     autoComplete="off"
                     {...register('checkTglPembayaran', {
-                      required: true,
+                      required: 'Tanggal pembayaran harus diisi',
+                      validate: (date) =>
+                        isTutupBuku(dateToEpochmillis(date))
+                          ? 'Tanggal pembayaran maksimal adalah bulan lalu'
+                          : true,
                     })}
                   />
                   <div id="invalid-feedback">
                     {errors.checkTglPembayaran &&
-                      'Tanggal Pembayaran harus diisi'}
+                      errors.checkTglPembayaran.message?.toString()}
                     <br />
                   </div>
                 </FloatingLabelFormComponent>

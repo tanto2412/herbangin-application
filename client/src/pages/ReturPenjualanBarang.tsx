@@ -722,20 +722,28 @@ const PenjualanBarang = () => {
                     className="form-control"
                     autoComplete="off"
                     {...register('checkTglRetur', {
-                      required: true,
+                      required: 'Tanggal retur harus diisi',
+                      validate: (date) =>
+                        isTutupBuku(dateToEpochmillis(date))
+                          ? 'Tanggal retur maksimal adalah bulan lalu'
+                          : true,
                     })}
                   />
                 </FloatingLabelFormComponent>
                 <div id="invalid-feedback">
-                  {errors.checkNomorFaktur
-                    ? 'Nomor Faktur Penjualan harus dipilih'
-                    : errors.checkTglRetur
-                    ? 'Tanggal Retur harus diisi'
-                    : errors.checkJumlahBarang
-                    ? 'Jumlah Barang Retur tidak boleh lebih dari Penjualan'
-                    : errors.checkOrderItemID
-                    ? 'Data Retur Penjualan harus ada'
-                    : ''}
+                  {errors.checkNomorFaktur &&
+                    'Nomor Faktur Penjualan harus dipilih'}
+                </div>
+                <div id="invalid-feedback">
+                  {errors.checkTglRetur &&
+                    errors.checkTglRetur.message?.toString()}
+                </div>
+                <div id="invalid-feedback">
+                  {errors.checkJumlahBarang &&
+                    'Jumlah Barang Retur tidak boleh lebih dari Penjualan'}
+                </div>
+                <div id="invalid-feedback">
+                  {errors.checkOrderItemID && 'Data Retur Penjualan harus ada'}
                   <br />
                 </div>
 

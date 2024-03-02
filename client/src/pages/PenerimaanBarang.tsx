@@ -418,16 +418,23 @@ const PenerimaanBarang = () => {
                     className="form-control"
                     autoComplete="off"
                     {...register('checkTglPenerimaan', {
-                      required: true,
+                      required: 'Tanggal penerimaan harus diisi',
+                      validate: (date) =>
+                        isTutupBuku(dateToEpochmillis(date))
+                          ? 'Tanggal penerimaan maksimal adalah bulan lalu'
+                          : true,
                     })}
                   />
                   <div id="invalid-feedback">
                     {errors.checkTglPenerimaan &&
-                      'Tanggal Penerimaan harus diisi'}
+                      errors.checkTglPenerimaan.message?.toString()}
+                  </div>
+                  <div id="invalid-feedback">
                     {errors.checkJumlahBarang &&
-                      'Nama dan Jumlah barang harus diisi'}
-                    {errors.checkProductID && 'Data Penerimaan harus ada'}
-                    <br />
+                      'Nama dan jumlah barang harus diisi'}
+                  </div>
+                  <div id="invalid-feedback">
+                    {errors.checkProductID && 'Data penerimaan harus ada'}
                   </div>
                 </FloatingLabelFormComponent>
 

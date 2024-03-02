@@ -651,7 +651,11 @@ const PenjualanBarang = () => {
                       className="form-control"
                       autoComplete="off"
                       {...register('checkTglFaktur', {
-                        required: true,
+                        required: 'Tanggal faktur harus diisi',
+                        validate: (date) =>
+                          isTutupBuku(dateToEpochmillis(date))
+                            ? 'Tanggal faktur maksimal adalah bulan lalu'
+                            : true,
                       })}
                     />
                   </FloatingLabelFormComponent>
@@ -688,18 +692,22 @@ const PenjualanBarang = () => {
                   </select>
                 </FloatingLabelFormComponent>
                 <div id="invalid-feedback">
-                  {errors.checkTglFaktur
-                    ? 'Tanggal Faktur harus diisi'
-                    : errors.checkSalesName
-                    ? 'Nama Sales harus dipilih'
-                    : errors.checkCustomerNameAddr
-                    ? 'Nama Pelanggan harus dipilih'
-                    : errors.checkJumlahBarang
-                    ? 'Nama dan Jumlah barang harus diisi dengan benar'
-                    : errors.checkProductID
-                    ? 'Data Penjualan harus ada'
-                    : ''}
-                  <br />
+                  {errors.checkTglFaktur &&
+                    errors.checkTglFaktur.message?.toString()}
+                </div>
+                <div id="invalid-feedback">
+                  {errors.checkSalesName && 'Nama Sales harus dipilih'}
+                </div>
+                <div id="invalid-feedback">
+                  {errors.checkCustomerNameAddr &&
+                    'Nama Pelanggan harus dipilih'}
+                </div>
+                <div id="invalid-feedback">
+                  {errors.checkJumlahBarang &&
+                    'Nama dan Jumlah barang harus diisi dengan benar'}
+                </div>
+                <div id="invalid-feedback">
+                  {errors.checkProductID && 'Data Penjualan harus ada'}
                 </div>
 
                 <div className="row justify-content-end">
