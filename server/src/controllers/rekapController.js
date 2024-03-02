@@ -1,6 +1,7 @@
 // controllers/rekapController.js
 const rekapModel = require('../models/rekapModel')
 const giroModel = require('../models/giroModel')
+const returModel = require('../models/returModel')
 const rupiahFormatter = require('../utils/converter')
 const puppeteer = require('puppeteer')
 const logger = require('../../logger')
@@ -381,11 +382,29 @@ async function piutang(req, res) {
   try {
     const rekapPiutang = await rekapModel.piutang(req.query)
 
+    const orderIds = rekapPiutang.map((piutang) => Number(piutang.nomor_faktur))
+    const returs = await returModel.getByOrderIds(orderIds)
+    let returMap = new Map()
+    returs.forEach((retur) => {
+      if (returMap.has(retur.nomor_faktur)) {
+        returMap.set(
+          retur.nomor_faktur,
+          returMap.get(retur.nomor_faktur) + Number(retur.total)
+        )
+      } else {
+        returMap.set(retur.nomor_faktur, Number(retur.total))
+      }
+    })
+
     let piutangMap = new Map()
     let grandTotal = 0
     let grandTotalBelumDibayar = 0
     let grandTotalSudahDibayar = 0
-    rekapPiutang.forEach((item) => {
+    rekapPiutang.forEach((piutang) => {
+      let item = piutang
+      item.total -= returMap.get(Number(piutang.nomor_faktur)) | 0
+      item.belum_dibayar -= returMap.get(Number(piutang.nomor_faktur)) | 0
+
       grandTotal += Number(item.total)
       grandTotalBelumDibayar += Number(item.belum_dibayar)
       grandTotalSudahDibayar += Number(item.sudah_dibayar)

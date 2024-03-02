@@ -253,7 +253,7 @@ async function giro(
   return await knex('giro')
     .select(
       'giro.nomor_giro',
-      'giro.nama_bank',
+      'payment.nama_bank',
       knex.raw(
         "to_char(to_timestamp(giro.tanggal_jatuh_tempo / 1000), 'dd-mm-yyyy') as tanggal_jatuh_tempo"
       ),
