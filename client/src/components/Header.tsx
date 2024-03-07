@@ -58,7 +58,7 @@ const Header = () => {
             Store Application
           </a>
           <div className="d-flex flex-row">
-            <div className="me-2">Hello, {username}</div>
+            <div className="me-2 my-auto">Hello, {username}</div>
             <button
               className="btn btn-sm btn-outline-success me-2"
               type="button"
