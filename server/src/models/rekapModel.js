@@ -122,7 +122,7 @@ async function pembayaran({
         "to_char(to_timestamp(payment.tanggal / 1000), 'dd-mm-yyyy') as tanggal"
       ),
       'payment.jumlah_pembayaran',
-      'payment.remarks',
+      'payment.jenis_pembayaran as remarks',
       knex.raw(
         `EXISTS(
       SELECT 1

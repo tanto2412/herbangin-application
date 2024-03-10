@@ -311,7 +311,6 @@ async function penjualan(req, res) {
                 <th class="left"><u>Nama Barang</u></th>
                 <th class="right"><u>Jumlah</u></th>
                 <th class="right"><u>Harga</u></th>
-                <th class="center"><u>Keterangan</u></th>
               </tr>
               ${Array.from(fakturMap)
                 .map(
@@ -325,18 +324,17 @@ async function penjualan(req, res) {
                             ? `
                           <td class="w15 left" rowspan="${faktur.items.length}">${item.nama}</td>
                           <td class="w15 center" rowspan="${faktur.items.length}">${item.tanggal}</td>
-                          <td class="w11 center" rowspan="${faktur.items.length}">${item.nomor_faktur}</td>
+                          <td class="w15 center" rowspan="${faktur.items.length}">${item.nomor_faktur}</td>
                           `
                             : ''
                         }
                         <td class="w18 left">${item.nama_barang}</td>
-                        <td class="w15 right">${item.jumlah_barang} ${
+                        <td class="w18 right">${item.jumlah_barang} ${
                             item.satuan_terkecil
                           }</td>
-                        <td class="w15 right">${rupiahFormatter.format(
+                        <td class="w18 right">${rupiahFormatter.format(
                           item.harga_satuan
                         )}</td>
-                        <td class="w11 center">${item.jenis_barang}</td>
                       </tr>
                       `
                       )

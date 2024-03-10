@@ -62,8 +62,7 @@ async function penjualan({
       'order_item.jumlah_barang',
       'order_item.satuan_terkecil',
       'order_item.harga_satuan',
-      'order_item.subtotal',
-      'product.jenis_barang'
+      'order_item.subtotal'
     )
     .leftJoin('order', 'order.nomor_faktur', '=', 'order_item.nomor_faktur')
     .leftJoin('sales', 'sales.id', '=', 'order.sales_id')
