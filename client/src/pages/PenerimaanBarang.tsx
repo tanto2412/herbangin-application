@@ -34,7 +34,6 @@ import {
   dateToEpochmillis,
   epochmillisToDate,
   epochmillisToInputDate,
-  isTutupBuku,
 } from '../utils/DateFunction'
 import { fetchProductsData } from '../dataHandling/API_products'
 import { useUserContext } from '../components/UserContext'
@@ -197,7 +196,6 @@ const PenerimaanBarang = () => {
               buttonCaption="Edit"
               buttonSize={20}
               showCaption={false}
-              disabled={isTutupBuku(PenerimaanBarangData?.tanggal)}
               onClick={() =>
                 onClickAction(EDIT_DIMSCREEN, PenerimaanBarangData?.id)
               }
@@ -206,7 +204,6 @@ const PenerimaanBarang = () => {
               buttonCaption="Delete"
               buttonSize={20}
               showCaption={false}
-              disabled={isTutupBuku(PenerimaanBarangData?.tanggal)}
               onClick={() =>
                 onClickAction(DELETE_DIMSCREEN, PenerimaanBarangData?.id)
               }
@@ -419,10 +416,6 @@ const PenerimaanBarang = () => {
                     autoComplete="off"
                     {...register('checkTglPenerimaan', {
                       required: 'Tanggal penerimaan harus diisi',
-                      validate: (date) =>
-                        isTutupBuku(dateToEpochmillis(date))
-                          ? 'Tanggal penerimaan maksimal adalah bulan lalu'
-                          : true,
                     })}
                   />
                   <div id="invalid-feedback">

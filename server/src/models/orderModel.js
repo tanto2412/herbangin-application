@@ -179,13 +179,6 @@ async function edit({
             updated_at: knex.raw('now()'),
           })
           .where('nomor_faktur', nomor_faktur)
-          .andWhere(
-            knex.raw(
-              "date_trunc('month', to_timestamp(tanggal_faktur/1000.0))"
-            ),
-            '>',
-            knex.raw("date_trunc('month', now() - INTERVAL '2 months')")
-          )
           .returning('*')
       )[0]
 

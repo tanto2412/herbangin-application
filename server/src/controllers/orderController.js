@@ -6,6 +6,7 @@ const paymentModel = require('../models/paymentModel')
 const returModel = require('../models/returModel')
 const giroModel = require('../models/giroModel')
 const logger = require('../../logger')
+const { isAlreadyTutupBuku } = require('../utils/date')
 
 async function search(req, res) {
   const orders = await orderModel.search(req.query)
@@ -62,6 +63,12 @@ async function getById(req, res) {
 
 async function create(req, res) {
   try {
+    const user = await req.user
+    if (isAlreadyTutupBuku(req.body.tanggal_faktur) && !user.administrator) {
+      res.status(500).send('tanggal maksimal bulan lalu')
+      return
+    }
+
     let createSpec = await buildCreateSpec(req.params.id, req.body)
     if (createSpec.error) {
       res.status(500).send(createSpec.error)
@@ -83,6 +90,12 @@ async function create(req, res) {
 
 async function edit(req, res) {
   try {
+    const user = await req.user
+    if (isAlreadyTutupBuku(req.body.tanggal_faktur) && !user.administrator) {
+      res.status(500).send('tanggal maksimal bulan lalu')
+      return
+    }
+
     let editSpec = await buildCreateSpec(req.params.id, req.body)
     if (editSpec.error) {
       res.status(500).send(editSpec.error)
