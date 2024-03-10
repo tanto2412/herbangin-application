@@ -118,14 +118,19 @@ async function edit(req, res) {
 }
 
 async function remove(req, res) {
-  const order = await orderModel.remove(req.params.id)
+  try {
+    const order = await orderModel.remove(req.params.id)
 
-  if (!order) {
-    res.status(500).send('delete failed')
-    return
+    if (!order) {
+      res.status(500).send('delete failed')
+      return
+    }
+
+    res.json(order)
+  } catch (error) {
+    logger.error(error)
+    res.status(500).send(error.detail ? error.detail : 'delete failed')
   }
-
-  res.json(order)
 }
 
 async function buildCreateSpec(

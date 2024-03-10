@@ -74,14 +74,19 @@ async function edit(req, res) {
 }
 
 async function remove(req, res) {
-  const payment = await paymentModel.remove(req.params.id)
+  try {
+    const payment = await paymentModel.remove(req.params.id)
 
-  if (!payment) {
-    res.status(500).send('delete failed')
-    return
+    if (!payment) {
+      res.status(500).send('delete failed')
+      return
+    }
+
+    res.json(payment)
+  } catch (error) {
+    logger.error(error)
+    res.status(500).send(error.detail ? error.detail : 'delete failed')
   }
-
-  res.json(payment)
 }
 
 async function checkPaymentAmount(

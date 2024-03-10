@@ -72,14 +72,19 @@ async function edit(req, res) {
 }
 
 async function remove(req, res) {
-  const receiving = await receivingModel.remove(req.params.id)
+  try {
+    const receiving = await receivingModel.remove(req.params.id)
 
-  if (!receiving) {
-    res.status(500).send('delete failed')
-    return
+    if (!receiving) {
+      res.status(500).send('delete failed')
+      return
+    }
+
+    res.json(receiving)
+  } catch (error) {
+    logger.error(error)
+    res.status(500).send(error.detail ? error.detail : 'delete failed')
   }
-
-  res.json(receiving)
 }
 
 async function buildCreateSpec(id, { tanggal, items }) {

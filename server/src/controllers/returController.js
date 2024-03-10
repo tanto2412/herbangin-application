@@ -79,14 +79,19 @@ async function edit(req, res) {
 }
 
 async function remove(req, res) {
-  const retur = await returModel.remove(req.params.id)
+  try {
+    const retur = await returModel.remove(req.params.id)
 
-  if (!retur) {
-    res.status(500).send('delete failed')
-    return
+    if (!retur) {
+      res.status(500).send('delete failed')
+      return
+    }
+
+    res.json(retur)
+  } catch (error) {
+    logger.error(error)
+    res.status(500).send(error.detail ? error.detail : 'delete failed')
   }
-
-  res.json(retur)
 }
 
 async function buildCreateSpec(retur_id, { nomor_faktur, tanggal, items }) {

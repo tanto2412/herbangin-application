@@ -57,16 +57,21 @@ async function create(req, res) {
 }
 
 async function remove(req, res) {
-  const users = await userModel.deleteUser(req.params.id)
+  try {
+    const users = await userModel.deleteUser(req.params.id)
 
-  if (!users.length) {
-    res.status(404).send('user not found')
-    return
+    if (!users.length) {
+      res.status(404).send('user not found')
+      return
+    }
+
+    const user = users[0]
+    delete user.password
+    res.json(user)
+  } catch (error) {
+    logger.error(error)
+    res.status(500).send(error.detail ? error.detail : 'delete failed')
   }
-
-  const user = users[0]
-  delete user.password
-  res.json(user)
 }
 
 module.exports = {

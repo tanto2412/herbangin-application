@@ -55,14 +55,19 @@ async function edit(req, res) {
 }
 
 async function remove(req, res) {
-  const sales = await salesModel.remove(req.params.id)
+  try {
+    const sales = await salesModel.remove(req.params.id)
 
-  if (!sales.length) {
-    res.status(404).send('sales not found')
-    return
+    if (!sales.length) {
+      res.status(404).send('sales not found')
+      return
+    }
+
+    res.json(sales[0])
+  } catch (error) {
+    logger.error(error)
+    res.status(500).send(error.detail ? error.detail : 'delete failed')
   }
-
-  res.json(sales[0])
 }
 
 module.exports = {

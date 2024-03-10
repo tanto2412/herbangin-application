@@ -65,14 +65,19 @@ async function edit(req, res) {
 }
 
 async function remove(req, res) {
-  const products = await productModel.remove(req.params.id)
+  try {
+    const products = await productModel.remove(req.params.id)
 
-  if (!products.length) {
-    res.status(404).send('product not found')
-    return
+    if (!products.length) {
+      res.status(404).send('product not found')
+      return
+    }
+
+    res.json(products[0])
+  } catch (error) {
+    logger.error(error)
+    res.status(500).send(error.detail ? error.detail : 'delete failed')
   }
-
-  res.json(products[0])
 }
 
 function validateFastMoving({ jenis_barang, batas_fast_moving }) {

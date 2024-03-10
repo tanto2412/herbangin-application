@@ -70,14 +70,19 @@ async function edit(req, res) {
 }
 
 async function remove(req, res) {
-  const customers = await customerModel.remove(req.params.id)
+  try {
+    const customers = await customerModel.remove(req.params.id)
 
-  if (!customers.length) {
-    res.status(404).send('customer not found')
-    return
+    if (!customers.length) {
+      res.status(404).send('customer not found')
+      return
+    }
+
+    res.json(customers[0])
+  } catch (error) {
+    logger.error(error)
+    res.status(500).send(error.detail ? error.detail : 'delete failed')
   }
-
-  res.json(customers[0])
 }
 
 async function isSalesExists(sales_id) {
