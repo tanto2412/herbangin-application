@@ -12,6 +12,7 @@ passport.serializeUser((user, done) => {
 // Deserialize user from session
 passport.deserializeUser((username, done) => {
   const user = userModel.getByUsername(username)
+  delete user.password
   done(null, user)
 })
 
@@ -25,6 +26,7 @@ passport.use(
         const passwordMatch = await bcrypt.compare(password, user.password)
 
         if (passwordMatch) {
+          delete user.password
           return done(null, user)
         }
       }
@@ -44,7 +46,17 @@ function isAuthenticated(req, res, next) {
   res.status(401).send('please login first')
 }
 
+async function isAdministrator(req, res, next) {
+  const user = await req.user
+  if (user.administrator) {
+    return next()
+  }
+
+  res.status(401).send('only supervisor can access')
+}
+
 module.exports = {
   passport,
   isAuthenticated,
+  isAdministrator,
 }

@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import DimScreenTemplate from './DimScreenTemplate'
 import FloatingLabelFormComponent from './FloatingLabelFormComponent'
 import { useUserContext } from './UserContext'
-import { changePassword, fetchLogin } from '../dataHandling/API_login_user'
+import { changePassword } from '../dataHandling/API_login_user'
 
 const Header = () => {
   const onClickLogout = () => {
@@ -30,8 +30,7 @@ const Header = () => {
 
   const onSubmit = async (data: any) => {
     try {
-      const loginData = await fetchLogin(username, data.oldPassword)
-      await changePassword(loginData.id, data.newPassword)
+      await changePassword(data.newPassword)
       onClickChangePwd()
     } catch (error) {
       setError('oldPassword', { type: 'wrongpassword' })

@@ -30,12 +30,11 @@ export const fetchLogin = async (
 }
 
 export const changePassword = async (
-  param_username_id: number,
   param_password: string
 ): Promise<UsersData[]> => {
   try {
     const response = await axios.put(
-      `${baseURL}/${usersURL}/${param_username_id}`,
+      `${baseURL}/${usersURL}`,
       { password: param_password },
       { withCredentials: true }
     )
