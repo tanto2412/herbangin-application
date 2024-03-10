@@ -139,6 +139,8 @@ async function create({
             remarks,
             nama_bank,
           })
+          .onConflict('id')
+          .merge()
           .returning('*')
       )[0]
 

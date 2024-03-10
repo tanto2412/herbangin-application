@@ -56,7 +56,11 @@ async function create({ tanggal, total, items }) {
   try {
     return await knex.transaction(async (trx) => {
       let receiving = (
-        await trx('receiving').insert({ tanggal, total }).returning('*')
+        await trx('receiving')
+          .insert({ tanggal, total })
+          .onConflict('id')
+          .merge()
+          .returning('*')
       )[0]
 
       let updatedItems = items.map((item) => {
@@ -67,6 +71,8 @@ async function create({ tanggal, total, items }) {
 
       let receivingItems = await trx('receiving_item')
         .insert(updatedItems)
+        .onConflict('id')
+        .merge()
         .returning('*')
       if (!receivingItems || !receivingItems.length) {
         await trx.rollback()

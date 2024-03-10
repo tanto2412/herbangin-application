@@ -147,6 +147,8 @@ async function create({
       let retur = (
         await trx('retur')
           .insert({ nomor_faktur, customer_id, sales_id, tanggal, total })
+          .onConflict('id')
+          .merge()
           .returning('*')
       )[0]
 
@@ -158,6 +160,8 @@ async function create({
 
       let returItems = await trx('retur_item')
         .insert(updatedItems)
+        .onConflict('id')
+        .merge()
         .returning('*')
       if (!returItems || !returItems.length) {
         await trx.rollback()

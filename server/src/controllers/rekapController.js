@@ -429,7 +429,7 @@ async function piutang(req, res) {
     Array.from(piutangMap).forEach(([customer_id, piutangGroup]) => {
       if (piutangMapBySales.has(piutangGroup.sales_id)) {
         let piutang = piutangGroup
-        piutang.customers.push(customer_id)
+        piutang.items.push(customer_id)
         piutang.subtotal += Number(piutangGroup.total)
         piutang.belum_dibayar += Number(piutangGroup.belum_dibayar)
         piutang.sudah_dibayar += Number(piutangGroup.sudah_dibayar)

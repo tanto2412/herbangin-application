@@ -112,6 +112,8 @@ async function create({ tanggal_faktur, customer_id, sales_id, total, items }) {
       let order = (
         await trx('order')
           .insert({ tanggal_faktur, customer_id, sales_id, total })
+          .onConflict('nomor_faktur')
+          .merge()
           .returning('*')
       )[0]
 
@@ -123,6 +125,8 @@ async function create({ tanggal_faktur, customer_id, sales_id, total, items }) {
 
       let orderItems = await trx('order_item')
         .insert(updatedItems)
+        .onConflict('id')
+        .merge()
         .returning('*')
       if (!orderItems || !orderItems.length) {
         await trx.rollback()

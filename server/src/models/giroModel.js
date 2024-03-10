@@ -152,14 +152,26 @@ async function editByPaymentId(
       status_pembayaran,
       tanggal_pencairan,
     })
-    .onConflict('nomor_pembayaran')
-    .merge([
-      'nomor_faktur',
-      'nomor_giro',
-      'tanggal_jatuh_tempo',
-      'status_pembayaran',
-      'tanggal_pencairan',
-    ])
+    .onConflict(
+      knex.raw(`
+          ("nomor_pembayaran") DO UPDATE SET 
+          nomor_faktur = EXCLUDED.nomor_faktur,
+          nomor_giro = EXCLUDED.nomor_giro,
+          tanggal_jatuh_tempo = EXCLUDED.tanggal_jatuh_tempo,
+          status_pembayaran = EXCLUDED.status_pembayaran,
+          tanggal_pencairan = EXCLUDED.tanggal_pencairan,
+          updated_at = EXCLUDED.updated_at
+        ON CONFLICT("id") DO UPDATE SET 
+          nomor_faktur = EXCLUDED.nomor_faktur,
+          nomor_giro = EXCLUDED.nomor_giro,
+          tanggal_jatuh_tempo = EXCLUDED.tanggal_jatuh_tempo,
+          status_pembayaran = EXCLUDED.status_pembayaran,
+          tanggal_pencairan = EXCLUDED.tanggal_pencairan,
+          nomor_pembayaran = EXCLUDED.nomor_pembayaran,
+          created_at = EXCLUDED.created_at
+          updated_at = EXCLUDED.updated_at
+      `)
+    )
     .returning('*')
 }
 
