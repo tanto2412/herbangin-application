@@ -52,7 +52,6 @@ const MasterBarang = () => {
     'checkProductName',
     'checkProductPrice',
     'checkStock',
-    'checkSatuanTerkecil',
     'checkBarangLaku',
     'checkBatasFastMoving',
   ]
@@ -61,9 +60,8 @@ const MasterBarang = () => {
     'Nama Barang',
     'Harga',
     'Stok Barang',
-    'Satuan Terkecil',
     'Barang Laku',
-    'Batas Fast Moving',
+    'Jatuh Tempo Barang Laku',
   ]
 
   useEffect(() => {
@@ -111,9 +109,7 @@ const MasterBarang = () => {
           <td>{ProductData?.kode_barang}</td>
           <td>{ProductData?.nama_barang}</td>
           <td>Rp. {Number(ProductData?.harga).toLocaleString()}</td>
-          <td>
-            {ProductData?.stok_barang} {ProductData?.satuan_terkecil}
-          </td>
+          <td>{ProductData?.stok_barang} Pak</td>
           <td>{ProductData?.jenis_barang == FAST_MOVING ? 'Yes' : 'No'}</td>
           <td>{ProductData?.batas_fast_moving}</td>
           <td className="text-center" width={90}>
@@ -147,9 +143,8 @@ const MasterBarang = () => {
       setValue(idFormComponentList[1], selectedSale.nama_barang)
       setValue(idFormComponentList[2], selectedSale.harga)
       setValue(idFormComponentList[3], selectedSale.stok_barang)
-      setValue(idFormComponentList[4], selectedSale.satuan_terkecil)
-      setValue(idFormComponentList[5], selectedSale.jenis_barang)
-      setValue(idFormComponentList[6], selectedSale.batas_fast_moving)
+      setValue(idFormComponentList[4], selectedSale.jenis_barang)
+      setValue(idFormComponentList[5], selectedSale.batas_fast_moving)
       setNameToChange(selectedSale.nama_barang)
       if (selectedSale.jenis_barang == SLOW_MOVING)
         setdisableStateBatasFastMoving(true)
@@ -172,7 +167,7 @@ const MasterBarang = () => {
       nama_barang: data.checkProductName,
       harga: data.checkProductPrice,
       stok_barang: 0,
-      satuan_terkecil: data.checkSatuanTerkecil,
+      satuan_terkecil: 'Pak',
       jenis_barang: data.checkBarangLaku,
       batas_fast_moving: data.checkBatasFastMoving,
     }
@@ -288,7 +283,7 @@ const MasterBarang = () => {
                     type="number"
                     id={idFormComponentList[2]}
                     className="form-control"
-                    step={0.01}
+                    step={100}
                     min={0}
                     autoComplete="off"
                     {...register('checkProductPrice', {
@@ -319,29 +314,9 @@ const MasterBarang = () => {
                   idInputComponent={idFormComponentList[4]}
                   labelName={labelFormComponentList[4]}
                 >
-                  <input
-                    type="text"
-                    id={idFormComponentList[4]}
-                    className="form-control"
-                    autoComplete="off"
-                    {...register('checkSatuanTerkecil', {
-                      required: true,
-                    })}
-                  />
-                  <div id="invalid-feedback">
-                    {errors.checkSatuanTerkecil &&
-                      'Satuan terkecil harus diisi'}
-                    <br />
-                  </div>
-                </FloatingLabelFormComponent>
-
-                <FloatingLabelFormComponent
-                  idInputComponent={idFormComponentList[5]}
-                  labelName={labelFormComponentList[5]}
-                >
                   <select
                     className="form-select"
-                    id={idFormComponentList[5]}
+                    id={idFormComponentList[4]}
                     {...register('checkBarangLaku', {
                       required: true,
                     })}
@@ -354,14 +329,14 @@ const MasterBarang = () => {
                 </FloatingLabelFormComponent>
 
                 <FloatingLabelFormComponent
-                  idInputComponent={idFormComponentList[6]}
-                  labelName={labelFormComponentList[6]}
+                  idInputComponent={idFormComponentList[5]}
+                  labelName={labelFormComponentList[5]}
                 >
                   <input
                     type="number"
-                    id={idFormComponentList[6]}
+                    id={idFormComponentList[5]}
                     className="form-control"
-                    step={0.01}
+                    step={1}
                     min={0}
                     autoComplete="off"
                     disabled={disableStateBatasFastMoving}
@@ -371,7 +346,7 @@ const MasterBarang = () => {
                   />
                   <div id="invalid-feedback">
                     {errors.checkBatasFastMoving &&
-                      'Batas Fast Moving harus diisi'}
+                      'Batas Jatuh Tempo Barang Laku harus diisi'}
                     <br />
                   </div>
                 </FloatingLabelFormComponent>

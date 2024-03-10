@@ -104,7 +104,7 @@ async function buildCreateSpec(id, { tanggal, items }) {
   let missingItems = []
   let missingJumlah = []
   let exceedStok = []
-  let filledItems = items.map(({ product_id, jumlah_barang }) => {
+  let filledItems = items.map(({ product_id, jumlah_barang, harga_satuan }) => {
     if (!jumlah_barang) {
       missingJumlah.push(product_id)
       return null
@@ -125,13 +125,13 @@ async function buildCreateSpec(id, { tanggal, items }) {
       }
     }
 
-    let subtotal = jumlah_barang * product.harga
+    let subtotal = jumlah_barang * (harga_satuan | 0)
     total += subtotal
     return {
       product_id,
       jumlah_barang,
       satuan_terkecil: product.satuan_terkecil,
-      harga_satuan: product.harga,
+      harga_satuan: harga_satuan | 0,
       subtotal,
     }
   })

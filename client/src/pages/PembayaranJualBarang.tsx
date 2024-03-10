@@ -559,7 +559,7 @@ const PembayaranJualBarang = () => {
                     type="number"
                     id={idFormComponentList[6]}
                     className="form-control"
-                    step={0.01}
+                    step={100}
                     min={0}
                     autoComplete="off"
                     {...register('checkBesarBayar', {
