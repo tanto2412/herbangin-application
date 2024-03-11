@@ -9,7 +9,12 @@ async function search(req, res) {
     delete user.password
     return user
   })
-  res.json(results)
+
+  const pagination = {
+    result: results,
+    pages: 1,
+  }
+  res.json(pagination)
 }
 
 async function getById(req, res) {
