@@ -6,6 +6,7 @@ export interface Pagination<Type> {
 export interface UsersData {
   id: number
   nama: string
+  password: string
   administrator: boolean
 }
 

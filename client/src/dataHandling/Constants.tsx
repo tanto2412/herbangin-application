@@ -17,6 +17,7 @@ export const LAIN_LAIN = 'LAIN_LAIN'
 
 export const baseURL = 'http://localhost:3000/api'
 
+export const UsersColumns = ['User ID', 'Username', 'Administrator status']
 export const SalesColumns = ['Sales ID', 'Nama Sales']
 export const CustomerColumns = [
   'Customer ID',

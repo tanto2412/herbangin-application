@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 import DimScreenTemplate from '../components/DimScreenTemplate'
@@ -9,85 +9,31 @@ import DeleteScreenContent from '../components/DeleteScreenContent'
 import ActionButton from '../components/ActionButton'
 import OKCancelButton from '../components/OKCancelButton'
 
-import UserColumns from '../dummyDataTable/UserColumns.json'
-import UserData from '../dummyDataTable/UserData.json'
+import {
+  fetchUsersData,
+  addUsersRecord,
+  deleteUsersRecord,
+} from '../dataHandling/API_login_user'
+import { Pagination, UsersData } from '../dataHandling/interfaces'
+import {
+  ADD_DIMSCREEN,
+  DELETE_DIMSCREEN,
+  HIDE_DIMSCREEN,
+  UsersColumns,
+} from '../dataHandling/Constants'
+import { useUserContext } from '../components/UserContext'
+import { AxiosError } from 'axios'
+import { useParams } from 'react-router-dom'
 
 const componentTitle = 'Master User'
 
-const HIDE_DIMSCREEN = 'NULL'
-const ADD_DIMSCREEN = 'Add'
-const EDIT_DIMSCREEN = 'Edit'
-const DELETE_DIMSCREEN = 'Delete'
-
 const MasterUser = () => {
-  const selectItemColumns = () =>
-    UserColumns?.map((UserColumns, index) => {
-      return (
-        <option key={index} value={UserColumns?.header}>
-          {UserColumns?.header}
-        </option>
-      )
-    })
-
-  const tableColumns = () =>
-    UserColumns?.map((UserColumns, index) => {
-      return <th key={index}>{UserColumns?.header}</th>
-    })
-
-  const tableData = () =>
-    UserData?.map((UserData, index) => {
-      return (
-        <tr key={index}>
-          <td>{UserData?.userId}</td>
-          <td>{UserData?.username}</td>
-          <td>{UserData?.isAdmin}</td>
-          <td className="text-center" width={90}>
-            <ActionButton
-              buttonCaption={EDIT_DIMSCREEN}
-              buttonSize={20}
-              showCaption={false}
-              onClick={() => onClickAction(EDIT_DIMSCREEN, UserData?.userId)}
-            />
-            <ActionButton
-              buttonCaption={DELETE_DIMSCREEN}
-              buttonSize={20}
-              showCaption={false}
-              onClick={() => onClickAction(DELETE_DIMSCREEN, UserData?.userId)}
-            />
-          </td>
-        </tr>
-      )
-    })
-
+  const [usersData, setUsersData] = useState<Pagination<UsersData> | null>(null)
   const [toggleDimScreen, setToogle] = useState(HIDE_DIMSCREEN)
   const [IDToChange, setIDToChange] = useState<number | null>(null)
-
-  const onClickAction = (dimScreenName: string, IDToChange?: any) => {
-    setToogle(dimScreenName)
-    setIDToChange(IDToChange)
-    dimScreenName == HIDE_DIMSCREEN && reset()
-  }
-
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm()
-
-  const onSubmit = (data: any) => {
-    console.log(data)
-    switch (toggleDimScreen) {
-      case ADD_DIMSCREEN:
-        break
-      case EDIT_DIMSCREEN:
-        break
-      case DELETE_DIMSCREEN:
-        break
-    }
-    setToogle(HIDE_DIMSCREEN)
-    reset()
-  }
+  const [nameToChange, setNameToChange] = useState<string | null>(null)
+  const { setUserName } = useUserContext()
+  const params = useParams()
 
   const idFormComponentList = [
     'checkUsername',
@@ -100,31 +46,115 @@ const MasterUser = () => {
     'Administrator status',
   ]
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await fetchUsersData()
+        setUsersData(data)
+      } catch (error) {
+        const axiosError = error as AxiosError
+        if (axiosError.response?.status === 401) {
+          setUserName('')
+        }
+      }
+    }
+
+    fetchData()
+  }, [IDToChange, toggleDimScreen, setUserName, params])
+
+  const tableColumns = () =>
+    UsersColumns?.map((UserColumns, index) => {
+      return <th key={index}>{UserColumns}</th>
+    })
+
+  const tableData = () =>
+    usersData?.result.map((UserData, index) => {
+      return (
+        <tr key={index}>
+          <td>{UserData?.id}</td>
+          <td>{UserData?.nama}</td>
+          <td>{UserData?.administrator == true ? 'Ya' : 'Tidak'}</td>
+          <td className="text-center" width={90}>
+            <ActionButton
+              buttonCaption={DELETE_DIMSCREEN}
+              buttonSize={20}
+              showCaption={false}
+              onClick={() => onClickAction(DELETE_DIMSCREEN, UserData?.id)}
+            />
+          </td>
+        </tr>
+      )
+    })
+
+  const onClickAction = (dimScreenName: string, IDToChangeParam?: any) => {
+    setToogle(dimScreenName)
+    IDToChangeParam && setIDToChange(IDToChangeParam)
+    dimScreenName == HIDE_DIMSCREEN && reset()
+
+    if (dimScreenName == DELETE_DIMSCREEN) {
+      const selectedSale = usersData?.result.find(
+        (user) => user.id === IDToChangeParam
+      ) as UsersData
+      setNameToChange(selectedSale.nama)
+    }
+
+    setValue(idFormComponentList[0], '')
+    setValue(idFormComponentList[1], '')
+    setValue(idFormComponentList[2], '')
+  }
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useForm()
+
+  const onSubmit = async (data: any) => {
+    const data_to_change: UsersData = {
+      // id and nama_sales as dummy value
+      id: 0,
+      nama: data.checkUsername,
+      password: data.checkPassword,
+      administrator: data.checkSelectIsAdmin,
+    }
+
+    switch (toggleDimScreen) {
+      case ADD_DIMSCREEN:
+        await addUsersRecord(data_to_change)
+        break
+      case DELETE_DIMSCREEN:
+        if (IDToChange != null) await deleteUsersRecord(IDToChange)
+        setIDToChange(null)
+        break
+    }
+
+    setToogle(HIDE_DIMSCREEN)
+  }
+
   return (
     <>
-      <ShowDataTemplate
-        titleNameString={componentTitle}
-        selectItemObject={selectItemColumns()}
-        tableColumnsObject={tableColumns()}
-        tableDataObject={tableData()}
-        onClickAdd={() => onClickAction(ADD_DIMSCREEN)}
-        register={register}
-      />
-      <DimScreenTemplate
-        idScreenFormat="dimScreen"
-        titleScreen={toggleDimScreen + ' ' + componentTitle}
-        onClickClose={() => onClickAction(HIDE_DIMSCREEN)}
-        toggleClassName={
-          toggleDimScreen === HIDE_DIMSCREEN ? 'invisible' : 'visible'
-        }
-      >
-        <form
-          id="actionForm"
-          name="actionForm"
-          onSubmit={handleSubmit(onSubmit)}
+      <form id="actionForm" name="actionForm" onSubmit={handleSubmit(onSubmit)}>
+        <ShowDataTemplate
+          titleNameString={componentTitle}
+          selectItemObject={null}
+          tableColumnsObject={tableColumns()}
+          tableDataObject={tableData()}
+          onClickAdd={() => onClickAction(ADD_DIMSCREEN)}
+          register={register}
+          pages={1}
+          currentPage={1}
+        />
+        <DimScreenTemplate
+          idScreenFormat="dimScreen"
+          titleScreen={toggleDimScreen + ' ' + componentTitle}
+          onClickClose={() => onClickAction(HIDE_DIMSCREEN)}
+          toggleClassName={
+            toggleDimScreen === HIDE_DIMSCREEN ? 'invisible' : 'visible'
+          }
         >
-          {(toggleDimScreen === ADD_DIMSCREEN ||
-            toggleDimScreen === EDIT_DIMSCREEN) && (
+          {toggleDimScreen === ADD_DIMSCREEN && (
             <>
               <div className="pb-2">
                 <FloatingLabelFormComponent
@@ -166,7 +196,7 @@ const MasterUser = () => {
                       'Password harus diisi'}
                     {errors.checkPassword &&
                       errors.checkPassword.type === 'minLength' &&
-                      'Panjang password minimal 6 karakter'}
+                      'Panjang password minimal 5 karakter'}
                     <br />
                   </div>
                 </FloatingLabelFormComponent>
@@ -178,19 +208,24 @@ const MasterUser = () => {
                   <select
                     className="form-select"
                     id={idFormComponentList[2]}
-                    {...register('checkIsAdmin', {
+                    {...register('checkSelectIsAdmin', {
                       required: true,
                     })}
                   >
-                    <option value="Tidak">Tidak</option>
-                    <option value="Ya">Ya</option>
-                  </select>
+                    <option value="false">Tidak</option>
+                    <option value="true">Ya</option>
+                  </select>{' '}
+                  <div id="invalid-feedback">
+                    {errors.checkSelectIsAdmin &&
+                      'Adminstrator status harus dipilih'}
+                    <br />
+                  </div>
                 </FloatingLabelFormComponent>
               </div>
             </>
           )}
           {toggleDimScreen === DELETE_DIMSCREEN && (
-            <DeleteScreenContent itemID={IDToChange} itemName={''} />
+            <DeleteScreenContent itemID={IDToChange} itemName={nameToChange} />
           )}
           {toggleDimScreen != HIDE_DIMSCREEN && (
             <OKCancelButton
@@ -198,8 +233,8 @@ const MasterUser = () => {
               onClickCancel={() => onClickAction(HIDE_DIMSCREEN)}
             />
           )}
-        </form>
-      </DimScreenTemplate>
+        </DimScreenTemplate>
+      </form>
     </>
   )
 }

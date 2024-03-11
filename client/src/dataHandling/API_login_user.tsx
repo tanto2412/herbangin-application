@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { baseURL } from './Constants'
-import { UsersData } from './interfaces'
+import { Pagination, UsersData } from './interfaces'
 
 const loginDataURL = 'auth/login'
 const usersURL = 'users'
@@ -47,6 +47,48 @@ export const changePassword = async (
     }
   } catch (error) {
     console.error('Error fetching login data:', error)
+    throw error
+  }
+}
+
+export const fetchUsersData = async (): Promise<Pagination<UsersData>> => {
+  try {
+    const response = await axios.get<Pagination<UsersData>>(
+      `${baseURL}/${usersURL}`,
+      { withCredentials: true }
+    )
+    return response.data
+  } catch (error) {
+    console.error('Error fetching users data:', error)
+    throw error
+  }
+}
+
+export const addUsersRecord = async (newUser: UsersData) => {
+  try {
+    const response = await axios.post(
+      `${baseURL}/${usersURL}`,
+      {
+        nama: newUser.nama,
+        password: newUser.password,
+        administrator: newUser.administrator,
+      },
+      { withCredentials: true }
+    )
+    return response.data
+  } catch (error) {
+    console.error('Error adding users record:', error)
+    throw error
+  }
+}
+
+export const deleteUsersRecord = async (id: number): Promise<void> => {
+  try {
+    await axios.delete(`${baseURL}/${usersURL}/${id}`, {
+      withCredentials: true,
+    })
+  } catch (error) {
+    console.error('Error deleting users record:', error)
     throw error
   }
 }

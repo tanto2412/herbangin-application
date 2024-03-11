@@ -237,7 +237,7 @@ const PembayaranJualBarang = () => {
     dimScreenName == HIDE_DIMSCREEN && reset()
 
     if (dimScreenName == ADD_DIMSCREEN) {
-      setJenisPembayaran(false)
+      setJenisPembayaran(undefined)
       setSelectedNomorFaktur(null)
       setFakturRemaininingAmount(0)
       setEditFakturAmount(0)
@@ -268,8 +268,8 @@ const PembayaranJualBarang = () => {
       setEditFakturAmount(selectedPayment.jumlah_pembayaran)
       setNameToChange(dateToChange)
 
-      if (selectedPayment.jenis_pembayaran == GIRO) setJenisPembayaran(true)
-      else setJenisPembayaran(false)
+      if (selectedPayment.jenis_pembayaran == GIRO) setJenisPembayaran(GIRO)
+      else setJenisPembayaran(undefined)
     }
   }
 

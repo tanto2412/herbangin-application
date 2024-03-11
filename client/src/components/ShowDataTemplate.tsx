@@ -5,7 +5,7 @@ import { NavLink } from 'react-router-dom'
 
 interface Props {
   titleNameString: string
-  selectItemObject: ReactNode
+  selectItemObject: ReactNode | null
   tableColumnsObject: ReactNode
   tableDataObject: ReactNode
   register: any
@@ -36,49 +36,54 @@ const ShowDataTemplate = ({
             <PageTitle titleName={titleNameString} />
           </div>
         </div>
-        <div className="p-2 d-flex flex-row">
-          <div className="d-inline-flex me-1 my-auto">Filter</div>
-          <div className="d-inline-flex me-1">
-            <select
-              className="form-select-sm"
-              name="checkSearchColumns"
-              {...register('checkSearchColumns')}
-              onChange={handleOnChangeCategory}
-            >
-              {selectItemObject}
-            </select>
-          </div>
-          {!searchItemObject && (
-            <div className="d-inline-flex me-1">
-              <input
-                type="input"
-                className="form-control-sm"
-                id="checkSearch"
-                {...register('checkSearch')}
-              />
+        {selectItemObject != null && (
+          <>
+            <div className="p-2 d-flex flex-row ">
+              <div className="d-inline-flex me-1 my-auto">Filter</div>
+              <div className="d-inline-flex me-1 ">
+                <select
+                  className="form-select-sm"
+                  name="checkSearchColumns"
+                  {...register('checkSearchColumns')}
+                  onChange={handleOnChangeCategory}
+                >
+                  {selectItemObject}
+                </select>
+              </div>
+              {!searchItemObject && (
+                <div className="d-inline-flex me-1">
+                  <input
+                    type="input"
+                    className="form-control-sm"
+                    id="checkSearch"
+                    {...register('checkSearch')}
+                  />
+                </div>
+              )}
+              {searchItemObject && (
+                <div className="d-inline-flex me-1">
+                  <select
+                    className="form-select-sm"
+                    name="checkSearchItemObject"
+                    {...register('checkSearchItemObject')}
+                  >
+                    {searchItemObject}
+                  </select>
+                </div>
+              )}
+              <div className="d-inline-flex me-1">
+                <ActionButton
+                  buttonCaption="Search"
+                  buttonSize={15}
+                  buttonType="submit"
+                  showCaption={true}
+                  hideBorder={false}
+                />
+              </div>
             </div>
-          )}
-          {searchItemObject && (
-            <div className="d-inline-flex me-1">
-              <select
-                className="form-select-sm"
-                name="checkSearchItemObject"
-                {...register('checkSearchItemObject')}
-              >
-                {searchItemObject}
-              </select>
-            </div>
-          )}
-          <div className="d-inline-flex me-1">
-            <ActionButton
-              buttonCaption="Search"
-              buttonSize={15}
-              buttonType="submit"
-              showCaption={true}
-              hideBorder={false}
-            />
-          </div>
-        </div>
+          </>
+        )}
+
         <div className="row">
           <div className="col-12">
             <table className="table table-hover table-striped table-bordered">

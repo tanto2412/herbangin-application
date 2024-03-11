@@ -519,6 +519,7 @@ const PenjualanBarang = () => {
       satuan_terkecil: selectedProduct.satuan_terkecil,
       harga_satuan: selectedProduct.harga,
       subtotal: subTotalTemp,
+      remaining_retur: 0,
     }
 
     setSelectedOrder([...selectedOrder, newRow])

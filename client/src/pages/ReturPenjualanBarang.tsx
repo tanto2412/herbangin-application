@@ -210,7 +210,7 @@ const PenjualanBarang = () => {
             (productorder) =>
               productorder.id === Number(productSoldCheckStockID)
           )
-          if (data) setProductSoldCheckStock(data.remainingRetur)
+          if (data) setProductSoldCheckStock(data.remaining_retur)
           else setProductSoldCheckStock(0)
         }
       } catch (error) {
