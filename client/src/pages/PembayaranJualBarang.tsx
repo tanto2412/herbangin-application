@@ -234,7 +234,12 @@ const PembayaranJualBarang = () => {
   const onClickAction = (dimScreenName: string, IDToChangeParam?: any) => {
     setToogle(dimScreenName)
     setIDToChange(IDToChangeParam)
-    dimScreenName == HIDE_DIMSCREEN && reset()
+    dimScreenName == HIDE_DIMSCREEN &&
+      reset({
+        checkSearch: getValues('checkSearch'),
+        checkSearchItemObject: getValues('checkSearchItemObject'),
+        checkSearchColumns: getValues('checkSearchColumns'),
+      })
 
     if (dimScreenName == ADD_DIMSCREEN) {
       setJenisPembayaran(undefined)
@@ -277,6 +282,7 @@ const PembayaranJualBarang = () => {
     register,
     handleSubmit,
     setValue,
+    getValues,
     setError,
     reset,
     formState: { errors },

@@ -133,7 +133,11 @@ const MasterBarang = () => {
   const onClickAction = (dimScreenName: string, IDToChangeParam?: number) => {
     setToogle(dimScreenName)
     IDToChangeParam && setIDToChange(IDToChangeParam)
-    dimScreenName == HIDE_DIMSCREEN && reset()
+    dimScreenName == HIDE_DIMSCREEN &&
+      reset({
+        checkSearch: getValues('checkSearch'),
+        checkSearchColumns: getValues('checkSearchColumns'),
+      })
 
     if (dimScreenName == EDIT_DIMSCREEN || dimScreenName == DELETE_DIMSCREEN) {
       const selectedSale = productsData?.result.find(
@@ -155,6 +159,7 @@ const MasterBarang = () => {
     register,
     handleSubmit,
     setValue,
+    getValues,
     reset,
     formState: { errors },
   } = useForm()

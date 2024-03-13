@@ -452,7 +452,11 @@ const PenjualanBarang = () => {
         setShowAddItemRow(false)
         setSearchSalesCustomer(null)
         setProductCheckStockID(null)
-        reset()
+        reset({
+          checkSearch: getValues('checkSearch'),
+          checkSearchItemObject: getValues('checkSearchItemObject'),
+          checkSearchColumns: getValues('checkSearchColumns'),
+        })
         break
     }
   }
@@ -519,7 +523,7 @@ const PenjualanBarang = () => {
       satuan_terkecil: selectedProduct.satuan_terkecil,
       harga_satuan: selectedProduct.harga,
       subtotal: subTotalTemp,
-      remaining_retur: 0,
+      remainingRetur: 0,
     }
 
     setSelectedOrder([...selectedOrder, newRow])

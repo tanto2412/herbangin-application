@@ -57,6 +57,9 @@ const PenjualanBarang = () => {
   const [customersList, setCustomersList] = useState<CustomersData[]>([])
   const [salesList, setSalesList] = useState<SalesData[]>([])
   const [orderList, setOrderList] = useState<OrderData[]>([])
+  const [selectedNomorCustomer, setSelectedNomorCustomer] = useState<
+    number | null
+  >(null)
   const [selectedNomorFaktur, setSelectedNomorFaktur] = useState<number | null>(
     null
   )
@@ -85,11 +88,13 @@ const PenjualanBarang = () => {
     'checkNomorFaktur',
     'checkTglFaktur',
     'checkTglRetur',
+    'checkNamaCustomerForAction',
   ]
   const labelFormComponentList = [
     'Nomor Faktur Penjualan',
     'Tanggal Faktur Penjualan',
     'Tanggal Retur',
+    'Pelanggan',
   ]
 
   const idFormComponentListItem = ['checkOrderItemID', 'checkJumlahBarang']
@@ -187,8 +192,12 @@ const PenjualanBarang = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await fetchOrderData()
-        setOrderList(data.result)
+        let data = null
+        if (selectedNomorCustomer == null) data = setOrderList([])
+        else {
+          data = await fetchOrderData('customer', String(selectedNomorCustomer))
+          setOrderList(data.result)
+        }
       } catch (error) {
         const axiosError = error as AxiosError
         if (axiosError.response?.status === 401) {
@@ -198,7 +207,7 @@ const PenjualanBarang = () => {
     }
 
     fetchData()
-  }, [setUserName])
+  }, [setUserName, selectedNomorCustomer])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -210,7 +219,7 @@ const PenjualanBarang = () => {
             (productorder) =>
               productorder.id === Number(productSoldCheckStockID)
           )
-          if (data) setProductSoldCheckStock(data.remaining_retur)
+          if (data) setProductSoldCheckStock(data.remainingRetur)
           else setProductSoldCheckStock(0)
         }
       } catch (error) {
@@ -420,6 +429,7 @@ const PenjualanBarang = () => {
     switch (dimScreenName) {
       case ADD_DIMSCREEN:
         setIDToChange(null)
+        setSelectedNomorCustomer(null)
         setSelectedNomorFaktur(null)
         setProductSoldCheckStockID(null)
         setProductSoldCheckStock(0)
@@ -456,7 +466,11 @@ const PenjualanBarang = () => {
         setShowAddItemRow(false)
         setProductSoldCheckStockID(null)
         setProductSoldCheckStock(0)
-        reset()
+        reset({
+          checkSearch: getValues('checkSearch'),
+          checkSearchItemObject: getValues('checkSearchItemObject'),
+          checkSearchColumns: getValues('checkSearchColumns'),
+        })
         break
     }
   }
@@ -490,6 +504,9 @@ const PenjualanBarang = () => {
         setProductSoldCheckStockID(null)
         setProductSoldCheckStock(0)
         setShowAddItemRow(false)
+        idFormComponentList.forEach((id) => {
+          setValue(id, '')
+        })
         idFormComponentListItem.forEach((id) => {
           setValue(id, '')
         })
@@ -570,6 +587,10 @@ const PenjualanBarang = () => {
         }
 
         if (toggleDimScreen == ADD_DIMSCREEN) {
+          if (data.checkNomorFaktur == '0') {
+            setError('checkNomorFaktur', { type: 'manual' })
+            return
+          }
           if (selectedRetur.length == 0) {
             setError('checkOrderItemID', { type: 'manual' })
             return
@@ -611,9 +632,25 @@ const PenjualanBarang = () => {
     setToogle(HIDE_DIMSCREEN)
   }
 
+  const handleOnChangeNamaCustomer = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const selectedValue = e.target.value
+    setSelectedNomorCustomer(Number(selectedValue))
+    setSelectedNomorFaktur(null)
+    setProductSoldCheckStockID(null)
+    setProductSoldCheckStock(0)
+    setShowAddItemRow(false)
+    clearErrors()
+    idFormComponentListItem.forEach((id) => {
+      setValue(id, '')
+    })
+  }
+
   const handleOnChangeNoFaktur = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedValue = e.target.value
-    setSelectedNomorFaktur(Number(selectedValue))
+    if (selectedValue != '0') setSelectedNomorFaktur(Number(selectedValue))
+    else setSelectedNomorFaktur(null)
     setProductSoldCheckStockID(null)
     setProductSoldCheckStock(0)
     setShowAddItemRow(false)
@@ -661,21 +698,45 @@ const PenjualanBarang = () => {
             <>
               <div className="pb-2">
                 {toggleDimScreen === ADD_DIMSCREEN && (
-                  <FloatingLabelFormComponent
-                    idInputComponent={idFormComponentList[0]}
-                    labelName={labelFormComponentList[0]}
-                  >
-                    <select
-                      className="form-select"
-                      id={idFormComponentList[0]}
-                      {...register('checkNomorFaktur', {
-                        required: true,
-                      })}
-                      onChange={handleOnChangeNoFaktur}
+                  <>
+                    <FloatingLabelFormComponent
+                      idInputComponent={idFormComponentList[3]}
+                      labelName={labelFormComponentList[3]}
                     >
-                      {orderListOptions()}
-                    </select>
-                  </FloatingLabelFormComponent>
+                      <select
+                        className="form-select"
+                        id={idFormComponentList[3]}
+                        {...register('checkNamaCustomerForAction', {
+                          required: true,
+                        })}
+                        onChange={handleOnChangeNamaCustomer}
+                      >
+                        {customersListToSearchOptions()}
+                      </select>
+                    </FloatingLabelFormComponent>
+                    <FloatingLabelFormComponent
+                      idInputComponent={idFormComponentList[0]}
+                      labelName={labelFormComponentList[0]}
+                    >
+                      <select
+                        className="form-select"
+                        id={idFormComponentList[0]}
+                        {...register('checkNomorFaktur', {
+                          required: true,
+                        })}
+                        onChange={handleOnChangeNoFaktur}
+                      >
+                        {orderList.length > 0 ? (
+                          <option key={0} value={0}>
+                            Pilih nomor faktur
+                          </option>
+                        ) : (
+                          ''
+                        )}
+                        {orderListOptions()}
+                      </select>
+                    </FloatingLabelFormComponent>
+                  </>
                 )}
                 {toggleDimScreen === EDIT_DIMSCREEN && (
                   <div className="input-group">
@@ -723,6 +784,10 @@ const PenjualanBarang = () => {
                     })}
                   />
                 </FloatingLabelFormComponent>
+                <div id="invalid-feedback">
+                  {errors.checkNamaCustomerForAction &&
+                    'Nama Pelanggan harus dipilih'}
+                </div>
                 <div id="invalid-feedback">
                   {errors.checkNomorFaktur &&
                     'Nomor Faktur Penjualan harus dipilih'}

@@ -269,7 +269,9 @@ const PenerimaanBarang = () => {
         break
       case HIDE_DIMSCREEN:
         setShowAddItemRow(false)
-        reset()
+        reset({
+          checkSearch: getValues('checkSearch'),
+        })
         break
     }
   }

@@ -141,7 +141,12 @@ const GiroPenjualan = () => {
   const onClickAction = (dimScreenName: string, IDToChangeParam?: any) => {
     setToogle(dimScreenName)
     setIDToChange(IDToChangeParam)
-    dimScreenName == HIDE_DIMSCREEN && reset()
+    dimScreenName == HIDE_DIMSCREEN &&
+      reset({
+        checkSearch: getValues('checkSearch'),
+        checkSearchItemObject: getValues('checkSearchItemObject'),
+        checkSearchColumns: getValues('checkSearchColumns'),
+      })
 
     if (dimScreenName == EDIT_DIMSCREEN || dimScreenName == DELETE_DIMSCREEN) {
       const selectedGiro = giroData?.result.find(
@@ -157,6 +162,7 @@ const GiroPenjualan = () => {
     register,
     handleSubmit,
     setValue,
+    getValues,
     reset,
     formState: { errors },
   } = useForm()
