@@ -15,7 +15,12 @@ import {
   updatePaymentRecord,
   deletePaymentRecord,
 } from '../dataHandling/API_payment'
-import { OrderData, Pagination, PaymentData } from '../dataHandling/interfaces'
+import {
+  CustomersData,
+  OrderData,
+  Pagination,
+  PaymentData,
+} from '../dataHandling/interfaces'
 import {
   EDIT_DIMSCREEN,
   HIDE_DIMSCREEN,
@@ -39,6 +44,7 @@ import {
   fetchOrderData,
   fetchOrderRemainingAmount,
 } from '../dataHandling/API_order'
+import { fetchCustomersData } from '../dataHandling/API_customers'
 
 const componentTitle = 'Pembayaran Jual Barang'
 
@@ -46,6 +52,7 @@ const PembayaranJualBarang = () => {
   const [paymentData, setPaymentData] =
     useState<Pagination<PaymentData> | null>(null)
   const [orderList, setOrderList] = useState<OrderData[]>([])
+  const [customersList, setCustomersList] = useState<CustomersData[]>([])
   const [toggleDimScreen, setToogle] = useState(HIDE_DIMSCREEN)
   const [IDToChange, setIDToChange] = useState<number | null>(null)
   const [nameToChange, setNameToChange] = useState<string | null>(null)
@@ -63,6 +70,9 @@ const PembayaranJualBarang = () => {
   )
   const [fakturRemaininingAmount, setFakturRemaininingAmount] = useState(0)
   const [editFakturAmount, setEditFakturAmount] = useState(0)
+  const [selectedNomorCustomer, setSelectedNomorCustomer] = useState<
+    number | null
+  >(null)
 
   const { setUserName } = useUserContext()
   const params = useParams()
@@ -77,6 +87,7 @@ const PembayaranJualBarang = () => {
     'checkNamaBank',
     'checkBesarBayar',
     'checkKeterangan',
+    'checkNamaCustomerForAction',
   ]
   const labelFormComponentList = [
     'Nomor Faktur',
@@ -87,7 +98,24 @@ const PembayaranJualBarang = () => {
     'Nama Bank',
     'Besar Pembayaran',
     'Keterangan',
+    'Pelanggan',
   ]
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await fetchCustomersData()
+        setCustomersList(data.result)
+      } catch (error) {
+        const axiosError = error as AxiosError
+        if (axiosError.response?.status === 401) {
+          setUserName('')
+        }
+      }
+    }
+
+    fetchData()
+  }, [setUserName])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -131,8 +159,12 @@ const PembayaranJualBarang = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await fetchOrderData()
-        setOrderList(data.result)
+        let data = null
+        if (selectedNomorCustomer == null) data = setOrderList([])
+        else {
+          data = await fetchOrderData('customer', String(selectedNomorCustomer))
+          setOrderList(data.result)
+        }
       } catch (error) {
         const axiosError = error as AxiosError
         if (axiosError.response?.status === 401) {
@@ -142,13 +174,22 @@ const PembayaranJualBarang = () => {
     }
 
     fetchData()
-  }, [setUserName])
+  }, [setUserName, selectedNomorCustomer])
 
   const orderListOptions = () =>
     orderList.map((OrderData) => {
       return (
         <option key={OrderData.nomor_faktur} value={OrderData.nomor_faktur}>
           {OrderData.nomor_faktur}
+        </option>
+      )
+    })
+
+  const customersListToSearchOptions = () =>
+    customersList.map((CustomerData) => {
+      return (
+        <option key={CustomerData.id} value={CustomerData.id}>
+          {CustomerData.nama_toko}
         </option>
       )
     })
@@ -242,6 +283,7 @@ const PembayaranJualBarang = () => {
       })
 
     if (dimScreenName == ADD_DIMSCREEN) {
+      setSelectedNomorCustomer(null)
       setJenisPembayaran(undefined)
       setSelectedNomorFaktur(null)
       setFakturRemaininingAmount(0)
@@ -292,6 +334,10 @@ const PembayaranJualBarang = () => {
     let isError = false
     switch (toggleDimScreen) {
       case ADD_DIMSCREEN:
+        if (data.checkNomorFaktur == '0') {
+          setError('checkNomorFaktur', { type: 'manual' })
+          return
+        }
       case EDIT_DIMSCREEN:
         if (data.checkCaraPembayaran == GIRO) {
           if (data.checkNomorGiro == '') {
@@ -381,9 +427,17 @@ const PembayaranJualBarang = () => {
     setEditFakturAmount(0)
   }
 
+  const handleOnChangeNamaCustomer = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const selectedValue = e.target.value
+    setSelectedNomorCustomer(Number(selectedValue))
+  }
+
   const handleOnChangeNoFaktur = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedValue = e.target.value
-    setSelectedNomorFaktur(Number(selectedValue))
+    if (selectedValue != '0') setSelectedNomorFaktur(Number(selectedValue))
+    else setSelectedNomorFaktur(null)
   }
 
   const handleOnChangeCaraBayar = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -431,26 +485,51 @@ const PembayaranJualBarang = () => {
                 </div>
               )}
               <div className="pb-2">
-                <FloatingLabelFormComponent
-                  idInputComponent={idFormComponentList[0]}
-                  labelName={labelFormComponentList[0]}
-                >
-                  <select
-                    className="form-select"
-                    id={idFormComponentList[0]}
-                    {...register('checkNomorFaktur', {
-                      required: true,
-                    })}
-                    onChange={handleOnChangeNoFaktur}
-                  >
-                    {orderListOptions()}
-                  </select>
-                  <div id="invalid-feedback">
-                    {errors.checkNomorFaktur &&
-                      'Nomor Faktur Penjualan harus dipilih'}
-                    <br />
-                  </div>
-                </FloatingLabelFormComponent>
+                {toggleDimScreen === ADD_DIMSCREEN && (
+                  <>
+                    <FloatingLabelFormComponent
+                      idInputComponent={idFormComponentList[8]}
+                      labelName={labelFormComponentList[8]}
+                    >
+                      <select
+                        className="form-select"
+                        id={idFormComponentList[8]}
+                        {...register('checkNamaCustomerForAction', {
+                          required: true,
+                        })}
+                        onChange={handleOnChangeNamaCustomer}
+                      >
+                        {customersListToSearchOptions()}
+                      </select>
+                      <div id="invalid-feedback">
+                        {errors.checkNamaCustomerForAction &&
+                          'Nama Pelanggan harus dipilih'}
+                      </div>
+                    </FloatingLabelFormComponent>
+                    <FloatingLabelFormComponent
+                      idInputComponent={idFormComponentList[0]}
+                      labelName={labelFormComponentList[0]}
+                    >
+                      <select
+                        className="form-select"
+                        id={idFormComponentList[0]}
+                        {...register('checkNomorFaktur', {
+                          required: true,
+                        })}
+                        onChange={handleOnChangeNoFaktur}
+                      >
+                        {orderList.length > 0 ? (
+                          <option key={0} value={0}>
+                            Pilih nomor faktur
+                          </option>
+                        ) : (
+                          ''
+                        )}
+                        {orderListOptions()}
+                      </select>
+                    </FloatingLabelFormComponent>
+                  </>
+                )}
 
                 <FloatingLabelFormComponent
                   idInputComponent={idFormComponentList[1]}
