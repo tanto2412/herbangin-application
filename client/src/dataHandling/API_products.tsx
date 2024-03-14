@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import { Pagination, ProductsData } from './interfaces'
 import { baseURL } from './Constants'
 
@@ -64,7 +64,8 @@ export const addProductsRecord = async (newProducts: ProductsData) => {
     )
     return response.data
   } catch (error) {
-    console.error('Error adding products record:', error)
+    const axiosError = error as AxiosError
+    alert('Error adding products record: ' + axiosError.response?.data)
     throw error
   }
 }
@@ -88,7 +89,8 @@ export const updateProductsRecord = async (
     )
     return response.data
   } catch (error) {
-    console.error('Error updating products record:', error)
+    const axiosError = error as AxiosError
+    alert('Error updating products record: ' + axiosError.response?.data)
     throw error
   }
 }
@@ -99,7 +101,8 @@ export const deleteProductsRecord = async (id: number): Promise<void> => {
       withCredentials: true,
     })
   } catch (error) {
-    console.error('Error deleting products record:', error)
+    const axiosError = error as AxiosError
+    alert('Error deleting products record: ' + axiosError.response?.data)
     throw error
   }
 }

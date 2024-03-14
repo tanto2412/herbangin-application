@@ -21,7 +21,7 @@ async function penerimaan({ product = null, from = null, to = null }) {
       if (from && to) {
         builder.whereBetween('receiving.tanggal', [
           from,
-          Number(to) + 24 * 60 * 60 * 1000,
+          Number(to) + 24 * 60 * 60 * 1000 - 1,
         ])
       }
 
@@ -71,7 +71,7 @@ async function penjualan({
       if (from && to) {
         builder.whereBetween('order.tanggal_faktur', [
           from,
-          Number(to) + 24 * 60 * 60 * 1000,
+          Number(to) + 24 * 60 * 60 * 1000 - 1,
         ])
       }
 
@@ -153,7 +153,7 @@ async function pembayaran({
       if (from && to) {
         builder.andWhereBetween('payment.tanggal', [
           from,
-          Number(to) + 24 * 60 * 60 * 1000,
+          Number(to) + 24 * 60 * 60 * 1000 - 1,
         ])
       }
 
@@ -220,7 +220,7 @@ async function piutang({
       if (from && to) {
         builder.andWhereBetween('order.tanggal_faktur', [
           from,
-          Number(to) + 24 * 60 * 60 * 1000,
+          Number(to) + 24 * 60 * 60 * 1000 - 1,
         ])
       }
 
@@ -282,7 +282,7 @@ async function giro(
       if (from && to) {
         builder.andWhereBetween('giro.tanggal', [
           from,
-          Number(to) + 24 * 60 * 60 * 1000,
+          Number(to) + 24 * 60 * 60 * 1000 - 1,
         ])
       }
 
@@ -337,7 +337,7 @@ async function retur({
       if (from && to) {
         builder.whereBetween('retur.tanggal', [
           from,
-          Number(to) + 24 * 60 * 60 * 1000,
+          Number(to) + 24 * 60 * 60 * 1000 - 1,
         ])
       }
 

@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import { Pagination, PaymentData } from './interfaces'
 import { baseURL } from './Constants'
 
@@ -50,7 +50,8 @@ export const addPaymentRecord = async (newPayment: PaymentData) => {
     )
     return response.data
   } catch (error) {
-    console.error('Error adding payment record:', error)
+    const axiosError = error as AxiosError
+    alert('Error adding payment record: ' + axiosError.response?.data)
     throw error
   }
 }
@@ -76,7 +77,8 @@ export const updatePaymentRecord = async (
     )
     return response.data
   } catch (error) {
-    console.error('Error updating payment record:', error)
+    const axiosError = error as AxiosError
+    alert('Error updating payment record: ' + axiosError.response?.data)
     throw error
   }
 }
@@ -87,7 +89,8 @@ export const deletePaymentRecord = async (id: number): Promise<void> => {
       withCredentials: true,
     })
   } catch (error) {
-    console.error('Error deleting payment record:', error)
+    const axiosError = error as AxiosError
+    alert('Error deleting payment record: ' + axiosError.response?.data)
     throw error
   }
 }

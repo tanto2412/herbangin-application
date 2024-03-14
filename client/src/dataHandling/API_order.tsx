@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import { OrderData, OrderDataDetails, Pagination } from './interfaces'
 import { baseURL } from './Constants'
 
@@ -75,7 +75,8 @@ export const addOrderRecord = async (newOrder: OrderData) => {
     )
     return response.data
   } catch (error) {
-    console.error('Error adding order record:', error)
+    const axiosError = error as AxiosError
+    alert('Error adding order record: ' + axiosError.response?.data)
     throw error
   }
 }
@@ -96,7 +97,8 @@ export const updateOrderRecord = async (
     )
     return response.data
   } catch (error) {
-    console.error('Error updating order record:', error)
+    const axiosError = error as AxiosError
+    alert('Error updating order record: ' + axiosError.response?.data)
     throw error
   }
 }
@@ -107,7 +109,8 @@ export const deleteOrderRecord = async (id: number): Promise<void> => {
       withCredentials: true,
     })
   } catch (error) {
-    console.error('Error deleting order record:', error)
+    const axiosError = error as AxiosError
+    alert('Error deleting order record: ' + axiosError.response?.data)
     throw error
   }
 }

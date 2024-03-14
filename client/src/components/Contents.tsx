@@ -1,4 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom'
+import { useUserContext } from './UserContext'
 
 const menuMap = new Map<string, string>([
   ['Home', ''],
@@ -17,16 +18,23 @@ const menuMap = new Map<string, string>([
 menuMap
 
 const Contents = () => {
-  const buttons = [...menuMap].map(([key, value]) => (
-    <NavLink
-      className="btn btn-outline-success rounded-0"
-      key={key}
-      to={value}
-      end
-    >
-      {key}
-    </NavLink>
-  ))
+  const { username } = useUserContext()
+  const buttons = [...menuMap].map(([key, value]) => {
+    if (key === 'Master User' && username !== 'supervisor') {
+      return ''
+    } else {
+      return (
+        <NavLink
+          className="btn btn-outline-success rounded-0"
+          key={key}
+          to={value}
+          end
+        >
+          {key}
+        </NavLink>
+      )
+    }
+  })
 
   return (
     <>

@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import { Pagination, ReturData, ReturDataDetails } from './interfaces'
 import { baseURL } from './Constants'
 
@@ -60,7 +60,8 @@ export const addReturRecord = async (newRetur: ReturData) => {
     )
     return response.data
   } catch (error) {
-    console.error('Error adding retur record:', error)
+    const axiosError = error as AxiosError
+    alert('Error adding retur record: ' + axiosError.response?.data)
     throw error
   }
 }
@@ -81,7 +82,8 @@ export const updateReturRecord = async (
     )
     return response.data
   } catch (error) {
-    console.error('Error updating retur record:', error)
+    const axiosError = error as AxiosError
+    alert('Error updating retur record: ' + axiosError.response?.data)
     throw error
   }
 }
@@ -92,7 +94,8 @@ export const deleteReturRecord = async (id: number): Promise<void> => {
       withCredentials: true,
     })
   } catch (error) {
-    console.error('Error deleting order record:', error)
+    const axiosError = error as AxiosError
+    alert('Error deleting retur record: ' + axiosError.response?.data)
     throw error
   }
 }

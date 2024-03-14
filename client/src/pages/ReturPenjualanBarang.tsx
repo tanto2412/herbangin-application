@@ -616,6 +616,11 @@ const PenjualanBarang = () => {
       reset()
     } else {
       navigate('./1')
+      reset({
+        checkSearch: getValues('checkSearch'),
+        checkSearchItemObject: getValues('checkSearchItemObject'),
+        checkSearchColumns: getValues('checkSearchColumns'),
+      })
       setSearchCategory(data.checkSearchColumns)
       if (
         data.checkSearchColumns == 'nomor_faktur' ||

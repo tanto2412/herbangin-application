@@ -197,6 +197,10 @@ const MasterBarang = () => {
       reset()
     } else {
       navigate('./1')
+      reset({
+        checkSearch: getValues('checkSearch'),
+        checkSearchColumns: getValues('checkSearchColumns'),
+      })
       setSearchTerm(data.checkSearch)
       setSearchCategory(data.checkSearchColumns)
     }

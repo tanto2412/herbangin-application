@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import { Pagination, ReceivingData, ReceivingDataDetails } from './interfaces'
 import { baseURL } from './Constants'
 
@@ -58,7 +58,8 @@ export const addReceivingRecord = async (newReceiving: ReceivingData) => {
     )
     return response.data
   } catch (error) {
-    console.error('Error adding receiving record:', error)
+    const axiosError = error as AxiosError
+    alert('Error adding receiving record: ' + axiosError.response?.data)
     throw error
   }
 }
@@ -78,7 +79,8 @@ export const updateReceivingRecord = async (
     )
     return response.data
   } catch (error) {
-    console.error('Error updating receiving record:', error)
+    const axiosError = error as AxiosError
+    alert('Error updating receiving record: ' + axiosError.response?.data)
     throw error
   }
 }
@@ -89,7 +91,8 @@ export const deleteReceivingRecord = async (id: number): Promise<void> => {
       withCredentials: true,
     })
   } catch (error) {
-    console.error('Error deleting receiving record:', error)
+    const axiosError = error as AxiosError
+    alert('Error deleting receiving record: ' + axiosError.response?.data)
     throw error
   }
 }

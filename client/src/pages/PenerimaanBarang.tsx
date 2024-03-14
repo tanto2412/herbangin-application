@@ -62,7 +62,11 @@ const PenerimaanBarang = () => {
   const idFormComponentList = ['checkTglPenerimaan']
   const labelFormComponentList = ['Tanggal Penerimaan']
 
-  const idFormComponentListItem = ['checkProductID', 'checkJumlahBarang']
+  const idFormComponentListItem = [
+    'checkProductID',
+    'checkJumlahBarang',
+    'checkHargaSatuan',
+  ]
 
   useEffect(() => {
     const fetchData = async () => {
@@ -139,7 +143,7 @@ const PenerimaanBarang = () => {
           <select
             className="form-select form-select-sm"
             id={idFormComponentList[0]}
-            {...register('checkProductID', {
+            {...register(idFormComponentListItem[0], {
               required: true,
             })}
           >
@@ -152,12 +156,22 @@ const PenerimaanBarang = () => {
             id={idFormComponentListItem[1]}
             className="form-control form-control-sm"
             autoComplete="off"
-            {...register('checkJumlahBarang', {
+            {...register(idFormComponentListItem[1], {
               required: true,
             })}
           />
         </td>
-        <td> </td>
+        <td>
+          <input
+            type="text"
+            id={idFormComponentListItem[2]}
+            className="form-control form-control-sm"
+            autoComplete="off"
+            {...register(idFormComponentListItem[2], {
+              required: true,
+            })}
+          />
+        </td>
         <td> </td>
         <td className="text-center" width={100}>
           <OKCancelButton
@@ -301,6 +315,7 @@ const PenerimaanBarang = () => {
   const onClickItemOK = () => {
     const added_product_id = getValues('checkProductID')
     const added_jumlah_barang = getValues('checkJumlahBarang')
+    const added_harga_satuan = getValues('checkHargaSatuan') | 0
     if (added_product_id == '' || added_jumlah_barang == '') {
       setError('checkJumlahBarang', { type: 'manual' })
       return
@@ -309,14 +324,14 @@ const PenerimaanBarang = () => {
       (product) => product.id === Number(added_product_id)
     ) as ProductsData
 
-    const subTotalTemp = Number(added_jumlah_barang) * selectedProduct.harga
+    const subTotalTemp = Number(added_jumlah_barang) * added_harga_satuan
 
     const newRow: ReceivingDataDetails = {
       product_id: Number(added_product_id),
       nama_barang: selectedProduct.nama_barang,
       jumlah_barang: Number(added_jumlah_barang),
       satuan_terkecil: selectedProduct.satuan_terkecil,
-      harga_satuan: selectedProduct.harga,
+      harga_satuan: added_harga_satuan,
       subtotal: subTotalTemp,
     }
 
@@ -375,6 +390,9 @@ const PenerimaanBarang = () => {
       reset()
     } else {
       navigate('./1')
+      reset({
+        checkSearch: getValues('checkSearch'),
+      })
       setSearchTerm(data.checkSearch)
     }
 

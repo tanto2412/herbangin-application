@@ -49,7 +49,12 @@ async function getById(req, res) {
   })
   let existingAmount = order.total
   for (let payment of existingPayments) {
-    existingAmount -= payment.jumlah_pembayaran
+    if (
+      payment.jenis_pembayaran != paymentModel.JenisPembayaran.GIRO ||
+      payment.status_pembayaran != giroModel.StatusPembayaran.DITOLAK
+    ) {
+      existingAmount -= payment.jumlah_pembayaran
+    }
   }
 
   let existingRetur = await returModel.search({ nomor_faktur: req.params.id })

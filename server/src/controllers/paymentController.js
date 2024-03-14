@@ -2,6 +2,7 @@
 const paymentModel = require('../models/paymentModel')
 const orderModel = require('../models/orderModel')
 const returModel = require('../models/returModel')
+const giroModel = require('../models/giroModel')
 const logger = require('../../logger')
 
 async function search(req, res) {
@@ -91,8 +92,15 @@ async function remove(req, res) {
 
 async function checkPaymentAmount(
   id,
-  { nomor_faktur, jumlah_pembayaran, jenis_pembayaran, remarks }
+  { nomor_faktur, jumlah_pembayaran, jenis_pembayaran, remarks, nomor_giro }
 ) {
+  if (nomor_giro) {
+    const giros = await giroModel.search({ nomor_giro })
+    if (giros.length > 0) {
+      return 'nomor giro sudah pernah digunakan'
+    }
+  }
+
   if (!(jenis_pembayaran in paymentModel.JenisPembayaran)) {
     return 'jenis_pembayaran must be [TUNAI, GIRO, TRANSFER, LAIN_LAIN]'
   }

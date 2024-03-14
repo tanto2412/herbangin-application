@@ -143,6 +143,9 @@ const MasterSales = () => {
       reset()
     } else {
       navigate('./1')
+      reset({
+        checkSearch: getValues('checkSearch'),
+      })
       setSearchTerm(data.checkSearch)
     }
 
