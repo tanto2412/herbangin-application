@@ -376,7 +376,9 @@ const MasterPelanggan = () => {
 
                 <FloatingLabelFormComponent
                   idInputComponent={idFormComponentList[6]}
-                  labelName={labelFormComponentList[6]}
+                  labelName={
+                    labelFormComponentList[6] + ' (Max: Rp. 15,000,000,000)'
+                  }
                 >
                   <input
                     type="number"

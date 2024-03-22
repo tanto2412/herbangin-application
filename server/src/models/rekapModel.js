@@ -56,7 +56,9 @@ async function penjualan({
       knex.raw(
         'to_char(to_timestamp("order".tanggal_faktur / 1000), \'dd-mm-yyyy\') as tanggal'
       ),
-      knex.raw('to_char("order".nomor_faktur, \'fm00000000\') AS nomor_faktur'),
+      knex.raw(
+        'to_char("order".nomor_faktur, \'fm00000000000\') AS nomor_faktur'
+      ),
       'customer.nama_toko',
       'product.nama_barang',
       'order_item.jumlah_barang',
@@ -116,7 +118,9 @@ async function pembayaran({
       'order.customer_id',
       'sales.nama',
       'payment.id',
-      knex.raw("to_char(payment.nomor_faktur, 'fm00000000') AS nomor_faktur"),
+      knex.raw(
+        "to_char(payment.nomor_faktur, 'fm00000000000') AS nomor_faktur"
+      ),
       'customer.nama_toko',
       knex.raw(
         "to_char(to_timestamp(payment.tanggal / 1000), 'dd-mm-yyyy') as tanggal"
@@ -191,7 +195,9 @@ async function piutang({
       'order.sales_id',
       'customer.nama_toko',
       'sales.nama',
-      knex.raw('to_char("order".nomor_faktur, \'fm00000000\') AS nomor_faktur'),
+      knex.raw(
+        'to_char("order".nomor_faktur, \'fm00000000000\') AS nomor_faktur'
+      ),
       knex.raw(
         'to_char(to_timestamp("order".tanggal_faktur / 1000), \'dd-mm-yyyy\') as tanggal'
       ),
@@ -266,7 +272,7 @@ async function giro(
       ),
       'payment.jumlah_pembayaran',
       'giro.nomor_pembayaran',
-      knex.raw("to_char(giro.nomor_faktur, 'fm00000000') AS nomor_faktur"),
+      knex.raw("to_char(giro.nomor_faktur, 'fm00000000000') AS nomor_faktur"),
       'customer.nama_toko'
     )
     .leftJoin('payment', 'payment.id', '=', 'giro.nomor_pembayaran')
@@ -329,7 +335,7 @@ async function retur({
       knex.raw(
         "to_char(to_timestamp(retur.tanggal / 1000), 'dd-mm-yyyy') as tanggal"
       ),
-      knex.raw("to_char(retur.nomor_faktur, 'fm00000000') AS nomor_faktur"),
+      knex.raw("to_char(retur.nomor_faktur, 'fm00000000000') AS nomor_faktur"),
       'customer.nama_toko',
       'sales.nama',
       'product.nama_barang',

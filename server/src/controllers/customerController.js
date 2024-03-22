@@ -30,6 +30,13 @@ async function create(req, res) {
       return
     }
 
+    if (isMoreThanMaxPiutang(req.body.batas_piutang)) {
+      res
+        .status(500)
+        .send('Melebihi batas maksimum piutang (Rp. 15,000,000,000)')
+      return
+    }
+
     const cleanedBody = clean(req.body)
 
     const customers = await customerModel.create(cleanedBody)
@@ -50,6 +57,13 @@ async function edit(req, res) {
   try {
     if (!(await isSalesExists(req.body.sales_id))) {
       res.status(500).send('sales not found')
+      return
+    }
+
+    if (isMoreThanMaxPiutang(req.body.batas_piutang)) {
+      res
+        .status(500)
+        .send('Melebihi batas maksimum piutang (Rp. 15,000,000,000)')
       return
     }
 
@@ -87,6 +101,10 @@ async function remove(req, res) {
 
 async function isSalesExists(sales_id) {
   return await salesModel.getById(sales_id)
+}
+
+function isMoreThanMaxPiutang(piutang) {
+  return piutang > 15000000000
 }
 
 function clean(body) {

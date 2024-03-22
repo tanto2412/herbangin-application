@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import { CustomersData, Pagination } from './interfaces'
 import { baseURL } from './Constants'
 
@@ -49,7 +49,8 @@ export const addCustomersRecord = async (newCustomers: CustomersData) => {
     )
     return response.data
   } catch (error) {
-    console.error('Error adding customers record:', error)
+    const axiosError = error as AxiosError
+    alert('Error adding customers record: ' + axiosError.response?.data)
     throw error
   }
 }
@@ -74,7 +75,8 @@ export const updateCustomersRecord = async (
     )
     return response.data
   } catch (error) {
-    console.error('Error updating customers record:', error)
+    const axiosError = error as AxiosError
+    alert('Error updating customers record: ' + axiosError.response?.data)
     throw error
   }
 }
@@ -85,7 +87,8 @@ export const deleteCustomersRecord = async (id: number): Promise<void> => {
       withCredentials: true,
     })
   } catch (error) {
-    console.error('Error deleting customers record:', error)
+    const axiosError = error as AxiosError
+    alert('Error deleting customers record: ' + axiosError.response?.data)
     throw error
   }
 }
