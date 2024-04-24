@@ -222,7 +222,7 @@ async function buildCreateSpec(
       kode_barang: product.kode_barang,
       jumlah_barang,
       satuan_terkecil: product.satuan_terkecil,
-      harga_satuan: harga_satuan === 0 ? product.harga : harga_satuan,
+      harga_satuan: harga_satuan,
       subtotal,
     }
   })
