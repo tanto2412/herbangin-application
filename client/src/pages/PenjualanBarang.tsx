@@ -78,6 +78,7 @@ const PenjualanBarang = () => {
   const [productCheckStockID, setProductCheckStockID] = useState<string | null>(
     null
   )
+  const [hargaSatuan, setHargaSatuan] = useState(0)
 
   const idFormComponentList = [
     'checkTglFaktur',
@@ -90,7 +91,11 @@ const PenjualanBarang = () => {
     'Pelanggan',
   ]
 
-  const idFormComponentListItem = ['checkProductID', 'checkJumlahBarang']
+  const idFormComponentListItem = [
+    'checkProductID',
+    'checkJumlahBarang',
+    'checkHargaSatuan',
+  ]
 
   useEffect(() => {
     const fetchData = async () => {
@@ -160,12 +165,18 @@ const PenjualanBarang = () => {
       try {
         if (productCheckStockID == null) {
           setProductCheckStock(0)
+          setHargaSatuan(0)
         } else {
           const data = productList.find(
             (product) => product.id === Number(productCheckStockID)
           )
-          if (data) setProductCheckStock(data.stok_barang)
-          else setProductCheckStock(0)
+          if (data) {
+            setProductCheckStock(data.stok_barang)
+            setHargaSatuan(data.harga)
+          } else {
+            setProductCheckStock(0)
+            setHargaSatuan(0)
+          }
         }
       } catch (error) {
         const axiosError = error as AxiosError
@@ -317,7 +328,18 @@ const PenjualanBarang = () => {
             })}
           />
         </td>
-        <td> </td>
+        <td>
+          <input
+            type="text"
+            id={idFormComponentListItem[2]}
+            className="form-control form-control-sm"
+            autoComplete="off"
+            placeholder={'Rp. ' + hargaSatuan.toLocaleString()}
+            {...register('checkHargaSatuan', {
+              required: 'Harga barang harus diisi',
+            })}
+          />
+        </td>
         <td> </td>
         <td className="text-center" width={100}>
           {/* <ActionButton
@@ -511,7 +533,11 @@ const PenjualanBarang = () => {
       (product) => product.id === Number(added_product_id)
     ) as ProductsData
 
-    const subTotalTemp = Number(added_jumlah_barang) * selectedProduct.harga
+    const added_harga_satuan =
+      Number(getValues('checkHargaSatuan')) === 0
+        ? selectedProduct.harga
+        : Number(getValues('checkHargaSatuan'))
+    const subTotalTemp = Number(added_jumlah_barang) * added_harga_satuan
 
     const newRow: OrderDataDetails = {
       //id as dummy value
@@ -521,7 +547,7 @@ const PenjualanBarang = () => {
       nama_barang: selectedProduct.nama_barang,
       jumlah_barang: Number(added_jumlah_barang),
       satuan_terkecil: selectedProduct.satuan_terkecil,
-      harga_satuan: selectedProduct.harga,
+      harga_satuan: Number(added_harga_satuan),
       subtotal: subTotalTemp,
       remainingRetur: 0,
     }
@@ -531,6 +557,7 @@ const PenjualanBarang = () => {
     setProductCheckStockID(null)
     resetField('checkProductID')
     resetField('checkJumlahBarang')
+    resetField('checkHargaSatuan')
   }
 
   const {
