@@ -1,7 +1,3 @@
-import dotenv from 'dotenv'
-
-dotenv.config()
-
 export const HIDE_DIMSCREEN = 'NULL'
 export const ADD_DIMSCREEN = 'Add'
 export const EDIT_DIMSCREEN = 'Edit'
@@ -19,8 +15,8 @@ export const GIRO = 'GIRO'
 export const TRANSFER = 'TRANSFER'
 export const LAIN_LAIN = 'LAIN_LAIN'
 
-export const baseURL = process.env.BE_HOSTNAME
-  ? process.env.BE_HOSTNAME
+export const baseURL = import.meta.env.VITE_REACT_APP_BE_HOSTNAME
+  ? import.meta.env.VITE_REACT_APP_BE_HOSTNAME
   : 'http://localhost:3000/api'
 
 export const UsersColumns = ['User ID', 'Username', 'Administrator status']
