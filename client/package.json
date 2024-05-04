@@ -11,6 +11,7 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
   },
+  "homepage": "https://tanto2412.github.io/herbangin-application",
   "dependencies": {
     "@gsebdev/react-simple-datepicker": "^1.0.21",
     "@hookform/resolvers": "^3.3.4",
