@@ -1,4 +1,6 @@
-require('dotenv').config()
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 export const HIDE_DIMSCREEN = 'NULL'
 export const ADD_DIMSCREEN = 'Add'
