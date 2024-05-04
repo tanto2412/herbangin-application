@@ -1,5 +1,6 @@
 # herbangin-application
 Herbangin application
+Run on node v18
 
 ## Installation
 1. Install [pgadmin4](https://www.pgadmin.org/download/pgadmin-4-windows/)
