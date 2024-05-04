@@ -333,6 +333,7 @@ const PembayaranJualBarang = () => {
   const onSubmit = async (data: any) => {
     let isError = false
     switch (toggleDimScreen) {
+      // @ts-ignore
       case ADD_DIMSCREEN:
         if (data.checkNomorFaktur == '0') {
           setError('checkNomorFaktur', { type: 'manual' })
