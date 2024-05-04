@@ -13,6 +13,7 @@ module.exports = {
       exec_mode: 'fork',
       env: {
         NODE_ENV: 'development',
+        BE_HOSTNAME: 'http://localhost:3000/api',
       },
     },
     // Express.js Server
