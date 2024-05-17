@@ -428,9 +428,9 @@ async function piutang(req, res) {
     let piutangMapBySales = new Map()
     Array.from(piutangMap).forEach(([customer_id, piutangGroup]) => {
       if (piutangMapBySales.has(piutangGroup.sales_id)) {
-        let piutang = piutangGroup
-        piutang.items.push(customer_id)
-        piutang.subtotal += Number(piutangGroup.total)
+        let piutang = piutangMapBySales.get(piutangGroup.sales_id)
+        piutang.customers.push(customer_id)
+        piutang.subtotal += Number(piutangGroup.subtotal)
         piutang.belum_dibayar += Number(piutangGroup.belum_dibayar)
         piutang.sudah_dibayar += Number(piutangGroup.sudah_dibayar)
         piutang.total_item += piutangGroup.items.length
@@ -438,9 +438,9 @@ async function piutang(req, res) {
       } else
         piutangMapBySales.set(piutangGroup.sales_id, {
           customers: [customer_id],
-          subtotal: piutangGroup.subtotal,
-          belum_dibayar: piutangGroup.belum_dibayar,
-          sudah_dibayar: piutangGroup.sudah_dibayar,
+          subtotal: Number(piutangGroup.subtotal),
+          belum_dibayar: Number(piutangGroup.belum_dibayar),
+          sudah_dibayar: Number(piutangGroup.sudah_dibayar),
           total_item: piutangGroup.items.length,
         })
     })
@@ -557,8 +557,12 @@ async function piutang(req, res) {
                             ${
                               indexCustomerId == 0 && index == 0
                                 ? `
-                              <td class="w15 left" rowspan="${piutangBySales.total_item}">${item.nama}</td>
+                              <td class="w15 left" rowspan="${piutang.items.length}">${item.nama}</td>
                               `
+                                : index == 0
+                                ? `
+                                <td class="w15 left" rowspan="${piutang.items.length}"></td>
+                                `
                                 : ''
                             }
                             ${
