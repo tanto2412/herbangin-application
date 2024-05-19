@@ -1,6 +1,6 @@
 interface Props {
   itemID?: number | null
-  itemName: string | null
+  itemName?: string | null
   actionString?: string
 }
 
@@ -20,7 +20,11 @@ const DeleteScreenContent = ({
               ID: <b>{itemID}</b> <br />
             </>
           )}
-          <b>{itemName}</b>
+          {itemName && (
+            <>
+              <b>{itemName}</b>
+            </>
+          )}
         </div>
       </div>
     </>

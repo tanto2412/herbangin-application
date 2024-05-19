@@ -14,11 +14,31 @@ async function search(req, res) {
   res.json(pagination)
 }
 
+async function searchGroup(req, res) {
+  const paymentGroups = await paymentModel.searchGroup(req.query)
+  const pagination = {
+    result: paymentGroups,
+    pages: await paymentModel.countGroup(req.query),
+  }
+  res.json(pagination)
+}
+
 async function getById(req, res) {
   let payment = await paymentModel.getById(req.params.id)
 
   if (!payment) {
     res.status(404).send('payment not found')
+    return
+  }
+
+  res.json(payment)
+}
+
+async function getGroup(req, res) {
+  let payment = await paymentModel.getGroup(req.params.id)
+
+  if (!payment) {
+    res.status(404).send('payment group not found')
     return
   }
 
@@ -162,10 +182,68 @@ async function checkParams({
   return null
 }
 
+async function createGroup(req, res) {
+  try {
+    const paymentGroup = await paymentModel.createGroup(req.body)
+    if (!paymentGroup) {
+      res.status(500).send('insert failed')
+      return
+    }
+
+    res.json(paymentGroup)
+  } catch (error) {
+    logger.error(error)
+    res.status(500).send(error.detail ? error.detail : 'insert failed')
+  }
+}
+
+async function editGroup(req, res) {
+  try {
+    let paymentGroup = paymentModel.getGroup(req.params.id)
+    if (paymentGroup.customer_id == req.body.customer_id) {
+      res.json(paymentGroup)
+      return
+    }
+
+    paymentGroup = await paymentModel.editGroup(req.params.id, req.body)
+
+    if (!paymentGroup) {
+      res.status(500).send('edit failed')
+      return
+    }
+
+    res.json(paymentGroup)
+  } catch (error) {
+    logger.error(error)
+    res.status(500).send(error.detail ? error.detail : 'edit failed')
+  }
+}
+
+async function removeGroup(req, res) {
+  try {
+    const payment = await paymentModel.removeGroup(req.params.id)
+
+    if (!payment) {
+      res.status(500).send('delete failed')
+      return
+    }
+
+    res.json(payment)
+  } catch (error) {
+    logger.error(error)
+    res.status(500).send(error.detail ? error.detail : 'delete failed')
+  }
+}
+
 module.exports = {
   search,
+  searchGroup,
   getById,
+  getGroup,
   create,
   edit,
   remove,
+  createGroup,
+  editGroup,
+  removeGroup,
 }

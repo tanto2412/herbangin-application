@@ -103,6 +103,14 @@ export interface ReturDataDetails {
   subtotal: number
 }
 
+export interface PaymentGroup {
+  id: number
+  customer_id: number
+  sales_id: number
+  nama_toko: string
+  nama_sales: string
+}
+
 export interface PaymentData {
   id: number
   nomor_faktur: number
@@ -115,6 +123,7 @@ export interface PaymentData {
   nomor_giro: string
   nama_bank: string
   tanggal_jatuh_tempo: number
+  payment_group_id: number
 }
 
 export interface GiroData {
@@ -126,4 +135,5 @@ export interface GiroData {
   tanggal_jatuh_tempo: number
   tanggal_pencairan: number
   status_pembayaran: string
+  payment_group_id: number
 }

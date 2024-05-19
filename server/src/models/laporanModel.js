@@ -115,7 +115,7 @@ async function pembayaran({
   return await knex('payment')
     .select(
       'sales.nama',
-      'payment.id',
+      'payment.payment_group_id as id',
       knex.raw(
         "to_char(payment.nomor_faktur, 'fm00000000000') AS nomor_faktur"
       ),
@@ -272,7 +272,7 @@ async function giro(
         "to_char(to_timestamp(giro.tanggal_jatuh_tempo / 1000), 'dd-mm-yyyy') as tanggal_jatuh_tempo"
       ),
       'payment.jumlah_pembayaran',
-      'giro.nomor_pembayaran',
+      'payment.payment_group_id as nomor_pembayaran',
       knex.raw("to_char(giro.nomor_faktur, 'fm00000000000') AS nomor_faktur"),
       'customer.nama_toko'
     )

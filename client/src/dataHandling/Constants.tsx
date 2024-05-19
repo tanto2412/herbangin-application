@@ -80,12 +80,27 @@ export const ReturItemsColumns = [
   'Harga satuan',
   'Subtotal',
 ]
-export const PaymentColumns = [
+export const PaymentColumns2 = [
   'Nomor Pembayaran',
   'Nomor Faktur',
   'Tanggal Pembayaran',
   'Nama Sales',
   'Nama Customer',
+  'Total pembayaran',
+  'Cara pembayaran',
+  'Nomor Giro',
+  'Tanggal Jatuh Tempo',
+  'Nama Bank',
+  'Keterangan',
+]
+export const PaymentGroupColumns = [
+  'Nomor Pembayaran',
+  'Nama Sales',
+  'Nama Customer',
+]
+export const PaymentColumns = [
+  'Nomor Faktur',
+  'Tanggal Pembayaran',
   'Total pembayaran',
   'Cara pembayaran',
   'Nomor Giro',

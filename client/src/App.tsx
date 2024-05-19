@@ -10,7 +10,8 @@ import MasterPelanggan from './pages/MasterPelanggan'
 import PenerimaanBarang from './pages/PenerimaanBarang'
 import PenjualanBarang from './pages/PenjualanBarang'
 import ReturPenjualanBarang from './pages/ReturPenjualanBarang'
-import PembayaranJualBarang from './pages/PembayaranJualBarang'
+import PembayaranGroup from './pages/PembayaranGroup'
+import Pembayaran from './pages/Pembayaran'
 import GiroPenjualan from './pages/GiroPenjualan'
 import Laporan from './pages/Laporan'
 import PDFViewer from './components/PdfViewer'
@@ -138,19 +139,26 @@ function App() {
             <Route
               path="pembayaran"
               element={
-                <ProtectedRoute
-                  redirectTo="/"
-                  outlet={<PembayaranJualBarang />}
-                />
+                <ProtectedRoute redirectTo="/" outlet={<PembayaranGroup />} />
               }
             >
               <Route
                 path=":page"
                 element={
-                  <ProtectedRoute
-                    redirectTo="/"
-                    outlet={<PembayaranJualBarang />}
-                  />
+                  <ProtectedRoute redirectTo="/" outlet={<PembayaranGroup />} />
+                }
+              />
+            </Route>
+            <Route
+              path="pembayaran/edit"
+              element={
+                <ProtectedRoute redirectTo="/" outlet={<Pembayaran />} />
+              }
+            >
+              <Route
+                path=":id"
+                element={
+                  <ProtectedRoute redirectTo="/" outlet={<Pembayaran />} />
                 }
               />
             </Route>

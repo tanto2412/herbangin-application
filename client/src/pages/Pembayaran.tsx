@@ -14,23 +14,25 @@ import {
   addPaymentRecord,
   updatePaymentRecord,
   deletePaymentRecord,
+  fetchPaymentGroup,
 } from '../dataHandling/API_payment'
 import {
   CustomersData,
   OrderData,
   Pagination,
   PaymentData,
+  PaymentGroup,
 } from '../dataHandling/interfaces'
 import {
   EDIT_DIMSCREEN,
   HIDE_DIMSCREEN,
   DELETE_DIMSCREEN,
-  PaymentColumns2,
   TUNAI,
   GIRO,
   TRANSFER,
   LAIN_LAIN,
   ADD_DIMSCREEN,
+  PaymentColumns,
 } from '../dataHandling/Constants'
 import { useUserContext } from '../components/UserContext'
 import { AxiosError } from 'axios'
@@ -44,23 +46,18 @@ import {
   fetchOrderData,
   fetchOrderRemainingAmount,
 } from '../dataHandling/API_order'
-import { fetchCustomersData } from '../dataHandling/API_customers'
 
-const componentTitle = 'Pembayaran Jual Barang'
-
-const PembayaranJualBarang = () => {
+const Pembayaran = () => {
+  const [paymentGroupData, setPaymentGroupData] = useState<PaymentGroup | null>(
+    null
+  )
   const [paymentData, setPaymentData] =
     useState<Pagination<PaymentData> | null>(null)
   const [orderList, setOrderList] = useState<OrderData[]>([])
-  const [customersList, setCustomersList] = useState<CustomersData[]>([])
   const [toggleDimScreen, setToogle] = useState(HIDE_DIMSCREEN)
   const [IDToChange, setIDToChange] = useState<number | null>(null)
   const [nameToChange, setNameToChange] = useState<string | null>(null)
-  const [searchCategory, setSearchCategory] = useState<string | undefined>(
-    undefined
-  )
-  const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined)
-  const [searchItemObject, setsearchItemObject] = useState<any | null>(null)
+  const [totalPayment, setTotalPayment] = useState<number>(0)
 
   const [jenisPembayaran, setJenisPembayaran] = useState<string | undefined>(
     undefined
@@ -77,6 +74,8 @@ const PembayaranJualBarang = () => {
   const { setUserName } = useUserContext()
   const params = useParams()
   const navigate = useNavigate()
+
+  const componentTitle = 'Pembayaran'
 
   const idFormComponentList = [
     'checkNomorFaktur',
@@ -104,8 +103,10 @@ const PembayaranJualBarang = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await fetchCustomersData()
-        setCustomersList(data.result)
+        if (params.id) {
+          const data = await fetchPaymentGroup(params.id)
+          setPaymentGroupData(data)
+        }
       } catch (error) {
         const axiosError = error as AxiosError
         if (axiosError.response?.status === 401) {
@@ -120,13 +121,19 @@ const PembayaranJualBarang = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await fetchPaymentData(
-          searchCategory,
-          searchTerm,
-          undefined,
-          false
-        )
-        setPaymentData(data)
+        if (params.id) {
+          const data = await fetchPaymentData(
+            'group',
+            params.id,
+            undefined,
+            true
+          )
+          setPaymentData(data)
+          const totalPayment = data.result
+            .map((payment) => Number(payment.jumlah_pembayaran))
+            .reduce((total, current) => total + current)
+          setTotalPayment(totalPayment)
+        }
       } catch (error) {
         const axiosError = error as AxiosError
         if (axiosError.response?.status === 401) {
@@ -136,7 +143,7 @@ const PembayaranJualBarang = () => {
     }
 
     fetchData()
-  }, [IDToChange, toggleDimScreen, searchTerm, searchCategory, setUserName])
+  }, [IDToChange, toggleDimScreen, setUserName])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -174,7 +181,7 @@ const PembayaranJualBarang = () => {
     }
 
     fetchData()
-  }, [setUserName, selectedNomorCustomer])
+  }, [IDToChange, selectedNomorCustomer, setSelectedNomorCustomer, setUserName])
 
   const orderListOptions = () =>
     orderList.map((OrderData) => {
@@ -184,26 +191,6 @@ const PembayaranJualBarang = () => {
         </option>
       )
     })
-
-  const customersListToSearchOptions = () =>
-    customersList.map((CustomerData) => {
-      return (
-        <option key={CustomerData.id} value={CustomerData.id}>
-          {CustomerData.nama_toko}
-        </option>
-      )
-    })
-
-  const selectItemColumns = () => (
-    <>
-      <option key={1} value="nomor_faktur">
-        Nomor Penjualan
-      </option>
-      <option key={2} value="jenis_pembayaran">
-        Cara Pembayaran
-      </option>
-    </>
-  )
 
   const jenisBayarOptions = () => (
     <>
@@ -223,7 +210,7 @@ const PembayaranJualBarang = () => {
   )
 
   const tableColumns = () =>
-    PaymentColumns2?.map((PaymentColumns, index) => {
+    PaymentColumns?.map((PaymentColumns, index) => {
       return <th key={index}>{PaymentColumns}</th>
     })
 
@@ -231,11 +218,8 @@ const PembayaranJualBarang = () => {
     paymentData?.result.map((PembayaranPenjualanData, index) => {
       return (
         <tr key={index}>
-          <td>{PembayaranPenjualanData?.id}</td>
           <td>{PembayaranPenjualanData?.nomor_faktur}</td>
           <td>{epochmillisToDate(PembayaranPenjualanData?.tanggal)}</td>
-          <td>{PembayaranPenjualanData?.nama_sales}</td>
-          <td>{PembayaranPenjualanData?.nama_toko}</td>
           <td>
             Rp.{' '}
             {Number(
@@ -283,7 +267,6 @@ const PembayaranJualBarang = () => {
       })
 
     if (dimScreenName == ADD_DIMSCREEN) {
-      setSelectedNomorCustomer(null)
       setJenisPembayaran(undefined)
       setSelectedNomorFaktur(null)
       setFakturRemaininingAmount(0)
@@ -291,6 +274,8 @@ const PembayaranJualBarang = () => {
       idFormComponentList.forEach((id) => {
         setValue(id, '')
       })
+      setValue(idFormComponentList[8], paymentGroupData?.nama_toko)
+      setSelectedNomorCustomer(Number(paymentGroupData?.customer_id))
     } else if (
       dimScreenName == EDIT_DIMSCREEN ||
       dimScreenName == DELETE_DIMSCREEN
@@ -310,7 +295,9 @@ const PembayaranJualBarang = () => {
       setValue(idFormComponentList[5], selectedPayment.nama_bank)
       setValue(idFormComponentList[6], selectedPayment.jumlah_pembayaran)
       setValue(idFormComponentList[7], selectedPayment.remarks)
+      setValue(idFormComponentList[8], paymentGroupData?.nama_toko)
 
+      setSelectedNomorCustomer(Number(paymentGroupData?.customer_id))
       setSelectedNomorFaktur(selectedPayment.nomor_faktur)
       setEditFakturAmount(selectedPayment.jumlah_pembayaran)
       setNameToChange(dateToChange)
@@ -366,6 +353,11 @@ const PembayaranJualBarang = () => {
           data.checkTglJatuhTempo = ''
         }
 
+        if (!paymentGroupData) {
+          alert('Ada yang salah, coba ulang kembali')
+          return
+        }
+
         if (
           Number(data.checkBesarBayar) >
           Number(fakturRemaininingAmount) + Number(editFakturAmount)
@@ -392,7 +384,7 @@ const PembayaranJualBarang = () => {
           nomor_giro: data.checkNomorGiro,
           nama_bank: data.checkNamaBank,
           tanggal_jatuh_tempo: dateJatuhTempo,
-          payment_group_id: data.paymentGroupId,
+          payment_group_id: paymentGroupData.id,
         }
 
         if (toggleDimScreen == ADD_DIMSCREEN) {
@@ -410,35 +402,11 @@ const PembayaranJualBarang = () => {
         break
     }
 
-    if (data.checkSearch == '' && data.checkSearchItemObject == '') {
-      setSearchTerm(undefined)
-      setSearchCategory(undefined)
-      setsearchItemObject(null)
-      reset()
-    } else {
-      navigate('./1')
-      reset({
-        checkSearch: getValues('checkSearch'),
-        checkSearchItemObject: getValues('checkSearchItemObject'),
-        checkSearchColumns: getValues('checkSearchColumns'),
-      })
-      setSearchCategory(data.checkSearchColumns)
-      if (data.checkSearchColumns == 'nomor_faktur')
-        setSearchTerm(data.checkSearch)
-      else if (data.checkSearchColumns == 'jenis_pembayaran')
-        setSearchTerm(data.checkSearchItemObject)
-    }
+    reset()
 
     setToogle(HIDE_DIMSCREEN)
     setSelectedNomorFaktur(null)
     setEditFakturAmount(0)
-  }
-
-  const handleOnChangeNamaCustomer = (
-    e: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const selectedValue = e.target.value
-    setSelectedNomorCustomer(Number(selectedValue))
   }
 
   const handleOnChangeNoFaktur = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -450,27 +418,18 @@ const PembayaranJualBarang = () => {
   const handleOnChangeCaraBayar = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setJenisPembayaran(e.target.value)
   }
-  const handleOnChangeCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedValue = e.target.value
-    if (selectedValue == 'nomor_faktur') setsearchItemObject(null)
-    else if (selectedValue == 'jenis_pembayaran')
-      setsearchItemObject(jenisBayarOptions)
-  }
-
   return (
     <>
       <form id="actionForm" name="actionForm" onSubmit={handleSubmit(onSubmit)}>
         <ShowDataTemplate
-          titleNameString="Pembayaran Jual Barang"
-          selectItemObject={selectItemColumns()}
+          titleNameString={'Nomor Pembayaran: ' + params.id}
+          selectItemObject={null}
           tableColumnsObject={tableColumns()}
           tableDataObject={tableData()}
           onClickAdd={() => onClickAction(ADD_DIMSCREEN)}
-          handleOnChangeCategory={handleOnChangeCategory}
-          searchItemObject={searchItemObject}
           register={register}
-          pages={paymentData?.pages}
-          currentPage={Number(params.id) | 1}
+          backAction={() => navigate(-1)}
+          additionalInfo={'Total: Rp. ' + totalPayment.toLocaleString()}
         />
         <DimScreenTemplate
           idScreenFormat="dimScreen"
@@ -492,26 +451,21 @@ const PembayaranJualBarang = () => {
                 </div>
               )}
               <div className="pb-2">
-                {toggleDimScreen === ADD_DIMSCREEN && (
+                {(toggleDimScreen === ADD_DIMSCREEN ||
+                  toggleDimScreen === EDIT_DIMSCREEN) && (
                   <>
                     <FloatingLabelFormComponent
                       idInputComponent={idFormComponentList[8]}
                       labelName={labelFormComponentList[8]}
                     >
-                      <select
-                        className="form-select"
-                        id={idFormComponentList[8]}
-                        {...register('checkNamaCustomerForAction', {
-                          required: true,
-                        })}
-                        onChange={handleOnChangeNamaCustomer}
-                      >
-                        {customersListToSearchOptions()}
-                      </select>
-                      <div id="invalid-feedback">
-                        {errors.checkNamaCustomerForAction &&
-                          'Nama Pelanggan harus dipilih'}
-                      </div>
+                      <input
+                        type="text"
+                        id={idFormComponentList[0]}
+                        className="form-control"
+                        autoComplete="off"
+                        {...register('checkNamaCustomerForAction')}
+                        disabled={true}
+                      />
                     </FloatingLabelFormComponent>
                     <FloatingLabelFormComponent
                       idInputComponent={idFormComponentList[0]}
@@ -523,6 +477,7 @@ const PembayaranJualBarang = () => {
                         {...register('checkNomorFaktur', {
                           required: true,
                         })}
+                        value={selectedNomorFaktur?.toString()}
                         onChange={handleOnChangeNoFaktur}
                       >
                         {orderList.length > 0 ? (
@@ -695,4 +650,4 @@ const PembayaranJualBarang = () => {
   )
 }
 
-export default PembayaranJualBarang
+export default Pembayaran

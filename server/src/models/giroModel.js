@@ -17,7 +17,7 @@ async function search({
   page_size = 20,
 }) {
   return await knex('giro')
-    .select('giro.*', 'payment.nama_bank')
+    .select('giro.*', 'payment.nama_bank', 'payment.payment_group_id')
     .leftJoin('payment', 'payment.id', '=', 'giro.nomor_pembayaran')
     .where((builder) => {
       if (nomor_faktur) {
@@ -182,11 +182,8 @@ async function remove(ids, trx) {
   return await trx('giro').whereIn('id', ids).del('*')
 }
 
-async function removeByPaymentId(id, trx) {
-  if (!trx) {
-    trx = knex
-  }
-  return await trx('giro').where('nomor_pembayaran', id).del('*')
+async function removeByPaymentIds(ids, trx = knex) {
+  return await trx('giro').whereIn('nomor_pembayaran', ids).del('*')
 }
 
 async function removeByOrderId(id, trx) {
@@ -206,6 +203,6 @@ module.exports = {
   create,
   update,
   remove,
-  removeByPaymentId,
+  removeByPaymentIds,
   removeByOrderId,
 }

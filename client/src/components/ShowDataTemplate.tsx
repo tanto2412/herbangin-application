@@ -14,6 +14,8 @@ interface Props {
   searchItemObject?: ReactNode | null
   pages?: number | undefined
   currentPage?: number | undefined
+  backAction?: () => void
+  additionalInfo?: string
 }
 
 const ShowDataTemplate = ({
@@ -25,15 +27,28 @@ const ShowDataTemplate = ({
   onClickAdd,
   handleOnChangeCategory,
   searchItemObject,
-  pages = 0,
+  pages,
   currentPage = 1,
+  backAction,
+  additionalInfo,
 }: Props) => {
   return (
     <>
       <div className="container ms-0">
         <div className="row">
-          <div className="col-12">
+          <div className="col-6">
             <PageTitle titleName={titleNameString} />
+          </div>
+          <div className="col-6 d-flex justify-content-end">
+            {backAction && (
+              <button
+                className="btn btn-sm btn-outline-success mb-2"
+                type="button"
+                onClick={backAction}
+              >
+                Kembali
+              </button>
+            )}
           </div>
         </div>
         {selectItemObject != null && (
@@ -105,6 +120,11 @@ const ShowDataTemplate = ({
             </table>
           </div>
         </div>
+        {additionalInfo && (
+          <div>
+            <b>{additionalInfo}</b>
+          </div>
+        )}
         <div className="row justify-content-between">
           <div className="col-6">
             {onClickAdd && (
@@ -116,41 +136,43 @@ const ShowDataTemplate = ({
               />
             )}
           </div>
-          <div className="col-6">
-            <nav>
-              <ul className="pagination pagination-sm justify-content-end">
-                <li className="page-item">
-                  <NavLink
-                    to={`${currentPage > 1 ? currentPage - 1 : 1}`}
-                    className={({ isActive }) =>
-                      (isActive ? 'disabled' : '') + ' page-link'
-                    }
-                  >
-                    Previous
-                  </NavLink>
-                </li>
-                {Array.from({ length: pages }, (_, index) => (
-                  <NavLink
-                    to={`./${index + 1}`}
-                    key={index}
-                    className="page-link"
-                  >
-                    {index + 1}
-                  </NavLink>
-                ))}
-                <li className="page-item">
-                  <NavLink
-                    to={`./${pages}`}
-                    className={({ isActive }) =>
-                      (isActive ? 'disabled' : '') + ' page-link'
-                    }
-                  >
-                    Next
-                  </NavLink>
-                </li>
-              </ul>
-            </nav>
-          </div>
+          {pages && (
+            <div className="col-6">
+              <nav>
+                <ul className="pagination pagination-sm justify-content-end">
+                  <li className="page-item">
+                    <NavLink
+                      to={`${currentPage > 1 ? currentPage - 1 : 1}`}
+                      className={({ isActive }) =>
+                        (isActive ? 'disabled' : '') + ' page-link'
+                      }
+                    >
+                      Previous
+                    </NavLink>
+                  </li>
+                  {Array.from({ length: pages }, (_, index) => (
+                    <NavLink
+                      to={`./${index + 1}`}
+                      key={index}
+                      className="page-link"
+                    >
+                      {index + 1}
+                    </NavLink>
+                  ))}
+                  <li className="page-item">
+                    <NavLink
+                      to={`./${pages}`}
+                      className={({ isActive }) =>
+                        (isActive ? 'disabled' : '') + ' page-link'
+                      }
+                    >
+                      Next
+                    </NavLink>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          )}
         </div>
       </div>
     </>

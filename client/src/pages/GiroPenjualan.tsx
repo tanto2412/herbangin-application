@@ -110,7 +110,7 @@ const GiroPenjualan = () => {
       return (
         <tr key={index}>
           <td>{giroData?.nomor_giro}</td>
-          <td>{giroData?.nomor_pembayaran}</td>
+          <td>{giroData?.payment_group_id}</td>
           <td>{giroData?.nomor_faktur}</td>
           <td>{giroData?.nama_bank}</td>
           <td>{epochmillisToDate(giroData?.tanggal_jatuh_tempo)}</td>

@@ -15,8 +15,6 @@ const menuMap = new Map<string, string>([
   ['Laporan', 'report'],
 ])
 
-menuMap
-
 const Contents = () => {
   const { username } = useUserContext()
   const buttons = [...menuMap].map(([key, value]) => {

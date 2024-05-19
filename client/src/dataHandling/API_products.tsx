@@ -36,7 +36,6 @@ export const fetchProductsDataByID = async (
   searchID?: string | null
 ): Promise<ProductsData> => {
   try {
-    console.log
     const response = await axios.get<ProductsData>(
       `${baseURL}/${productsDataURL}/${searchID}`,
       { withCredentials: true }
