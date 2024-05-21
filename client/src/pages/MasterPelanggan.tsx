@@ -384,7 +384,7 @@ const MasterPelanggan = () => {
                     type="number"
                     id={idFormComponentList[6]}
                     className="form-control"
-                    step={1000}
+                    step={1}
                     min={0}
                     autoComplete="off"
                     {...register('checkCustomerMaxPiutang', {

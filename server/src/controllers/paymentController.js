@@ -147,7 +147,10 @@ async function checkPaymentAmount(
     existingAmount -= retur.total
   }
 
-  if (jumlah_pembayaran != 0 && jumlah_pembayaran > existingAmount) {
+  if (
+    jumlah_pembayaran != 0 &&
+    Number(jumlah_pembayaran) > Number(existingAmount)
+  ) {
     return `exceed outstanding amount: ${existingAmount}`
   }
 
@@ -199,7 +202,8 @@ async function createGroup(req, res) {
 
 async function editGroup(req, res) {
   try {
-    let paymentGroup = paymentModel.getGroup(req.params.id)
+    let paymentGroup = await paymentModel.getGroup(req.params.id)
+
     if (paymentGroup.customer_id == req.body.customer_id) {
       res.json(paymentGroup)
       return

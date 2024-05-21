@@ -32,6 +32,25 @@ export const fetchOrderData = async (
   }
 }
 
+export const fetchOutstandingOrderData = async (
+  customer_id: string | undefined
+): Promise<OrderData[]> => {
+  try {
+    const params = new URLSearchParams()
+    if (customer_id) {
+      params.append('customer_id', customer_id)
+    }
+    const response = await axios.get<OrderData[]>(
+      `${baseURL}/${orderDataURL}/outstanding`,
+      { params, withCredentials: true }
+    )
+    return response.data
+  } catch (error) {
+    console.error('Error fetching outstanding order data:', error)
+    throw error
+  }
+}
+
 export const fetchOrderRemainingAmount = async (
   id: number
 ): Promise<number> => {

@@ -122,7 +122,7 @@ const PembayaranGroup = () => {
         const data = await fetchPaymentGroupList(
           searchCategory,
           searchTerm,
-          undefined,
+          Number(params.page),
           false
         )
         setPaymentGroupData(data)
@@ -135,7 +135,14 @@ const PembayaranGroup = () => {
     }
 
     fetchData()
-  }, [IDToChange, toggleDimScreen, searchTerm, searchCategory, setUserName])
+  }, [
+    params,
+    IDToChange,
+    toggleDimScreen,
+    searchTerm,
+    searchCategory,
+    setUserName,
+  ])
 
   const salesListToSearchOptions = () =>
     salesList.map((sales) => {

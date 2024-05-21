@@ -6,6 +6,11 @@ const checkMiddleware = require('../middlewares/checkMiddleware')
 const orderParams = ['tanggal_faktur', 'customer_id', 'items']
 
 router.get('/', checkMiddleware.checkPagination(), orderController.search)
+router.get(
+  '/outstanding',
+  checkMiddleware.checkPagination(),
+  orderController.getOutstandingOrder
+)
 router.get('/:id', orderController.getById)
 
 router.put(

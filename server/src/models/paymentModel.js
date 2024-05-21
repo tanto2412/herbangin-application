@@ -121,7 +121,8 @@ async function count({
 }
 
 async function countGroup({ sales = null, customer = null, page_size = 20 }) {
-  return await knex('payment')
+  return await knex('payment_group')
+    .leftJoin('customer', 'customer.id', '=', 'payment_group.customer_id')
     .where((builder) => {
       if (sales) {
         builder.where('customer.sales_id', sales)

@@ -52,7 +52,7 @@ export const fetchPaymentGroupList = async (
     }
     const response = await axios.get<Pagination<PaymentGroup>>(
       `${baseURL}/${paymentGroupDataURL}`,
-      { withCredentials: true }
+      { params, withCredentials: true }
     )
     return response.data
   } catch (error) {

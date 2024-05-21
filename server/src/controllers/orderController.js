@@ -267,10 +267,16 @@ async function buildCreateSpec(
   }
 }
 
+async function getOutstandingOrder(req, res) {
+  const orders = await orderModel.getOutstandingOrder(req.query.customer_id)
+  res.json(orders)
+}
+
 module.exports = {
   search,
   getById,
   create,
   edit,
   remove,
+  getOutstandingOrder,
 }

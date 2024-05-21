@@ -45,6 +45,7 @@ import {
 import {
   fetchOrderData,
   fetchOrderRemainingAmount,
+  fetchOutstandingOrderData,
 } from '../dataHandling/API_order'
 
 const Pembayaran = () => {
@@ -166,12 +167,10 @@ const Pembayaran = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let data = null
-        if (selectedNomorCustomer == null) data = setOrderList([])
-        else {
-          data = await fetchOrderData('customer', String(selectedNomorCustomer))
-          setOrderList(data.result)
-        }
+        const data = await fetchOutstandingOrderData(
+          selectedNomorCustomer?.toString()
+        )
+        setOrderList(data)
       } catch (error) {
         const axiosError = error as AxiosError
         if (axiosError.response?.status === 401) {
@@ -181,7 +180,13 @@ const Pembayaran = () => {
     }
 
     fetchData()
-  }, [IDToChange, selectedNomorCustomer, setSelectedNomorCustomer, setUserName])
+  }, [
+    IDToChange,
+    selectedNomorCustomer,
+    selectedNomorFaktur,
+    setSelectedNomorCustomer,
+    setUserName,
+  ])
 
   const orderListOptions = () =>
     orderList.map((OrderData) => {
@@ -268,7 +273,7 @@ const Pembayaran = () => {
 
     if (dimScreenName == ADD_DIMSCREEN) {
       setJenisPembayaran(undefined)
-      setSelectedNomorFaktur(null)
+      setSelectedNomorFaktur(0)
       setFakturRemaininingAmount(0)
       setEditFakturAmount(0)
       idFormComponentList.forEach((id) => {
@@ -405,14 +410,14 @@ const Pembayaran = () => {
     reset()
 
     setToogle(HIDE_DIMSCREEN)
-    setSelectedNomorFaktur(null)
+    setSelectedNomorFaktur(0)
     setEditFakturAmount(0)
   }
 
   const handleOnChangeNoFaktur = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedValue = e.target.value
     if (selectedValue != '0') setSelectedNomorFaktur(Number(selectedValue))
-    else setSelectedNomorFaktur(null)
+    else setSelectedNomorFaktur(0)
   }
 
   const handleOnChangeCaraBayar = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -483,6 +488,19 @@ const Pembayaran = () => {
                         {orderList.length > 0 ? (
                           <option key={0} value={0}>
                             Pilih nomor faktur
+                          </option>
+                        ) : (
+                          ''
+                        )}
+                        {selectedNomorFaktur &&
+                        !orderList.find(
+                          (order) => order.nomor_faktur === selectedNomorFaktur
+                        ) ? (
+                          <option
+                            key={selectedNomorFaktur}
+                            value={selectedNomorFaktur}
+                          >
+                            {selectedNomorFaktur}
                           </option>
                         ) : (
                           ''
@@ -606,7 +624,7 @@ const Pembayaran = () => {
                     type="number"
                     id={idFormComponentList[6]}
                     className="form-control"
-                    step={100}
+                    step={1}
                     min={0}
                     autoComplete="off"
                     {...register('checkBesarBayar', {

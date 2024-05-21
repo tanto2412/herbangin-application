@@ -48,6 +48,44 @@ async function search({
     })
 }
 
+async function getOutstandingOrder(customer_id = null) {
+  const totalOrderQuery = knex('order_item as oi')
+    .leftJoin('retur_item as ri', 'oi.id', 'ri.order_item_id')
+    .select('oi.nomor_faktur')
+    .sum(
+      knex.raw(
+        'oi.harga_satuan * (oi.jumlah_barang - COALESCE(ri.jumlah_barang, 0))'
+      )
+    )
+    .groupBy('oi.nomor_faktur')
+
+  const totalPaymentQuery = knex('payment as p')
+    .leftJoin('giro as g', 'p.id', 'g.nomor_pembayaran')
+    .select('p.nomor_faktur')
+    .sum(
+      knex.raw(
+        `CASE WHEN g.status_pembayaran = 'DITOLAK' THEN 0 ELSE COALESCE(p.jumlah_pembayaran, 0) END`
+      )
+    )
+    .groupBy('p.nomor_faktur')
+
+  const finalQuery = knex('order as o')
+    .leftJoin(totalOrderQuery.as('tor'), 'o.nomor_faktur', 'tor.nomor_faktur')
+    .leftJoin(totalPaymentQuery.as('tp'), 'o.nomor_faktur', 'tp.nomor_faktur')
+    .select('o.*', knex.raw('tor.sum - COALESCE(tp.sum, 0) as sisa_bayar'))
+    .whereRaw('tor.sum - COALESCE(tp.sum, 0) > 0')
+    .andWhereRaw('o.customer_id = COALESCE(?, o.customer_id)', customer_id)
+    .orderBy('o.nomor_faktur', 'asc')
+
+  try {
+    const orders = await finalQuery
+    return orders
+  } catch (error) {
+    console.error('Error fetching orders:', error)
+    return []
+  }
+}
+
 async function count({
   nomor = null,
   sales = null,
@@ -306,4 +344,5 @@ module.exports = {
   create,
   edit,
   remove,
+  getOutstandingOrder,
 }

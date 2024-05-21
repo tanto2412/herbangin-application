@@ -651,7 +651,7 @@ const PembayaranJualBarang = () => {
                     type="number"
                     id={idFormComponentList[6]}
                     className="form-control"
-                    step={100}
+                    step={1}
                     min={0}
                     autoComplete="off"
                     {...register('checkBesarBayar', {
