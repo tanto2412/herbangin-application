@@ -88,7 +88,7 @@ const MasterPelanggan = () => {
     }
 
     fetchData()
-  }, [IDToChange, toggleDimScreen, searchTerm, searchCategory, setUserName])
+  }, [params, IDToChange, toggleDimScreen, searchTerm, searchCategory, setUserName])
 
   useEffect(() => {
     const fetchData = async () => {

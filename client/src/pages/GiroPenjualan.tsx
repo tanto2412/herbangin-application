@@ -54,7 +54,7 @@ const GiroPenjualan = () => {
         const data = await fetchGiroData(
           searchCategory,
           searchTerm,
-          undefined,
+          Number(params.page),
           false
         )
         setGiroData(data)
@@ -67,7 +67,7 @@ const GiroPenjualan = () => {
     }
 
     fetchData()
-  }, [IDToChange, toggleDimScreen, searchTerm, searchCategory, setUserName])
+  }, [params, IDToChange, toggleDimScreen, searchTerm, searchCategory, setUserName])
 
   const selectItemColumns = () => (
     <>

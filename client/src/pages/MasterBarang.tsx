@@ -70,7 +70,7 @@ const MasterBarang = () => {
         const data = await fetchProductsData(
           searchCategory,
           searchTerm,
-          undefined,
+          Number(params.page),
           false
         )
         setProductsData(data)
@@ -83,7 +83,7 @@ const MasterBarang = () => {
     }
 
     fetchData()
-  }, [IDToChange, toggleDimScreen, searchTerm, searchCategory, setUserName])
+  }, [params, IDToChange, toggleDimScreen, searchTerm, searchCategory, setUserName])
 
   const selectItemColumns = () => (
     <>

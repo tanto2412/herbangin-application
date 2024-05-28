@@ -105,7 +105,7 @@ const PenjualanBarang = () => {
         const data = await fetchReturData(
           searchCategory,
           searchTerm,
-          undefined,
+          Number(params.page),
           false
         )
         setReturData(data)
@@ -118,7 +118,7 @@ const PenjualanBarang = () => {
     }
 
     fetchData()
-  }, [IDToChange, toggleDimScreen, searchTerm, setUserName])
+  }, [params, IDToChange, toggleDimScreen, searchTerm, setUserName])
 
   useEffect(() => {
     const fetchDataItems = async () => {

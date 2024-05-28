@@ -17,7 +17,6 @@ import {
   fetchPaymentGroup,
 } from '../dataHandling/API_payment'
 import {
-  CustomersData,
   OrderData,
   Pagination,
   PaymentData,
@@ -43,7 +42,6 @@ import {
   epochmillisToInputDate,
 } from '../utils/DateFunction'
 import {
-  fetchOrderData,
   fetchOrderRemainingAmount,
   fetchOutstandingOrderData,
 } from '../dataHandling/API_order'
