@@ -45,16 +45,16 @@ const PembayaranGroup = () => {
   >([])
   const [salesList, setSalesList] = useState<SalesData[]>([])
   const [searchSalesCustomer, setSearchSalesCustomer] = useState<string | null>(
-    null
+    null,
   )
   const [toggleDimScreen, setToogle] = useState(HIDE_DIMSCREEN)
   const [IDToChange, setIDToChange] = useState<number | null>(null)
   const [customerOption, setCustomerOptions] = useState<string | undefined>(
-    undefined
+    undefined,
   )
 
   const [searchCategory, setSearchCategory] = useState<string | undefined>(
-    undefined
+    undefined,
   )
   const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined)
   const [searchItemObject, setsearchItemObject] = useState<any | null>(null)
@@ -123,7 +123,7 @@ const PembayaranGroup = () => {
           searchCategory,
           searchTerm,
           Number(params.page),
-          false
+          false,
         )
         setPaymentGroupData(data)
       } catch (error) {
@@ -154,7 +154,7 @@ const PembayaranGroup = () => {
     })
 
   const customersListToSearchOptions = () =>
-    customersList.map((CustomerData) => {
+    customersListToSearch.map((CustomerData) => {
       return (
         <option key={CustomerData.id} value={CustomerData.id}>
           {CustomerData.nama_toko}
@@ -164,6 +164,9 @@ const PembayaranGroup = () => {
 
   const selectItemColumns = () => (
     <>
+      <option key={1} value="nomor">
+        Nomor Pembayaran
+      </option>
       <option key={1} value="customer">
         Nama Pelanggan
       </option>
@@ -216,6 +219,7 @@ const PembayaranGroup = () => {
       reset({
         checkSearchItemObject: getValues('checkSearchItemObject'),
         checkSearchColumns: getValues('checkSearchColumns'),
+        checkSearch: getValues('checkSearch'),
       })
 
     if (dimScreenName == ADD_DIMSCREEN) {
@@ -229,7 +233,7 @@ const PembayaranGroup = () => {
       dimScreenName == DELETE_DIMSCREEN
     ) {
       const selectedPaymentGroup = paymentGroupData?.result.find(
-        (paymentGroup) => paymentGroup.id === IDToChangeParam
+        (paymentGroup) => paymentGroup.id === IDToChangeParam,
       ) as PaymentGroup
       setValue(idFormComponentList[0], selectedPaymentGroup.sales_id)
       setValue(idFormComponentList[1], selectedPaymentGroup.customer_id)
@@ -288,7 +292,7 @@ const PembayaranGroup = () => {
         break
     }
 
-    if (data.checkSearchItemObject == '') {
+    if (data.checkSearch == '' && data.checkSearchItemObject == '') {
       setSearchTerm(undefined)
       setSearchCategory(undefined)
       setsearchItemObject(null)
@@ -302,11 +306,17 @@ const PembayaranGroup = () => {
         navigate('./edit/' + result.id)
       } else navigate('./1')
       reset({
+        checkSearch: getValues('checkSearch'),
         checkSearchItemObject: getValues('checkSearchItemObject'),
         checkSearchColumns: getValues('checkSearchColumns'),
       })
       setSearchCategory(data.checkSearchColumns)
-      setSearchTerm(data.checkSearchItemObject)
+      if (data.checkSearchColumns == 'nomor') setSearchTerm(data.checkSearch)
+      else if (
+        data.checkSearchColumns == 'sales' ||
+        data.checkSearchColumns == 'customer'
+      )
+        setSearchTerm(data.checkSearchItemObject)
     }
 
     setToogle(HIDE_DIMSCREEN)
@@ -320,8 +330,11 @@ const PembayaranGroup = () => {
 
   const handleOnChangeCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedValue = e.target.value
-    if (selectedValue == 'customer') setsearchItemObject(customersListToSearch)
-    else if (selectedValue == 'sales') setsearchItemObject(salesList)
+    if (selectedValue == 'nomor') setsearchItemObject(null)
+    else if (selectedValue == 'customer')
+      setsearchItemObject(customersListToSearchOptions)
+    else if (selectedValue == 'sales')
+      setsearchItemObject(salesListToSearchOptions)
   }
 
   const handleCustomerChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -333,7 +346,7 @@ const PembayaranGroup = () => {
     <>
       <form id="actionForm" name="actionForm" onSubmit={handleSubmit(onSubmit)}>
         <ShowDataTemplate
-          titleNameString="Pembayaran Jual Barang"
+          titleNameString={'Pembayaran Jual Barang'}
           selectItemObject={selectItemColumns()}
           tableColumnsObject={tableColumns()}
           tableDataObject={tableData()}

@@ -461,7 +461,7 @@ const PembayaranJualBarang = () => {
     <>
       <form id="actionForm" name="actionForm" onSubmit={handleSubmit(onSubmit)}>
         <ShowDataTemplate
-          titleNameString="Pembayaran Jual Barang"
+          titleNameString={'Pembayaran Jual Barang'}
           selectItemObject={selectItemColumns()}
           tableColumnsObject={tableColumns()}
           tableDataObject={tableData()}
