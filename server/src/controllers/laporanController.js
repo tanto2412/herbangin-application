@@ -141,30 +141,30 @@ async function penerimaan(req, res) {
                         }
                         <td class="w25 left">${item.nama_barang}</td>
                         <td class="w15 right">${item.jumlah_barang} ${
-                            item.satuan_terkecil
-                          }</td>
+                          item.satuan_terkecil
+                        }</td>
                         <td class="w15 right">${rupiahFormatter.format(
-                          item.harga_satuan
+                          item.harga_satuan,
                         )}</td>
                         <td class="w15 right">${rupiahFormatter.format(
-                          item.subtotal
+                          item.subtotal,
                         )}</td>
                       </tr>
-                      `
+                      `,
                       )
                       .join('') +
                     `<tr>
                       <td class="right subtotal" colspan="5"><b>Subtotal :</b></td>
                       <td class="subtotal"><b>${rupiahFormatter.format(
-                        penerimaan.subtotal
+                        penerimaan.subtotal,
                       )}</b></td>
-                    </tr>`
+                    </tr>`,
                 )
                 .join('')}
               <tr class="foot">
                 <td class="right subtotal" colspan="5"><b>Grand Total :</b></td>
                 <td class="subtotal"><b>${rupiahFormatter.format(
-                  grandTotal
+                  grandTotal,
                 )}</b></td>
               </tr>
             </table>
@@ -330,27 +330,27 @@ async function penjualan(req, res) {
                         }
                         <td class="w18 left">${item.nama_barang}</td>
                         <td class="w18 right">${item.jumlah_barang} ${
-                            item.satuan_terkecil
-                          }</td>
+                          item.satuan_terkecil
+                        }</td>
                         <td class="w18 right">${rupiahFormatter.format(
-                          item.harga_satuan
+                          item.harga_satuan,
                         )}</td>
                       </tr>
-                      `
+                      `,
                       )
                       .join('') +
                     `<tr>
                       <td class="right subtotal" colspan="5"><b>Subtotal :</b></td>
                       <td class="subtotal"><b>${rupiahFormatter.format(
-                        faktur.subtotal
+                        faktur.subtotal,
                       )}</b></td>
-                    </tr>`
+                    </tr>`,
                 )
                 .join('')}
                 <tr class="foot">
                   <td class="right subtotal" colspan="5"><b>Grand Total :</b></td>
                   <td class="subtotal"><b>${rupiahFormatter.format(
-                    grandTotal
+                    grandTotal,
                   )}</b></td>
                 </tr>
             </table>
@@ -385,7 +385,7 @@ async function piutang(req, res) {
     const laporanPiutang = await laporanModel.piutang(req.query)
 
     const orderIds = laporanPiutang.map((piutang) =>
-      Number(piutang.nomor_faktur)
+      Number(piutang.nomor_faktur),
     )
     const returs = await returModel.getByOrderIds(orderIds)
     let returMap = new Map()
@@ -393,7 +393,7 @@ async function piutang(req, res) {
       if (returMap.has(retur.nomor_faktur)) {
         returMap.set(
           retur.nomor_faktur,
-          returMap.get(retur.nomor_faktur) + Number(retur.total)
+          returMap.get(retur.nomor_faktur) + Number(retur.total),
         )
       } else {
         returMap.set(retur.nomor_faktur, Number(retur.total))
@@ -408,6 +408,9 @@ async function piutang(req, res) {
       let item = piutang
       item.total -= returMap.get(Number(piutang.nomor_faktur)) | 0
       item.belum_dibayar -= returMap.get(Number(piutang.nomor_faktur)) | 0
+
+      if (item.belum_dibayar === 0) return
+
       grandTotal += Number(item.total)
       grandTotalBelumDibayar += Number(item.belum_dibayar)
       grandTotalSudahDibayar += Number(item.sudah_dibayar)
@@ -542,42 +545,42 @@ async function piutang(req, res) {
                         <td class="w12 center">${item.nomor_faktur}</td>
                         <td class="w15 center">${item.tanggal}</td>
                         <td class="w15 right">${rupiahFormatter.format(
-                          item.total
+                          item.total,
                         )}</td>
                         <td class="w15 right">${rupiahFormatter.format(
-                          item.sudah_dibayar
+                          item.sudah_dibayar,
                         )}</td>
                         <td class="w15 right">${rupiahFormatter.format(
-                          item.belum_dibayar
+                          item.belum_dibayar,
                         )}</td>
                       </tr>
-                      `
+                      `,
                       )
                       .join('') +
                     `<tr>
                       <td class="right subtotal" colspan="3"><b>Subtotal :</b></td>
                       <td class="subtotal"><b>${rupiahFormatter.format(
-                        piutang.subtotal
+                        piutang.subtotal,
                       )}</b></td>
                       <td class="subtotal"><b>${rupiahFormatter.format(
-                        piutang.sudah_dibayar
+                        piutang.sudah_dibayar,
                       )}</b></td>
                       <td class="subtotal"><b>${rupiahFormatter.format(
-                        piutang.belum_dibayar
+                        piutang.belum_dibayar,
                       )}</b></td>
-                    </tr>`
+                    </tr>`,
                 )
                 .join('')}
                 <tr class="foot">
                   <td class="right subtotal" colspan="3"><b>Grand Total :</b></td>
                   <td class="subtotal"><b>${rupiahFormatter.format(
-                    grandTotal
+                    grandTotal,
                   )}</b></td>
                   <td class="subtotal"><b>${rupiahFormatter.format(
-                    grandTotalSudahDibayar
+                    grandTotalSudahDibayar,
                   )}</b></td>
                   <td class="subtotal"><b>${rupiahFormatter.format(
-                    grandTotalBelumDibayar
+                    grandTotalBelumDibayar,
                   )}</b></td>
                 </tr>
             </table>
@@ -648,7 +651,7 @@ async function pembayaran(req, res) {
       if (returMap.has(retur.nomor_faktur)) {
         returMap.set(
           retur.nomor_faktur,
-          returMap.get(retur.nomor_faktur) + Number(retur.total)
+          returMap.get(retur.nomor_faktur) + Number(retur.total),
         )
       } else {
         returMap.set(retur.nomor_faktur, Number(retur.total))
@@ -825,7 +828,7 @@ async function pembayaran(req, res) {
                             <td class="w12 center">${item.id}</td>
                             <td class="w12 left">${item.jenis_pembayaran}</td>
                             <td class="w20 right">${rupiahFormatter.format(
-                              item.jumlah_pembayaran
+                              item.jumlah_pembayaran,
                             )}</td>
                             <td class="w12 center">${item.tanggal}</td>
                             <td class="w12 left">${
@@ -838,23 +841,23 @@ async function pembayaran(req, res) {
                               item.remarks ? item.remarks : ''
                             }</td>
                           </tr>
-                          `
+                          `,
                     )
                     .join('') +
                   `<tr>
                     <td class="right subtotal" colspan="2"><b>Subtotal :</b></td>
                     <td class="subtotal"><b>${rupiahFormatter.format(
-                      pembayaran.subtotal
+                      pembayaran.subtotal,
                     )}</b></td>
                   </tr></table>
-                </td></table>`
+                </td></table>`,
               )
               .join('')}
             <table>
               <tr>
                 <td class="w30 right"><b>Grand Total : </b></td>
                 <td class="left"><b>${rupiahFormatter.format(
-                  grandTotal
+                  grandTotal,
                 )}</b></td>
               </tr>
             </table>
@@ -888,18 +891,18 @@ async function giroDitolak(req, res) {
   try {
     const laporanGiroDitolak = await laporanModel.giro(
       req.query,
-      giroModel.StatusPembayaran.DITOLAK
+      giroModel.StatusPembayaran.DITOLAK,
     )
 
     const grandTotal = laporanGiroDitolak.reduce(
       (a, b) => a + Number(b.jumlah_pembayaran),
-      0
+      0,
     )
 
     const htmlTemplate = await createGiroHtml(
       laporanGiroDitolak,
       giroModel.StatusPembayaran.DITOLAK,
-      grandTotal
+      grandTotal,
     )
 
     const browser = await puppeteer.launch()
@@ -926,18 +929,18 @@ async function giroBlmDibayar(req, res) {
   try {
     const laporanGiroBlmDibayar = await laporanModel.giro(
       req.query,
-      giroModel.StatusPembayaran.BELUM_LUNAS
+      giroModel.StatusPembayaran.BELUM_LUNAS,
     )
 
     const grandTotal = laporanGiroBlmDibayar.reduce(
       (a, b) => a + Number(b.jumlah_pembayaran),
-      0
+      0,
     )
 
     const htmlTemplate = await createGiroHtml(
       laporanGiroBlmDibayar,
       giroModel.StatusPembayaran.BELUM_LUNAS,
-      grandTotal
+      grandTotal,
     )
 
     const browser = await puppeteer.launch()
@@ -1072,19 +1075,19 @@ async function createGiroHtml(laporanGiro, status, grandTotal) {
                     <td class="w15 left">${giro.nama_bank}</td>
                     <td class="w18 center">${giro.tanggal_jatuh_tempo}</td>
                     <td class="w15 right">${rupiahFormatter.format(
-                      giro.jumlah_pembayaran
+                      giro.jumlah_pembayaran,
                     )}</td>
                     <td class="w11 center">${giro.nomor_pembayaran}</td>
                     <td class="w11 center">${giro.nomor_faktur}</td>
                     <td class="w18 left">${giro.nama_toko}</td>
                   </tr>
-                  `
+                  `,
               )
               .join('')}
               <tr class="foot">
                 <td class="right subtotal" colspan="3"><b>Grand Total :</b></td>
                 <td class="subtotal"><b>${rupiahFormatter.format(
-                  grandTotal
+                  grandTotal,
                 )}</b></td>
               </tr>
           </table>
@@ -1231,9 +1234,9 @@ async function retur(req, res) {
                         }</td>
                         
                       </tr>
-                      `
+                      `,
                     )
-                    .join('')
+                    .join(''),
                 )
                 .join('')}
             </table>

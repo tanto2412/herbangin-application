@@ -414,6 +414,8 @@ async function piutang(req, res) {
       item.total -= returMap.get(Number(piutang.nomor_faktur)) | 0
       item.belum_dibayar -= returMap.get(Number(piutang.nomor_faktur)) | 0
 
+      if (item.belum_dibayar === 0) return
+
       grandTotal += Number(item.total)
       grandTotalBelumDibayar += Number(item.belum_dibayar)
       grandTotalSudahDibayar += Number(item.sudah_dibayar)

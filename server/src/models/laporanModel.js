@@ -8,13 +8,13 @@ async function penerimaan({ product = null, from = null, to = null }) {
     .select(
       'receiving_item.receiving_id',
       knex.raw(
-        "to_char(to_timestamp(receiving.tanggal / 1000), 'dd-mm-yyyy') as tanggal"
+        "to_char(to_timestamp(receiving.tanggal / 1000), 'dd-mm-yyyy') as tanggal",
       ),
       'product.nama_barang',
       'receiving_item.harga_satuan',
       'receiving_item.satuan_terkecil',
       'receiving_item.jumlah_barang',
-      'receiving_item.subtotal'
+      'receiving_item.subtotal',
     )
     .leftJoin('receiving', 'receiving.id', '=', 'receiving_item.receiving_id')
     .leftJoin('product', 'product.id', '=', 'receiving_item.product_id')
@@ -29,7 +29,7 @@ async function penerimaan({ product = null, from = null, to = null }) {
       if (product) {
         builder.andWhere(
           'receiving_item.product_id',
-          knex.raw('COALESCE(?, receiving_item.product_id)', product)
+          knex.raw('COALESCE(?, receiving_item.product_id)', product),
         )
       }
     })
@@ -55,16 +55,16 @@ async function penjualan({
     .select(
       'sales.nama',
       knex.raw(
-        'to_char(to_timestamp("order".tanggal_faktur / 1000), \'dd-mm-yyyy\') as tanggal'
+        'to_char(to_timestamp("order".tanggal_faktur / 1000), \'dd-mm-yyyy\') as tanggal',
       ),
       knex.raw(
-        'to_char("order".nomor_faktur, \'fm00000000000\') AS nomor_faktur'
+        'to_char("order".nomor_faktur, \'fm00000000000\') AS nomor_faktur',
       ),
       'product.nama_barang',
       'order_item.jumlah_barang',
       'order_item.satuan_terkecil',
       'order_item.harga_satuan',
-      'order_item.subtotal'
+      'order_item.subtotal',
     )
     .leftJoin('order', 'order.nomor_faktur', '=', 'order_item.nomor_faktur')
     .leftJoin('sales', 'sales.id', '=', 'order.sales_id')
@@ -84,14 +84,14 @@ async function penjualan({
       if (product) {
         builder.andWhere(
           'order_item.product_id',
-          knex.raw('COALESCE(?, order_item.product_id)', product)
+          knex.raw('COALESCE(?, order_item.product_id)', product),
         )
       }
 
       if (customer)
         builder.where(
           'order.customer_id',
-          knex.raw('COALESCE(?, "order".customer_id)', customer)
+          knex.raw('COALESCE(?, "order".customer_id)', customer),
         )
     })
     .orderBy('order.nomor_faktur', 'asc')
@@ -117,14 +117,14 @@ async function pembayaran({
       'sales.nama',
       'payment.payment_group_id as id',
       knex.raw(
-        "to_char(payment.nomor_faktur, 'fm00000000000') AS nomor_faktur"
+        "to_char(payment.nomor_faktur, 'fm00000000000') AS nomor_faktur",
       ),
       'customer.nama_toko',
       knex.raw(
-        "to_char(to_timestamp(payment.tanggal / 1000), 'dd-mm-yyyy') as tanggal"
+        "to_char(to_timestamp(payment.tanggal / 1000), 'dd-mm-yyyy') as tanggal",
       ),
       knex.raw(
-        `to_char(to_timestamp("order".tanggal_faktur / 1000), 'dd-mm-yyyy') as tanggal_faktur`
+        `to_char(to_timestamp("order".tanggal_faktur / 1000), 'dd-mm-yyyy') as tanggal_faktur`,
       ),
       'order.total',
       'payment.jumlah_pembayaran',
@@ -136,7 +136,7 @@ async function pembayaran({
         `CASE WHEN giro.id IS NOT NULL
           THEN giro.status_pembayaran
           ELSE 'LUNAS'
-        END as status_pembayaran`
+        END as status_pembayaran`,
       ),
       knex.raw(
         `EXISTS(
@@ -145,8 +145,8 @@ async function pembayaran({
       LEFT JOIN product ON product.id = order_item.product_id
       WHERE "order".nomor_faktur = payment.nomor_faktur AND (product.jenis_barang = ? OR (payment.tanggal < "order".tanggal_faktur + (CAST(product.batas_fast_moving AS BIGINT) * 24 * 60 * 60 * 1000)))
     ) AS komisi`,
-        productModel.JenisBarang.SLOW_MOVING
-      )
+        productModel.JenisBarang.SLOW_MOVING,
+      ),
     )
     .leftJoin('order', 'order.nomor_faktur', '=', 'payment.nomor_faktur')
     .leftJoin('sales', 'sales.id', '=', 'order.sales_id')
@@ -160,9 +160,9 @@ async function pembayaran({
             .where(
               'order_item.nomor_faktur',
               '=',
-              knex.raw('"order".nomor_faktur')
+              knex.raw('"order".nomor_faktur'),
             )
-            .andWhere('order_item.product_id', '=', product)
+            .andWhere('order_item.product_id', '=', product),
         )
       }
 
@@ -180,7 +180,7 @@ async function pembayaran({
       if (customer)
         builder.andWhere(
           'order.customer_id',
-          knex.raw('COALESCE(?, "order".customer_id)', customer)
+          knex.raw('COALESCE(?, "order".customer_id)', customer),
         )
     })
     .orderBy('payment.id', 'asc')
@@ -205,16 +205,16 @@ async function piutang({
       'order.customer_id',
       'customer.nama_toko',
       knex.raw(
-        'to_char("order".nomor_faktur, \'fm00000000000\') AS nomor_faktur'
+        'to_char("order".nomor_faktur, \'fm00000000000\') AS nomor_faktur',
       ),
       knex.raw(
-        'to_char(to_timestamp("order".tanggal_faktur / 1000), \'dd-mm-yyyy\') as tanggal'
+        'to_char(to_timestamp("order".tanggal_faktur / 1000), \'dd-mm-yyyy\') as tanggal',
       ),
       'order.total',
       knex.raw('coalesce(sum(payment.jumlah_pembayaran), 0) as sudah_dibayar'),
       knex.raw(
-        '"order".total - coalesce(sum(payment.jumlah_pembayaran), 0) as belum_dibayar'
-      )
+        '"order".total - coalesce(sum(payment.jumlah_pembayaran), 0) as belum_dibayar',
+      ),
     )
     .leftJoin('customer', 'customer.id', '=', 'order.customer_id')
     .leftJoin('payment', 'payment.nomor_faktur', '=', 'order.nomor_faktur')
@@ -226,9 +226,9 @@ async function piutang({
             .where(
               'order_item.nomor_faktur',
               '=',
-              knex.raw('"order".nomor_faktur')
+              knex.raw('"order".nomor_faktur'),
             )
-            .andWhere('order_item.product_id', '=', product)
+            .andWhere('order_item.product_id', '=', product),
         )
       }
 
@@ -242,14 +242,15 @@ async function piutang({
       if (customer)
         builder.andWhere(
           'order.customer_id',
-          knex.raw('COALESCE(?, "order".customer_id)', customer)
+          knex.raw('COALESCE(?, "order".customer_id)', customer),
         )
     })
+    .orderBy('order.nomor_faktur', 'asc')
     .groupBy(
       'customer.nama_toko',
       'order.nomor_faktur',
       'order.tanggal_faktur',
-      'order.total'
+      'order.total',
     )
     .then((rows) => {
       return rows
@@ -262,19 +263,19 @@ async function piutang({
 
 async function giro(
   { product = null, sales = null, customer = null, from = null, to = null },
-  status_pembayaran
+  status_pembayaran,
 ) {
   return await knex('giro')
     .select(
       'giro.nomor_giro',
       'payment.nama_bank',
       knex.raw(
-        "to_char(to_timestamp(giro.tanggal_jatuh_tempo / 1000), 'dd-mm-yyyy') as tanggal_jatuh_tempo"
+        "to_char(to_timestamp(giro.tanggal_jatuh_tempo / 1000), 'dd-mm-yyyy') as tanggal_jatuh_tempo",
       ),
       'payment.jumlah_pembayaran',
       'payment.payment_group_id as nomor_pembayaran',
       knex.raw("to_char(giro.nomor_faktur, 'fm00000000000') AS nomor_faktur"),
-      'customer.nama_toko'
+      'customer.nama_toko',
     )
     .leftJoin('payment', 'payment.id', '=', 'giro.nomor_pembayaran')
     .leftJoin('order', 'order.nomor_faktur', '=', 'giro.nomor_faktur')
@@ -287,9 +288,9 @@ async function giro(
             .where(
               'order_item.nomor_faktur',
               '=',
-              knex.raw('"order".nomor_faktur')
+              knex.raw('"order".nomor_faktur'),
             )
-            .andWhere('order_item.product_id', '=', product)
+            .andWhere('order_item.product_id', '=', product),
         )
       }
 
@@ -307,7 +308,7 @@ async function giro(
       if (customer)
         builder.andWhere(
           'customer.id',
-          knex.raw('COALESCE(?, customerid)', customer)
+          knex.raw('COALESCE(?, customerid)', customer),
         )
 
       builder.where('giro.status_pembayaran', status_pembayaran)
@@ -334,14 +335,14 @@ async function retur({
     .select(
       'retur_item.retur_id',
       knex.raw(
-        "to_char(to_timestamp(retur.tanggal / 1000), 'dd-mm-yyyy') as tanggal"
+        "to_char(to_timestamp(retur.tanggal / 1000), 'dd-mm-yyyy') as tanggal",
       ),
       knex.raw("to_char(retur.nomor_faktur, 'fm00000000000') AS nomor_faktur"),
       'customer.nama_toko',
       'sales.nama',
       'product.nama_barang',
       'retur_item.jumlah_barang',
-      'retur_item.satuan_terkecil'
+      'retur_item.satuan_terkecil',
     )
     .leftJoin('retur', 'retur.id', '=', 'retur_item.retur_id')
     .leftJoin('product', 'product.id', '=', 'retur_item.product_id')
@@ -362,14 +363,14 @@ async function retur({
       if (product) {
         builder.andWhere(
           'retur_item.product_id',
-          knex.raw('COALESCE(?, retur_item.product_id)', product)
+          knex.raw('COALESCE(?, retur_item.product_id)', product),
         )
       }
 
       if (customer)
         builder.andWhere(
           'retur.customer_id',
-          knex.raw('COALESCE(?, retur.customer_id)', customer)
+          knex.raw('COALESCE(?, retur.customer_id)', customer),
         )
     })
     .orderBy('retur.id', 'asc')
