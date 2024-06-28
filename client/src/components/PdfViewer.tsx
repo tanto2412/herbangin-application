@@ -20,7 +20,7 @@ const PDFViewer: React.FC = () => {
           const response = await fetchReport(
             params.jenis,
             params.id,
-            searchParams
+            searchParams,
           )
 
           setPdfData(response)
@@ -42,6 +42,20 @@ const PDFViewer: React.FC = () => {
     return btoa(binary)
   }
 
+  const handleDownload = () => {
+    if (pdfData) {
+      const blob = new Blob([pdfData], { type: 'application/pdf' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'rekap_piutang.pdf'
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url) // Clean up the URL object
+    }
+  }
+
   return (
     <>
       <button
@@ -50,6 +64,14 @@ const PDFViewer: React.FC = () => {
         onClick={onBack}
       >
         Kembali Ke Filter
+      </button>
+      <button
+        className="btn btn-sm btn-outline-primary mb-2 mx-2"
+        type="button"
+        onClick={handleDownload}
+        disabled={!pdfData} // Disable button if pdfData is not yet loaded
+      >
+        Download PDF
       </button>
       {pdfData && (
         <embed

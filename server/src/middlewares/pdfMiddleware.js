@@ -18,7 +18,10 @@ function addPdfHeaders() {
 
     const filename = `${routeName}-${timestamp}`
     res.setHeader('Content-Type', 'application/pdf')
-    res.setHeader('Content-Disposition', `inline; filename="${filename}.pdf"`)
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="${filename}.pdf"`,
+    )
     next()
   }
 }
