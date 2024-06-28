@@ -445,7 +445,7 @@ async function piutang(req, res) {
         piutang.belum_dibayar += Number(piutangGroup.belum_dibayar)
         piutang.sudah_dibayar += Number(piutangGroup.sudah_dibayar)
         piutang.total_item += piutangGroup.items.length
-        piutangMap.set(piutangGroup.sales_id, piutang)
+        piutangMapBySales.set(piutangGroup.sales_id, piutang)
       } else
         piutangMapBySales.set(piutangGroup.sales_id, {
           customers: [customer_id],

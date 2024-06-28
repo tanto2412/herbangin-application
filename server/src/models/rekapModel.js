@@ -251,6 +251,11 @@ async function piutang({
       'order.tanggal_faktur',
       'order.total',
     )
+    .having(
+      knex.raw(
+        '"order".total - COALESCE(SUM(payment.jumlah_pembayaran), 0) > 0',
+      ),
+    )
     .then((rows) => {
       return rows
     })
