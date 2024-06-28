@@ -22,6 +22,7 @@ function addPdfHeaders() {
       'Content-Disposition',
       `attachment; filename="${filename}.pdf"`,
     )
+    res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition')
     next()
   }
 }

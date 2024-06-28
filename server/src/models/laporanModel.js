@@ -197,6 +197,7 @@ async function pembayaran({
 async function piutang({
   product = null,
   customer = null,
+  sales = null,
   from = null,
   to = null,
 }) {
@@ -244,6 +245,8 @@ async function piutang({
           'order.customer_id',
           knex.raw('COALESCE(?, "order".customer_id)', customer),
         )
+
+      if (sales) builder.andWhere('order.sales_id', '=', sales)
     })
     .orderBy('order.nomor_faktur', 'asc')
     .groupBy(

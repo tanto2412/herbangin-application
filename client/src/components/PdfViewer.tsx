@@ -8,6 +8,7 @@ const PDFViewer: React.FC = () => {
   const navigate = useNavigate()
   const params = useParams()
   const [searchParams] = useSearchParams()
+  const [filename, setFilename] = useState<string>('default.pdf')
 
   const onBack = () => {
     navigate(-1)
@@ -23,7 +24,23 @@ const PDFViewer: React.FC = () => {
             searchParams,
           )
 
-          setPdfData(response)
+          if (!response || !response.data) {
+            throw new Error(`Failed to fetch PDF`)
+          }
+
+          // Check if headers exist before accessing .get()
+          const headers = response.headers
+          if (headers) {
+            const contentDisposition = headers['content-disposition']
+            if (contentDisposition) {
+              const filenameMatch = contentDisposition.match(/filename="(.+)"/)
+              if (filenameMatch && filenameMatch.length === 2) {
+                setFilename(filenameMatch[1])
+              }
+            }
+          }
+
+          setPdfData(response.data)
         }
       } catch (error) {
         console.error('Error fetching PDF:', error)
@@ -48,7 +65,7 @@ const PDFViewer: React.FC = () => {
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = 'rekap_piutang.pdf'
+      a.download = filename
       document.body.appendChild(a)
       a.click()
       document.body.removeChild(a)
