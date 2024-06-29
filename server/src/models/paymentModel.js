@@ -26,7 +26,7 @@ async function search({
       'giro.nomor_giro',
       'giro.tanggal_jatuh_tempo',
       'giro.tanggal_pencairan',
-      'giro.status_pembayaran'
+      'giro.status_pembayaran',
     )
     .leftJoin('order', 'order.nomor_faktur', '=', 'payment.nomor_faktur')
     .leftJoin('sales', 'sales.id', '=', 'order.sales_id')
@@ -60,6 +60,7 @@ async function search({
 }
 
 async function searchGroup({
+  nomor = null,
   sales = null,
   customer = null,
   page = 1,
@@ -70,11 +71,15 @@ async function searchGroup({
       'payment_group.*',
       'sales.nama as nama_sales',
       'customer.nama_toko',
-      'sales.id as sales_id'
+      'sales.id as sales_id',
     )
     .leftJoin('customer', 'customer.id', '=', 'payment_group.customer_id')
     .leftJoin('sales', 'sales.id', '=', 'customer.sales_id')
     .where((builder) => {
+      if (nomor) {
+        builder.where('payment_group.id', id)
+      }
+
       if (sales) {
         builder.where('customer.sales_id', sales)
       }
@@ -151,7 +156,7 @@ async function getById(id) {
       'giro.nomor_giro',
       'giro.tanggal_jatuh_tempo',
       'giro.tanggal_pencairan',
-      'giro.status_pembayaran'
+      'giro.status_pembayaran',
     )
     .leftJoin('order', 'order.nomor_faktur', '=', 'payment.nomor_faktur')
     .leftJoin('sales', 'sales.id', '=', 'order.sales_id')
@@ -180,7 +185,7 @@ async function getByOrderIds(ids) {
       'giro.nomor_giro',
       'giro.tanggal_jatuh_tempo',
       'giro.tanggal_pencairan',
-      'giro.status_pembayaran'
+      'giro.status_pembayaran',
     )
     .leftJoin('order', 'order.nomor_faktur', '=', 'payment.nomor_faktur')
     .leftJoin('sales', 'sales.id', '=', 'order.sales_id')
@@ -251,7 +256,7 @@ async function edit(
     nomor_giro,
     tanggal_jatuh_tempo,
     nama_bank,
-  }
+  },
 ) {
   try {
     return await knex.transaction(async (trx) => {
