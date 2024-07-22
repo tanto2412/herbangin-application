@@ -355,7 +355,7 @@ const PembayaranGroup = () => {
           searchItemObject={searchItemObject}
           register={register}
           pages={paymentGroupData?.pages}
-          currentPage={Number(params.id) | 1}
+          currentPage={Number(params.page) || 1}
         />
         <DimScreenTemplate
           idScreenFormat="dimScreen"

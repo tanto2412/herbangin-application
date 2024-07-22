@@ -8,7 +8,7 @@ export const fetchCustomersData = async (
   searchCategory: string = 'nama_toko',
   searchTerm?: string | null,
   page?: number | null,
-  all: boolean = true
+  all: boolean = true,
 ): Promise<Pagination<CustomersData>> => {
   try {
     const params = new URLSearchParams()
@@ -23,7 +23,7 @@ export const fetchCustomersData = async (
     }
     const response = await axios.get<Pagination<CustomersData>>(
       `${baseURL}/${customerDataURL}`,
-      { params, withCredentials: true }
+      { params, withCredentials: true },
     )
     return response.data
   } catch (error) {
@@ -45,7 +45,7 @@ export const addCustomersRecord = async (newCustomers: CustomersData) => {
         email: newCustomers.email,
         batas_piutang: newCustomers.batas_piutang,
       },
-      { withCredentials: true }
+      { withCredentials: true },
     )
     return response.data
   } catch (error) {
@@ -57,7 +57,7 @@ export const addCustomersRecord = async (newCustomers: CustomersData) => {
 
 export const updateCustomersRecord = async (
   id: number,
-  newCustomers: CustomersData
+  newCustomers: CustomersData,
 ): Promise<CustomersData> => {
   try {
     const response = await axios.put<CustomersData>(
@@ -71,7 +71,7 @@ export const updateCustomersRecord = async (
         email: newCustomers.email,
         batas_piutang: newCustomers.batas_piutang,
       },
-      { withCredentials: true }
+      { withCredentials: true },
     )
     return response.data
   } catch (error) {

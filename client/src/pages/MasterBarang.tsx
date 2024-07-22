@@ -38,7 +38,7 @@ const MasterBarang = () => {
   const [IDToChange, setIDToChange] = useState<number | null>(null)
   const [nameToChange, setNameToChange] = useState<string | null>(null)
   const [searchCategory, setSearchCategory] = useState<string | undefined>(
-    undefined
+    undefined,
   )
   const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined)
   const [disableStateBatasFastMoving, setdisableStateBatasFastMoving] =
@@ -71,7 +71,7 @@ const MasterBarang = () => {
           searchCategory,
           searchTerm,
           Number(params.page),
-          false
+          false,
         )
         setProductsData(data)
       } catch (error) {
@@ -83,7 +83,14 @@ const MasterBarang = () => {
     }
 
     fetchData()
-  }, [params, IDToChange, toggleDimScreen, searchTerm, searchCategory, setUserName])
+  }, [
+    params,
+    IDToChange,
+    toggleDimScreen,
+    searchTerm,
+    searchCategory,
+    setUserName,
+  ])
 
   const selectItemColumns = () => (
     <>
@@ -141,7 +148,7 @@ const MasterBarang = () => {
 
     if (dimScreenName == EDIT_DIMSCREEN || dimScreenName == DELETE_DIMSCREEN) {
       const selectedSale = productsData?.result.find(
-        (sale) => sale.id === IDToChangeParam
+        (sale) => sale.id === IDToChangeParam,
       ) as ProductsData
       setValue(idFormComponentList[0], selectedSale.kode_barang)
       setValue(idFormComponentList[1], selectedSale.nama_barang)
@@ -209,7 +216,7 @@ const MasterBarang = () => {
   }
 
   const handleOnChangeBarangLaku = (
-    e: React.ChangeEvent<HTMLSelectElement>
+    e: React.ChangeEvent<HTMLSelectElement>,
   ) => {
     const selectedValue = e.target.value
 
@@ -232,7 +239,7 @@ const MasterBarang = () => {
           onClickAdd={() => onClickAction(ADD_DIMSCREEN)}
           register={register}
           pages={productsData?.pages}
-          currentPage={Number(params.id) | 1}
+          currentPage={Number(params.page) || 1}
         />
         <DimScreenTemplate
           idScreenFormat="dimScreen"

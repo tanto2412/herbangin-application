@@ -71,7 +71,11 @@ const PenerimaanBarang = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await fetchReceivingData(searchTerm, Number(params.page), false)
+        const data = await fetchReceivingData(
+          searchTerm,
+          Number(params.page),
+          false,
+        )
         setReceivingData(data)
       } catch (error) {
         const axiosError = error as AxiosError
@@ -275,7 +279,7 @@ const PenerimaanBarang = () => {
       case DELETE_DIMSCREEN:
         setIDToChange(IDToChangeParam)
         const selectedReceivingID = receivingData?.result.find(
-          (receiving) => receiving.id === IDToChangeParam
+          (receiving) => receiving.id === IDToChangeParam,
         ) as ReceivingData
         const dateToChange = epochmillisToInputDate(selectedReceivingID.tanggal)
         setValue(idFormComponentList[0], dateToChange)
@@ -321,7 +325,7 @@ const PenerimaanBarang = () => {
       return
     }
     const selectedProduct = productList.find(
-      (product) => product.id === Number(added_product_id)
+      (product) => product.id === Number(added_product_id),
     ) as ProductsData
 
     const subTotalTemp = Number(added_jumlah_barang) * added_harga_satuan
@@ -410,7 +414,7 @@ const PenerimaanBarang = () => {
           onClickAdd={() => onClickAction(ADD_DIMSCREEN)}
           register={register}
           pages={receivingData?.pages}
-          currentPage={Number(params.id) | 1}
+          currentPage={Number(params.page) || 1}
         />
         <DimScreenTemplate
           idScreenFormat="dimScreen"

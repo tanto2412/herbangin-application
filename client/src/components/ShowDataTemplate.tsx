@@ -27,11 +27,15 @@ const ShowDataTemplate = ({
   onClickAdd,
   handleOnChangeCategory,
   searchItemObject,
-  pages,
+  pages = 1,
   currentPage = 1,
   backAction,
   additionalInfo,
 }: Props) => {
+  const startPage = Math.max(currentPage - 3, 1)
+  const endPage = Math.min(currentPage + 3, pages)
+  console.log(currentPage)
+
   return (
     <>
       <div className="container ms-0">
@@ -142,28 +146,64 @@ const ShowDataTemplate = ({
                 <ul className="pagination pagination-sm justify-content-end">
                   <li className="page-item">
                     <NavLink
-                      to={`${currentPage > 1 ? currentPage - 1 : 1}`}
-                      className={({ isActive }) =>
-                        (isActive ? 'disabled' : '') + ' page-link'
+                      to={`./${currentPage - 1}`}
+                      className={
+                        'page-link ' + (currentPage === 1 ? 'disabled' : '')
                       }
                     >
                       Previous
                     </NavLink>
                   </li>
-                  {Array.from({ length: pages }, (_, index) => (
-                    <NavLink
-                      to={`./${index + 1}`}
-                      key={index}
-                      className="page-link"
-                    >
-                      {index + 1}
-                    </NavLink>
-                  ))}
+                  {startPage !== 1 && (
+                    <li className="page-item">
+                      <NavLink to={`./1`} key={1} className="page-link">
+                        {1}
+                      </NavLink>
+                    </li>
+                  )}
+                  {startPage > 2 && (
+                    <li className="page-item">
+                      <div className="page-link">...</div>
+                    </li>
+                  )}
+                  {Array.from(
+                    { length: endPage - startPage + 1 },
+                    (_, index) => {
+                      const pageNum = startPage + index - 1
+                      return (
+                        <li className="page-item">
+                          <NavLink
+                            to={`./${pageNum + 1}`}
+                            key={pageNum}
+                            className="page-link"
+                          >
+                            {pageNum + 1}
+                          </NavLink>
+                        </li>
+                      )
+                    },
+                  )}
+                  {endPage < pages - 1 && (
+                    <li className="page-item">
+                      <div className="page-link">...</div>
+                    </li>
+                  )}
+                  {endPage !== pages && (
+                    <li className="page-item">
+                      <NavLink
+                        to={`./${pages}`}
+                        key={pages}
+                        className="page-link"
+                      >
+                        {pages}
+                      </NavLink>
+                    </li>
+                  )}
                   <li className="page-item">
                     <NavLink
-                      to={`./${pages}`}
-                      className={({ isActive }) =>
-                        (isActive ? 'disabled' : '') + ' page-link'
+                      to={`./${currentPage + 1}`}
+                      className={
+                        'page-link ' + (currentPage === pages ? 'disabled' : '')
                       }
                     >
                       Next

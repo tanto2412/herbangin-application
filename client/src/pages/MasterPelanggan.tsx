@@ -42,12 +42,12 @@ const MasterPelanggan = () => {
   const [IDToChange, setIDToChange] = useState<number | null>(null)
   const [nameToChange, setNameToChange] = useState<string | null>(null)
   const [searchCategory, setSearchCategory] = useState<string | undefined>(
-    undefined
+    undefined,
   )
   const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined)
   const [searchItemObject, setsearchItemObject] = useState<any | null>(null)
   const { setUserName } = useUserContext()
-  const params = useParams()
+  const { page } = useParams()
   const navigate = useNavigate()
 
   const idFormComponentList = [
@@ -75,8 +75,8 @@ const MasterPelanggan = () => {
         const data = await fetchCustomersData(
           searchCategory,
           searchTerm,
-          Number(params.page),
-          false
+          Number(page),
+          false,
         )
         setCustomersData(data)
       } catch (error) {
@@ -88,7 +88,14 @@ const MasterPelanggan = () => {
     }
 
     fetchData()
-  }, [params, IDToChange, toggleDimScreen, searchTerm, searchCategory, setUserName])
+  }, [
+    page,
+    IDToChange,
+    toggleDimScreen,
+    searchTerm,
+    searchCategory,
+    setUserName,
+  ])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -173,7 +180,7 @@ const MasterPelanggan = () => {
 
     if (dimScreenName == EDIT_DIMSCREEN || dimScreenName == DELETE_DIMSCREEN) {
       const selectedSale = customersData?.result.find(
-        (sale) => sale.id === IDToChangeParam
+        (sale) => sale.id === IDToChangeParam,
       ) as CustomersData
       setValue(idFormComponentList[0], selectedSale.nama_toko)
       setValue(idFormComponentList[1], selectedSale.alamat)
@@ -250,6 +257,8 @@ const MasterPelanggan = () => {
     else if (selectedValue == 'sales') setsearchItemObject(salesListOptions)
   }
 
+  console.log(page)
+
   return (
     <>
       <form id="actionForm" name="actionForm" onSubmit={handleSubmit(onSubmit)}>
@@ -263,7 +272,7 @@ const MasterPelanggan = () => {
           searchItemObject={searchItemObject}
           register={register}
           pages={customersData?.pages}
-          currentPage={Number(params.id) | 1}
+          currentPage={Number(page) || 1}
         />
         <DimScreenTemplate
           idScreenFormat="dimScreen"

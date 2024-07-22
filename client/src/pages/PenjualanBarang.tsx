@@ -61,11 +61,11 @@ const PenjualanBarang = () => {
   const [nameToChange, setNameToChange] = useState<string | null>(null)
 
   const [searchCategory, setSearchCategory] = useState<string | undefined>(
-    undefined
+    undefined,
   )
   const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined)
   const [searchSalesCustomer, setSearchSalesCustomer] = useState<string | null>(
-    null
+    null,
   )
   const [searchItemObject, setsearchItemObject] = useState<any | null>(null)
 
@@ -76,7 +76,7 @@ const PenjualanBarang = () => {
 
   const [productCheckStock, setProductCheckStock] = useState(0)
   const [productCheckStockID, setProductCheckStockID] = useState<string | null>(
-    null
+    null,
   )
   const [hargaSatuan, setHargaSatuan] = useState(0)
 
@@ -104,7 +104,7 @@ const PenjualanBarang = () => {
           searchCategory,
           searchTerm,
           Number(params.page),
-          false
+          false,
         )
         setOrderData(data)
       } catch (error) {
@@ -168,7 +168,7 @@ const PenjualanBarang = () => {
           setHargaSatuan(0)
         } else {
           const data = productList.find(
-            (product) => product.id === Number(productCheckStockID)
+            (product) => product.id === Number(productCheckStockID),
           )
           if (data) {
             setProductCheckStock(data.stok_barang)
@@ -290,7 +290,7 @@ const PenjualanBarang = () => {
     })
 
   const handleOnChangeCheckStock = (
-    e: React.ChangeEvent<HTMLSelectElement>
+    e: React.ChangeEvent<HTMLSelectElement>,
   ) => {
     const selectedValue = e.target.value
     setProductCheckStockID(selectedValue)
@@ -397,7 +397,7 @@ const PenjualanBarang = () => {
               onClick={() =>
                 onClickAction(
                   DELETE_DIMSCREEN,
-                  PenjualanBarangData?.nomor_faktur
+                  PenjualanBarangData?.nomor_faktur,
                 )
               }
             />
@@ -459,10 +459,10 @@ const PenjualanBarang = () => {
       case DELETE_DIMSCREEN:
         setIDToChange(IDToChangeParam)
         const selectedOrderID = orderData?.result.find(
-          (order) => order.nomor_faktur === IDToChangeParam
+          (order) => order.nomor_faktur === IDToChangeParam,
         ) as OrderData
         const dateToChange = epochmillisToInputDate(
-          selectedOrderID.tanggal_faktur
+          selectedOrderID.tanggal_faktur,
         )
         setValue(idFormComponentList[0], dateToChange)
         setValue(idFormComponentList[1], selectedOrderID.sales_id)
@@ -530,7 +530,7 @@ const PenjualanBarang = () => {
       return
     }
     const selectedProduct = productList.find(
-      (product) => product.id === Number(added_product_id)
+      (product) => product.id === Number(added_product_id),
     ) as ProductsData
 
     const added_harga_satuan =
@@ -658,7 +658,7 @@ const PenjualanBarang = () => {
   }
 
   const handleOnChangeSalesCustomer = (
-    e: React.ChangeEvent<HTMLSelectElement>
+    e: React.ChangeEvent<HTMLSelectElement>,
   ) => {
     const selectedValue = e.target.value
     setSearchSalesCustomer(selectedValue)
@@ -685,7 +685,7 @@ const PenjualanBarang = () => {
           searchItemObject={searchItemObject}
           register={register}
           pages={orderData?.pages}
-          currentPage={Number(params.id) | 1}
+          currentPage={Number(params.page) || 1}
         />
         <DimScreenTemplate
           idScreenFormat="dimScreen"

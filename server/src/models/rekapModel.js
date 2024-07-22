@@ -106,6 +106,7 @@ async function penjualan({
 }
 
 async function pembayaran({
+  lunas = false,
   sales = null,
   product = null,
   customer = null,
@@ -140,6 +141,7 @@ async function pembayaran({
     .leftJoin('order', 'order.nomor_faktur', '=', 'payment.nomor_faktur')
     .leftJoin('sales', 'sales.id', '=', 'order.sales_id')
     .leftJoin('customer', 'customer.id', '=', 'order.customer_id')
+    .leftJoin('giro', 'giro.nomor_pembayaran', '=', 'payment.id')
     .where((builder) => {
       if (product) {
         builder.whereExists(
@@ -170,6 +172,13 @@ async function pembayaran({
           'order.customer_id',
           knex.raw('COALESCE(?, "order".customer_id)', customer),
         )
+
+      if (lunas)
+        builder.andWhere(function () {
+          this.where('giro.status_pembayaran', 'LUNAS').orWhereNull(
+            'giro.status_pembayaran',
+          )
+        })
     })
     .orderBy('payment.id', 'asc')
     .orderBy('order.nomor_faktur', 'asc')

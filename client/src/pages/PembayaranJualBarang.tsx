@@ -57,16 +57,16 @@ const PembayaranJualBarang = () => {
   const [IDToChange, setIDToChange] = useState<number | null>(null)
   const [nameToChange, setNameToChange] = useState<string | null>(null)
   const [searchCategory, setSearchCategory] = useState<string | undefined>(
-    undefined
+    undefined,
   )
   const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined)
   const [searchItemObject, setsearchItemObject] = useState<any | null>(null)
 
   const [jenisPembayaran, setJenisPembayaran] = useState<string | undefined>(
-    undefined
+    undefined,
   )
   const [selectedNomorFaktur, setSelectedNomorFaktur] = useState<number | null>(
-    null
+    null,
   )
   const [fakturRemaininingAmount, setFakturRemaininingAmount] = useState(0)
   const [editFakturAmount, setEditFakturAmount] = useState(0)
@@ -124,7 +124,7 @@ const PembayaranJualBarang = () => {
           searchCategory,
           searchTerm,
           undefined,
-          false
+          false,
         )
         setPaymentData(data)
       } catch (error) {
@@ -239,7 +239,7 @@ const PembayaranJualBarang = () => {
           <td>
             Rp.{' '}
             {Number(
-              PembayaranPenjualanData?.jumlah_pembayaran
+              PembayaranPenjualanData?.jumlah_pembayaran,
             ).toLocaleString()}
           </td>
           <td>{PembayaranPenjualanData?.jenis_pembayaran}</td>
@@ -296,7 +296,7 @@ const PembayaranJualBarang = () => {
       dimScreenName == DELETE_DIMSCREEN
     ) {
       const selectedPayment = paymentData?.result.find(
-        (giro) => giro.id === IDToChangeParam
+        (giro) => giro.id === IDToChangeParam,
       ) as PaymentData
       const dateToChange = epochmillisToInputDate(selectedPayment.tanggal)
       setValue(idFormComponentList[0], selectedPayment.nomor_faktur)
@@ -305,7 +305,7 @@ const PembayaranJualBarang = () => {
       setValue(idFormComponentList[3], selectedPayment.nomor_giro)
       setValue(
         idFormComponentList[4],
-        epochmillisToInputDate(selectedPayment.tanggal_jatuh_tempo)
+        epochmillisToInputDate(selectedPayment.tanggal_jatuh_tempo),
       )
       setValue(idFormComponentList[5], selectedPayment.nama_bank)
       setValue(idFormComponentList[6], selectedPayment.jumlah_pembayaran)
@@ -435,7 +435,7 @@ const PembayaranJualBarang = () => {
   }
 
   const handleOnChangeNamaCustomer = (
-    e: React.ChangeEvent<HTMLSelectElement>
+    e: React.ChangeEvent<HTMLSelectElement>,
   ) => {
     const selectedValue = e.target.value
     setSelectedNomorCustomer(Number(selectedValue))
@@ -470,7 +470,7 @@ const PembayaranJualBarang = () => {
           searchItemObject={searchItemObject}
           register={register}
           pages={paymentData?.pages}
-          currentPage={Number(params.id) | 1}
+          currentPage={Number(params.page) || 1}
         />
         <DimScreenTemplate
           idScreenFormat="dimScreen"

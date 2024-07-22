@@ -36,7 +36,7 @@ const GiroPenjualan = () => {
   const [IDToChange, setIDToChange] = useState<number | null>(null)
   const [nameToChange, setNameToChange] = useState<string | null>(null)
   const [searchCategory, setSearchCategory] = useState<string | undefined>(
-    undefined
+    undefined,
   )
   const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined)
   const [searchItemObject, setsearchItemObject] = useState<any | null>(null)
@@ -55,7 +55,7 @@ const GiroPenjualan = () => {
           searchCategory,
           searchTerm,
           Number(params.page),
-          false
+          false,
         )
         setGiroData(data)
       } catch (error) {
@@ -67,7 +67,14 @@ const GiroPenjualan = () => {
     }
 
     fetchData()
-  }, [params, IDToChange, toggleDimScreen, searchTerm, searchCategory, setUserName])
+  }, [
+    params,
+    IDToChange,
+    toggleDimScreen,
+    searchTerm,
+    searchCategory,
+    setUserName,
+  ])
 
   const selectItemColumns = () => (
     <>
@@ -150,7 +157,7 @@ const GiroPenjualan = () => {
 
     if (dimScreenName == EDIT_DIMSCREEN || dimScreenName == DELETE_DIMSCREEN) {
       const selectedGiro = giroData?.result.find(
-        (giro) => giro.id === IDToChangeParam
+        (giro) => giro.id === IDToChangeParam,
       ) as GiroData
       setValue(idFormComponentList[0], selectedGiro.nomor_giro)
       setValue(idFormComponentList[1], '')
@@ -173,7 +180,7 @@ const GiroPenjualan = () => {
         if (IDToChange != null)
           await updateGiroRecord_Lunas(
             IDToChange,
-            dateToEpochmillis(data.checkTglPencairan)
+            dateToEpochmillis(data.checkTglPencairan),
           )
         break
       case DELETE_DIMSCREEN:
@@ -232,7 +239,7 @@ const GiroPenjualan = () => {
           searchItemObject={searchItemObject}
           register={register}
           pages={giroData?.pages}
-          currentPage={Number(params.id) | 1}
+          currentPage={Number(params.page) || 1}
         />
         <DimScreenTemplate
           idScreenFormat="dimScreen"

@@ -61,7 +61,7 @@ const PenjualanBarang = () => {
     number | null
   >(null)
   const [selectedNomorFaktur, setSelectedNomorFaktur] = useState<number | null>(
-    null
+    null,
   )
 
   const [toggleDimScreen, setToogle] = useState(HIDE_DIMSCREEN)
@@ -69,7 +69,7 @@ const PenjualanBarang = () => {
   const [nameToChange, setNameToChange] = useState<string | null>(null)
 
   const [searchCategory, setSearchCategory] = useState<string | undefined>(
-    undefined
+    undefined,
   )
   const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined)
   const [searchItemObject, setsearchItemObject] = useState<any | null>(null)
@@ -106,7 +106,7 @@ const PenjualanBarang = () => {
           searchCategory,
           searchTerm,
           Number(params.page),
-          false
+          false,
         )
         setReturData(data)
       } catch (error) {
@@ -217,7 +217,7 @@ const PenjualanBarang = () => {
         } else {
           const data = orderItemList.find(
             (productorder) =>
-              productorder.id === Number(productSoldCheckStockID)
+              productorder.id === Number(productSoldCheckStockID),
           )
           if (data) setProductSoldCheckStock(data.remainingRetur)
           else setProductSoldCheckStock(0)
@@ -287,7 +287,7 @@ const PenjualanBarang = () => {
     })
 
   const handleOnChangeCheckSoldProduct = (
-    e: React.ChangeEvent<HTMLSelectElement>
+    e: React.ChangeEvent<HTMLSelectElement>,
   ) => {
     const selectedValue = e.target.value
     setProductSoldCheckStockID(selectedValue)
@@ -445,14 +445,14 @@ const PenjualanBarang = () => {
       case DELETE_DIMSCREEN:
         setIDToChange(IDToChangeParam)
         const selectedReturID = returData?.result.find(
-          (order) => order.id === IDToChangeParam
+          (order) => order.id === IDToChangeParam,
         ) as ReturData
         const dateToChange = epochmillisToInputDate(selectedReturID.tanggal)
 
         setValue(idFormComponentList[0], selectedReturID.nomor_faktur)
         setValue(
           idFormComponentList[1],
-          epochmillisToInputDate(selectedReturID.tanggal_faktur)
+          epochmillisToInputDate(selectedReturID.tanggal_faktur),
         )
         setValue(idFormComponentList[2], dateToChange)
         setNameToChange(dateToChange)
@@ -527,7 +527,7 @@ const PenjualanBarang = () => {
       return
     }
     const selectedOrderItem = orderItemList.find(
-      (orderItem) => orderItem.id === Number(added_orderItemID)
+      (orderItem) => orderItem.id === Number(added_orderItemID),
     ) as OrderDataDetails
 
     const subTotalTemp =
@@ -638,7 +638,7 @@ const PenjualanBarang = () => {
   }
 
   const handleOnChangeNamaCustomer = (
-    e: React.ChangeEvent<HTMLSelectElement>
+    e: React.ChangeEvent<HTMLSelectElement>,
   ) => {
     const selectedValue = e.target.value
     setSelectedNomorCustomer(Number(selectedValue))
@@ -687,7 +687,7 @@ const PenjualanBarang = () => {
           searchItemObject={searchItemObject}
           register={register}
           pages={returData?.pages}
-          currentPage={Number(params.id) | 1}
+          currentPage={Number(params.page) || 1}
         />
         <DimScreenTemplate
           idScreenFormat="dimScreen"

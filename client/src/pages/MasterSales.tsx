@@ -48,7 +48,7 @@ const MasterSales = () => {
         const data = await fetchSalesData(
           searchTerm,
           Number(params.page),
-          false
+          false,
         )
         setSalesData(data)
       } catch (error) {
@@ -107,7 +107,7 @@ const MasterSales = () => {
 
     if (dimScreenName == EDIT_DIMSCREEN || dimScreenName == DELETE_DIMSCREEN) {
       const selectedSale = salesData?.result.find(
-        (sale) => sale.id === IDToChangeParam
+        (sale) => sale.id === IDToChangeParam,
       ) as SalesData
       setValue(idFormComponentList[0], selectedSale.nama)
       setNameToChange(selectedSale.nama)
@@ -163,7 +163,7 @@ const MasterSales = () => {
           onClickAdd={() => onClickAction(ADD_DIMSCREEN)}
           register={register}
           pages={salesData?.pages}
-          currentPage={Number(params.id) | 1}
+          currentPage={Number(params.page) || 1}
         />
         <DimScreenTemplate
           idScreenFormat="dimScreen"

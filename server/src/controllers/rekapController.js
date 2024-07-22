@@ -865,6 +865,7 @@ async function pembayaran(req, res) {
 
 async function cashIn(req, res) {
   try {
+    req.query.lunas = true
     const rekapPembayaran = await rekapModel.pembayaran(req.query)
 
     let pembayaranMap = new Map()
