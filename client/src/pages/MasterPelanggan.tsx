@@ -257,8 +257,6 @@ const MasterPelanggan = () => {
     else if (selectedValue == 'sales') setsearchItemObject(salesListOptions)
   }
 
-  console.log(page)
-
   return (
     <>
       <form id="actionForm" name="actionForm" onSubmit={handleSubmit(onSubmit)}>

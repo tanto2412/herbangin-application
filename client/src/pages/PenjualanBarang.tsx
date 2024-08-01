@@ -533,10 +533,7 @@ const PenjualanBarang = () => {
       (product) => product.id === Number(added_product_id),
     ) as ProductsData
 
-    const added_harga_satuan =
-      Number(getValues('checkHargaSatuan')) === 0
-        ? selectedProduct.harga
-        : Number(getValues('checkHargaSatuan'))
+    const added_harga_satuan = Number(getValues('checkHargaSatuan'))
     const subTotalTemp = Number(added_jumlah_barang) * added_harga_satuan
 
     const newRow: OrderDataDetails = {

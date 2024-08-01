@@ -34,7 +34,6 @@ const ShowDataTemplate = ({
 }: Props) => {
   const startPage = Math.max(currentPage - 3, 1)
   const endPage = Math.min(currentPage + 3, pages)
-  console.log(currentPage)
 
   return (
     <>

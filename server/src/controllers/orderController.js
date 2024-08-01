@@ -140,7 +140,7 @@ async function remove(req, res) {
 
 async function buildCreateSpec(
   nomor_faktur,
-  { tanggal_faktur, customer_id, items }
+  { tanggal_faktur, customer_id, items },
 ) {
   const itemIds = items.map(({ product_id }) => product_id)
 
@@ -194,7 +194,6 @@ async function buildCreateSpec(
   let missingJumlah = []
   let exceedStok = []
   let filledItems = items.map(({ product_id, jumlah_barang, harga_satuan }) => {
-    harga_satuan = harga_satuan === 0 ? product.harga : harga_satuan
     if (!jumlah_barang) {
       missingJumlah.push(product_id)
       return null

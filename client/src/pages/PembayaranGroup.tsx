@@ -162,6 +162,15 @@ const PembayaranGroup = () => {
       )
     })
 
+  const customersListToOptions = () =>
+    customersList.map((CustomerData) => {
+      return (
+        <option key={CustomerData.id} value={CustomerData.id}>
+          {CustomerData.nama_toko}
+        </option>
+      )
+    })
+
   const selectItemColumns = () => (
     <>
       <option key={1} value="nomor">
@@ -414,7 +423,7 @@ const PembayaranGroup = () => {
                     ) : (
                       ''
                     )}
-                    {customersListToSearchOptions()}
+                    {customersListToOptions()}
                   </select>
                   <div id="invalid-feedback">
                     {errors.checkNamaToko && 'Nama pelanggan harus dipilih'}
