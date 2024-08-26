@@ -113,7 +113,7 @@ async function pembayaran({
   from = 0,
   to = 0,
 }) {
-  return await knex('payment')
+  const query = knex('payment')
     .select(
       'order.sales_id',
       'order.customer_id',
@@ -161,8 +161,8 @@ async function pembayaran({
 
       if (from && to) {
         builder.andWhereRaw(
-          `(giro.id IS NOT NULL AND giro.tanggal_pencairan BETWEEN ? AND ?) OR
-          (giro.id IS NULL AND payment.tanggal BETWEEN ? AND ?)`,
+          `((giro.id IS NOT NULL AND giro.tanggal_pencairan BETWEEN ? AND ?) OR
+          (giro.id IS NULL AND payment.tanggal BETWEEN ? AND ?))`,
           [
             from,
             Number(to) + 24 * 60 * 60 * 1000 - 1,
@@ -191,13 +191,17 @@ async function pembayaran({
     })
     .orderBy('payment.id', 'asc')
     .orderBy('order.nomor_faktur', 'asc')
-    .then((rows) => {
-      return rows
-    })
-    .catch((error) => {
-      logger.error(error)
-      return []
-    })
+    .toSQL()
+
+  console.log(query.sql)
+  console.log(query.bindings)
+  // .then((rows) => {
+  //   return rows
+  // })
+  // .catch((error) => {
+  //   logger.error(error)
+  //   return []
+  // })
 }
 
 async function piutang({
@@ -324,13 +328,16 @@ async function giro(
       }
 
       if (sales) {
-        builder.andWhere('sales.id', knex.raw('COALESCE(?, sales.id)', sales))
+        builder.andWhere(
+          'order.sales_id',
+          knex.raw('COALESCE(?, "order".sales_id)', sales),
+        )
       }
 
       if (customer)
         builder.andWhere(
           'customer.id',
-          knex.raw('COALESCE(?, customerid)', customer),
+          knex.raw('COALESCE(?, customer.id)', customer),
         )
 
       builder.where('giro.status_pembayaran', status_pembayaran)

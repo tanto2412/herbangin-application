@@ -305,13 +305,16 @@ async function giro(
       }
 
       if (sales) {
-        builder.andWhere('sales.id', knex.raw('COALESCE(?, sales.id)', sales))
+        builder.andWhere(
+          'order.sales_id',
+          knex.raw('COALESCE(?, "order".sales_id)', sales),
+        )
       }
 
       if (customer)
         builder.andWhere(
           'customer.id',
-          knex.raw('COALESCE(?, customerid)', customer),
+          knex.raw('COALESCE(?, customer.id)', customer),
         )
 
       builder.where('giro.status_pembayaran', status_pembayaran)
