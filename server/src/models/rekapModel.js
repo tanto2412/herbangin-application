@@ -160,10 +160,16 @@ async function pembayaran({
       }
 
       if (from && to) {
-        builder.andWhereBetween('payment.tanggal', [
-          from,
-          Number(to) + 24 * 60 * 60 * 1000 - 1,
-        ])
+        builder.andWhereRaw(
+          `(giro.id IS NOT NULL AND giro.tanggal_pencairan BETWEEN ? AND ?) OR
+          (giro.id IS NULL AND payment.tanggal BETWEEN ? AND ?)`,
+          [
+            from,
+            Number(to) + 24 * 60 * 60 * 1000 - 1,
+            from,
+            Number(to) + 24 * 60 * 60 * 1000 - 1,
+          ],
+        )
       }
 
       if (sales) {
