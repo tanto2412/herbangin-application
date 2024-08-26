@@ -124,17 +124,20 @@ async function pembayaran({
       ),
       'customer.nama_toko',
       knex.raw(
-        "to_char(to_timestamp(payment.tanggal / 1000), 'dd-mm-yyyy') as tanggal",
+        `CASE WHEN giro.id IS NOT NULL
+          THEN to_char(to_timestamp(giro.tanggal_pencairan / 1000), 'dd-mm-yyyy')
+          ELSE to_char(to_timestamp(payment.tanggal / 1000), 'dd-mm-yyyy')
+        END as tanggal`,
       ),
       'payment.jumlah_pembayaran',
       'payment.jenis_pembayaran as remarks',
       knex.raw(
         `EXISTS(
-      SELECT 1
-      FROM order_item
-      LEFT JOIN product ON product.id = order_item.product_id
-      WHERE "order".nomor_faktur = payment.nomor_faktur AND (product.jenis_barang = ? OR (payment.tanggal < "order".tanggal_faktur + (CAST(product.batas_fast_moving AS BIGINT) * 24 * 60 * 60 * 1000)))
-    ) AS komisi`,
+            SELECT 1
+            FROM order_item
+            LEFT JOIN product ON product.id = order_item.product_id
+            WHERE "order".nomor_faktur = payment.nomor_faktur AND (product.jenis_barang = ? OR (payment.tanggal < "order".tanggal_faktur + (CAST(product.batas_fast_moving AS BIGINT) * 24 * 60 * 60 * 1000)))
+          ) AS komisi`,
         productModel.JenisBarang.SLOW_MOVING,
       ),
     )
