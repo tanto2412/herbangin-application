@@ -113,7 +113,7 @@ async function pembayaran({
   from = 0,
   to = 0,
 }) {
-  const query = knex('payment')
+  return await knex('payment')
     .select(
       'order.sales_id',
       'order.customer_id',
@@ -191,17 +191,13 @@ async function pembayaran({
     })
     .orderBy('payment.id', 'asc')
     .orderBy('order.nomor_faktur', 'asc')
-    .toSQL()
-
-  console.log(query.sql)
-  console.log(query.bindings)
-  // .then((rows) => {
-  //   return rows
-  // })
-  // .catch((error) => {
-  //   logger.error(error)
-  //   return []
-  // })
+    .then((rows) => {
+      return rows
+    })
+    .catch((error) => {
+      logger.error(error)
+      return []
+    })
 }
 
 async function piutang({
