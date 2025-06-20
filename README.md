@@ -21,3 +21,5 @@ Run on node v18
 4. Edit `start.bat` to cwd
 5. Run the task scheduler
 6. Create a shortcut of `restart.bat` and set run as administrator
+
+test1
