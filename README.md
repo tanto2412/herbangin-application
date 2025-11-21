@@ -23,3 +23,4 @@ Run on node v18
 6. Create a shortcut of `restart.bat` and set run as administrator
 
 test1
+test2
